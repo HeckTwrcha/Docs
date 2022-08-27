@@ -1,0 +1,558 @@
+------------------------------
+Author  : twrcha AD
+Contacts: twrcha@outlook.com
+version : 0.4
+created : 18th Aug 2022
+updated : 26th Aug 2022
+disply  : 1920 x 1080
+------------------------------
+@@@ DISCLAIMER: this file is a collection of best practises and know-how gathered from various sources, tested and verified by this document author within the subject linux environment for      the best of the author's knowldage during the document dated period. meanwhile there are few un-verified commands/procedures which are highlighted/marked by the auther, however     discrepancy still may occurs, due to the fact of no 100% matched environments. @@@ 
+
+
+
+			###################################################################################################################
+			# Install, setup, activate and configure network services on linux server (DNS, DHCP, ssh, AAAA, web-server, db)  #
+			#                                     Ubuntu Live Server - 22.04 & 20.04                                          #
+			###################################################################################################################
+
+
+
+################################################################################################################
+# setup linux network interfaces in cli-(tty)-multi-user.target-mode(3) (Ethernet & Wifi config static/dhcp)   #
+################################################################################################################
+
+
+ip link
+ip add
+ip a
+iwconfig           # you have to install wireless-tools.
+sudo nano /etc/netplan/<your-wifi-&-or-eth-config-file>.yaml               # set your ethernet and/or wifi setting and save. 
+sudo netplan apply /etc/netplan/<your-wifi-&-or-eth-config-file>.yaml      # apply the setting file and activate.
+
+
+sudo nano /etc/netplan/<your-wifi-&-or-eth-config-file>.yaml
+-----------------------------------------------------------#
+network:
+  ethernets:
+    enp0s31f6:
+      addresses:
+        - 10.150.15.25/24
+  version: 2
+
+-----------------------------------------------------------#
+network:
+  ethernets:
+    enp0s31f6:
+      dhcp4: true                                          # the values could be "true/false" or "yes/no".
+      dhcp6: true
+  version: 2
+
+-----------------------------------------------------------#
+
+network:
+  wifis:
+    wlp3s0:
+      access-points:
+        "your-wifi-ssid":
+          password: "your-wifi-password"
+      dhcp4: true                                          # the values could be "true/false" or "yes/no".
+      dhcp6: true
+  version: 2
+  renderer: NetworkManager                                 # optional ??? 
+-----------------------------------------------------------#
+
+
+
+
+
+###################################################################
+# Grub2 linux bootloader management (dual boot linux & Windows)   #
+###################################################################
+## https://social.technet.microsoft.com/Forums/en-US/b139538b-7e2f-4988-9e7a-e1eb57688560/how-to-mount-the-efi-partition-on-usb-drive-from-windows-10?forum=win10itprogeneral/
+## https://www.linuxuprising.com/2020/01/how-to-boot-to-console-text-mode-in.html/
+## you can use Paragon software tools for linux-fs & apfs support with Windows.
+
+Grub Runlevels:
+---------------
+0 – Halt Shuts down the system.
+1 – Single-User Mode Mode for administrative tasks.
+2 – Multi-User Mode Does not configure network interfaces / services.
+3 – Multi-User Mode with Networking Starts the system normally.
+4 – Not used/User-definable For special purposes.
+5 – Start the system with display manager. As runlevel 3 + display manager.
+6 – Reboot Reboots the system.
+
+## grub mode(1) is CLI aka (tty)   with networking and utilizes the 'single-user.target' service (used by Microsoft WSL2).
+## Grub mode(3) is CLI aka (tty)   with networking and utilizes the 'multi-user.target'  serivce.
+## Grub mode(5) is GUI aka desktop with networking and utilizes the 'graphical.target'   service.
+## Grub mode(2 & 4 both obsolete) was used to start and stop groups of services now used by 'systemd' bootloader and utilises 'systemd.target' service.
+
+
+Switching between CLI & GUI using Grub:
+---------------------------------------
+## Once you see the GNU GRUB screen, with the first entry from the menu selected, press the 'e' key. This allows you to edit the kernel parameters before booting.
+## Look for the line that begins with linux (use the Up / Down / Left / Right arrow keys to navigate); vmlinuz should also be on the same line.
+## At the end of this line (you can place the ## cursor using the arrow keys at the beginning of the line, then press the End key to move the cursor to the end of that line)
+## add a space followed by the number 3. Don't change anything else.
+
+examples:
+----------
+
+1- Ubuntu:
+----------
+linux      /boot/vmlinuz-5.18.0-1-generic root=UUID=1438eb20-da3d-4880-bb3a-414e+++0a929 ro quiet splash $vt_handoff         # auto system defined.
+linux      /boot/vmlinuz-5.18.0-1-generic root=UUID=1438eb20-da3d-4880-bb3a-414e+++0a929 ro quiet splash $vt_handoff 3       # force CLI-tty.
+linux      /boot/vmlinuz-5.18.0-1-generic root=UUID=1438eb20-da3d-4880-bb3a-414e+++0a929 ro quiet splash $vt_handoff 5       # force GUI.
+
+
+2- Fedora:
+----------
+linux ($root)/vmlinuz-5.3.13-300.fc31.x86_64 root=/dev/mapper/fedora_localhost--live-root ro resume=/dev/mapper/fedora_localhost--live-swap rd.lvm.lv=fedora_localhost-live/root rd.lvm.lv=fedora_localhost-live/swap rhgb quiet 
+
+linux ($root)/vmlinuz-5.3.13-300.fc31.x86_64 root=/dev/mapper/fedora_localhost--live-root ro resume=/dev/mapper/fedora_localhost--live-swap rd.lvm.lv=fedora_localhost-live/root rd.lvm.lv=fedora_localhost-live/swap rhgb quiet 3
+
+linux ($root)/vmlinuz-5.3.13-300.fc31.x86_64 root=/dev/mapper/fedora_localhost--live-root ro resume=/dev/mapper/fedora_localhost--live-swap rd.lvm.lv=fedora_localhost-live/root rd.lvm.lv=fedora_localhost-live/swap rhgb quiet 5
+
+
+
+
+Grub bootloader management:
+---------------------------
+## Windows uefi partition             (hd0,gpt1) = /dev/sda1 = UUID A241-6434 .
+## Windows bootmanager boot partition (hd0,gpt2) = /dev/sda2 = C:\ .
+## linux uefi partition               (hd1,gpt1) = /dev/sdb1 = UUID CCC7-B036 lablel 'SYSTEM'.
+## linux bootloader boot partition    (hd1,gpt2) = /dev/sdb2 = /boot where the config file is located '/boot/grub/grub.cfg' .
+## grub files required in the boot process, 
+## /etc/default/grub
+## /etc/default/grub.d/init-select.cfg
+## grub will takeover the boot control aggressively and probably break Windows bootmanager when it is installed on a USB flash memory,
+## therefore you have rediscover Windows bootmanager/efi partition and recreate grup configuration with Windows OS in the boot list:
+
+
+os-prober                                        # detect all existing/available bootable OS's.
+sudo grub-mkconfig -o /boot/grub/grub.cfg        # dtetct and generate a new 'grup.cfg' file with all the newly detected OS's 
+update-grub                                      # does the same as the above command.
+
+----------------------------------------------------------------------------
+Generating grub configuration file ...
+Found Windows Boot Manager on /dev/sda1@/efi/Microsoft/Boot/bootmgfw.efi
+Adding boot menu entry for UEFI Firmware Settings
+done
+----------------------------------------------------------------------------
+
+
+
+## to mount and access Windows efi partition from within Windows it can be done through pwsh/cli only (not expolorer.exe), using the command below, 
+
+PS C:\> mountvol A: /S                # while A: can be replaced with any available drive letter.
+The directory is not empty.
+PS C:\> A:
+PS A:\> cat /efi/ubuntu/grub.cfg
+search.fs_uuid 6f9262ad-1506-4eb6-afbd-d341b901a7ab root hd1,gpt1
+set prefix=($root)'/boot/grub'
+configfile $prefix/grub.cfg
+PS A:\> dir
+--------------------------
+|boot
+| |boot.sdi
+|
+|efi
+  |
+  |boot
+  |  |bootx64.efi
+  |  |fbx64.efi
+  |  |mmx64.efi
+  |
+  |Microsoft
+  |  |boot
+  |  |  |bcd (file)
+  |  |  |boot.stl
+  |  |  |bootmgfw.efi
+  |  |  |bootmgr.efi
+  |  |  |cbmr_driver.efi
+  |  |  |memtest.efi 
+  |  |  |[(13 x .dll & 2 x .p7b files) & many directories]
+  |  |
+  |  |recovery
+  |     |bcd (file)
+  |
+  |ubuntu
+     |grubx64.efi
+     |shimx64.efi
+     |mmx64.efi
+     |bootx64.csv
+     |grub.cfg
+    
+----------------------------
+
+pwsh: (works with Windows efi partition only, Microsoft do not support other OS's)
+-----
+
+diskpart
+sel disk 0
+sel part 1 (efi partition)
+assign letter=A
+exit
+taskkill /im explorer.exe /f
+explorer.exe
+
+----------------------------------------------------------
+DISKPART> sel disk 1
+
+Disk 1 is now the selected disk.
+
+DISKPART> list partition
+
+  Partition ###  Type              Size     Offset
+  -------------  ----------------  -------  -------
+  Partition 1    System             512 MB  1024 KB
+  Partition 2    Unknown           1024 MB   513 MB
+  Partition 3    Unknown             13 GB  1537 MB
+
+DISKPART> sel partition 1
+
+Partition 1 is now the selected partition.
+
+DISKPART> assign letter=B
+
+Virtual Disk Service error:
+The operation is not supported on removable media.
+
+
+DISKPART>
+----------------------------------------------------------
+
+
+disk UUID:
+----------
+
+DISKPART> sel disk 1
+
+Disk 1 is now the selected disk.
+
+DISKPART> uniqueid disk
+
+Disk 1 ID: {33C129B8-4EBC-44D7-98E9-A7BBDFBBCB07}
+
+Disk 0 ID: {EA90C3C5-D08E-493F-A4A8-AD0DC7BF6FA3}
+
+
+
+
+partition GUID:
+---------------
+
+pwsh:
+-----
+
+Get-WmiObject -namespace root\cimv2 -class win32_volume | FL -property DriveLetter, DeviceID         # (for pwsh v7.x).
+
+GWMI          -namespace root\cimv2 -class win32_volume | FL -property DriveLetter, DeviceID         # (for pwsh v5.x).
+
+-----------------------------------------------------------------
+DriveLetter : C:
+DeviceID    : \\?\Volume{860c48a6-1b52-4eeb-a89f-508d81303480}\
+
+DriveLetter :
+DeviceID    : \\?\Volume{0826eb02-a9cb-48ce-abcd-dd7d54aa1dc4}\
+
+DriveLetter :
+DeviceID    : \\?\Volume{8e3fb42b-ec9d-4448-902e-134d44b6c018}\
+
+DriveLetter :
+DeviceID    : \\?\Volume{9e6722f5-d906-474e-a537-b8cf09edb95c}\
+
+DriveLetter : P:
+DeviceID    : \\?\Volume{1d935999-c7c8-11ec-b0a5-54ee75aca650}\
+-----------------------------------------------------------------
+
+
+from grub bash:
+---------------
+## to gain more functionality, GRUB needs to be able to load its modules, which are apparently located in the /grub/x86_64-efi directory on /dev/sdb1.
+## but to do that, grub needs two important variables set correctly: 'root' and 'prefix'. 
+## /boot/efi/EFI/LFS/grubx64.efi
+## /boot/grub
+
+ls                                #
+ls (hd1,gpt1)/boot                # check if the 'boot.sdi' file exist.
+set                               # with no parameter to check the current grub 'root' & 'prefix' parameters,
+----------------------------------#
+
+search.fs_uuid <disk-partition-uuid> root hd1,gpt1       # set grub root (efi) location using the disk/partition 'uuid' , which containes grub bootloader.
+set root='hd1,gpt1'                                      # set grub root (efi) location manually.
+
+set prefix=(hd1,gpt1)/boot/grub                          # set grub bootloader configuration file location manually.
+set prefix=($root)'/boot/grub'                           # same as above using a veriable ($root) which is pre-defined based on the disk/partition 'uuid'.
+----------------------------------#
+
+
+ls (hd0,gpt1)/efi/boot
+-------------
+bootx64.efi
+fbx64.efi
+mmx64.efi
+-------------
+
+
+ls (hd0,gpt1)/efi/ubuntu
+-------------
+grubx64.efi
+shimx64.efi
+mmx64.efi
+bootx64.csv
+grub.cfg
+-------------
+
+
+ls (hd0,gpt1) /efi/microsoft/boot/bootmgfw.efi
+
+
+ls (hd1,gpt1) /boot/grub/grub.cfg
+
+
+
+
+
+#############################################################################
+# nameserver (DNS)-server & slave-DNS-server setup & configuration          #
+#############################################################################
+
+## the package name of the DNS server in the Ubuntu operating system is bind9. It is available in the base OS repository.
+## So, you can use the apt command to install the bind9 package along with other utility packages.
+
+Creating DNS Zones:
+-------------------
+## the '/etc/bind/' is the configuration directory for the DNS server that holds configuration files and zone files.
+## the global configuration file for DNS server is '/etc/bind/named.conf'.
+## for the zone creations, use the '/etc/bind/named.conf.local' file instead of the global configuration file.
+## once you have created DNS zones, create the DNS forward and reverse zones files.
+## This forward zone translates a fully qualified domain name (FQDN) into an IP address.
+## Domain names should end with a dot (.).
+## Whenever you change any records in the zone   file, update the serial number +1 with the current number.
+## Whenever you change any records in the lookup file, update the serial number +1 with the current number.
+## forward        zone file '/etc/bind/strandfintech.local.db' .
+## reverse/lookup zone file '/etc/bind/r.strandfintech.local.db' .
+
+/etc/bind/named.conf
+/etc/bind/named.conf.local
+/etc/bind/strandfintech.local.db
+/etc/bind/r.strandfintech.local.db
+
+
+
+## Record types in the forward zone file,
+ # SOA – Start of Authority
+ # NS  – Name Server
+ # MX  – Mail for Exchange
+ # CN  – Canonical Name
+ # A   – A record
+
+
+## Record types in the reverse zone file,
+ # SOA – Start of Authority
+ # PTR – Pointer
+
+
+
+Creating Forward Zone: (for the domain strandfintech)
+----------------------------------------------------------------------------------------
+zone "strandfintech.local" IN { // Domain name
+
+     type master; // Primary DNS
+
+     file "/etc/bind/strandfintech.local.db"; // Forward Zone file
+
+     allow-update { none; }; // Since this is the primary DNS, it should be none.
+
+};
+----------------------------------------------------------------------------------------
+
+
+
+Creating Reverse Zone:
+--------------------------------------------------------------------------------------------------------
+zone "0.168.192.in-addr.arpa" IN { // Reverse lookup name, should match your network in reverse order
+
+     type master; // Primary DNS
+
+     file "/etc/bind/r.strandfintech.local.db"; // Reverse lookup file
+
+     allow-update { none; }; // Since this is the primary DNS, it should be none.
+
+};
+--------------------------------------------------------------------------------------------------------
+
+
+
+sudo named-checkconf                                                               # validate DNS Syntax.
+sudo named-checkzone                                                               # validate DNS zones.
+sudo named-checkzone strandfintech.local /etc/bind/strandfintech.local.db          # validate DNS forward zone.
+sudo named-checkzone 0.168.192.in-addr.arpa /etc/bind/r.strandfintech.local.db     # validate DNS reverse zone.
+sudo rndc reload                                                                   # reload the new zones files. 
+dig www.strandfintech.local @192.168.0.10                                          # validte the DNS record.
+dig -x 192.168.0.101 @192.168.0.10                                                 # validate the reverse lookup record.
+
+
+
+
+
+#############################################################################
+# Dynamic Host Configuration Protocol (DHCP-server) setup & configuration   #
+#############################################################################
+## the following is a quick description of how DHCP actually works:
+## once a client (that is configured to use DHCP) and connected to a network boots up, it sends a DHCPDISCOVER packet to the DHCP server.
+## when the DHCP server receives the DHCPDISCOVER request packet, it replies with a DHCPOFFER packet.
+## the client gets the DHCPOFFER packet, it sends a DHCPREQUEST packet to the server showing it is ready to receive the network configuration information provided in the DHCPOFFER packet.
+## after the DHCP server receives the DHCPREQUEST packet from the client, it sends the DHCPACK packet showing that the client is now permitted to use the IP address assigned to it.
+
+sudo apt install isc-dhcp-server
+sudo nano /etc/default/isc-dhcp-server
+----------------------------------------
+dhcpd
+INTERFACES="eth0"
+----------------------------------------
+
+
+
+## Set the following global parameters at the top of the file, they will apply to all the declarations below (do specify values that apply to your scenario):
+## for example, define a subnetwork; here, we’ll setup three DHCP subnets (10.1.x.0/24) on the LAN network over the same network interface (use parameters that apply to your scenario).
+## Since the three subnets share the same medium (eth0), they should be declared inside the same shared-network:
+## since all subnets are sharing the same network interface card (NIC) the DHCP traffic will be managed by the L3 network switch(s) & router(s)/Gateway(s),
+## so that the DHCP client device gets the proper DHCP settings belong to its subnet/vlan.
+## Set your DHCP server ip to be the 'DHCP Helper Address' on your L3 Switch for each VLAN then define the scopes for those on your server.
+## Set the DHCP server NIC port on the switch to be a '.1q trunk' carrying all appropriate VLANs then setup the separate vNICs on your server with appropriate IPs for each VLAN.
+
+sudo nano /etc/dhcp/dhcpd.conf
+dhcpd -4 eth0
+-----------------------------------------------------------------
+ddns-update-style interim;
+option domain-name "mydomain.com";
+option domain-name-servers ns1.mydomain.com; ns2.mydomain.com
+default-lease-time 86400;
+max-lease-time 86400;
+authoritative;
+log-facility local7;
+
+shared-network my-net {                              
+
+  subnet 10.1.1.0 netmask 255.255.255.0 {
+        range 10.1.1.50 10.1.1.100;
+        range 10.1.1.150 10.1.1.200;
+        default-lease-time 86400;
+        max-lease-time 86400;
+        option routers 10.1.1.1;
+        option ip-forwarding off;
+        option broadcast-address 10.1.1.255;
+        option subnet-mask 255.255.255.0;
+        option ntp-servers 10.1.1.1;
+        option domain-name-servers 10.1.1.1;
+  }
+
+  subnet 10.1.2.0 netmask 255.255.255.0 {
+        range 10.1.2.100 10.1.2.254;
+        default-lease-time 86400;
+        max-lease-time 86400;
+        option routers 10.1.2.1;
+        option ip-forwarding off;
+        option broadcast-address 10.1.2.255;
+        option subnet-mask 255.255.255.0;
+        option ntp-servers 10.1.2.1;
+        option domain-name-servers 10.1.2.1;
+  }
+
+  subnet 10.1.3.0 netmask 255.255.255.0 {
+        range 10.1.3.100 10.1.3.254;
+        default-lease-time 86400;
+        max-lease-time 86400;
+        option routers 10.1.3.1;
+        option ip-forwarding off;
+        option broadcast-address 10.1.3.255;
+        option subnet-mask 255.255.255.0;
+        option ntp-servers 10.1.3.1;
+        option domain-name-servers 10.1.3.1;
+  }
+
+}
+-------------------------------------------------------------
+
+
+
+## To assign a fixed (static) IP address to a particular client computer, add the section below to explicitly specify it’s MAC addresses and the IP to be statically assigned:
+-------------------------------------------------
+host kali-node {
+	 hardware ethernet 00:f0:m4:6y:89:0g;
+	 fixed-address 10.1.1.105;
+ }
+
+host fedora-node {
+	 hardware ethernet 00:4g:8h:13:8h:3a;
+	 fixed-address 10.1.3.106;
+ }
+------------------------------------------------
+
+
+
+## Start and enable the DHCP server service:
+
+#------------ SystemD ------------ 
+$ sudo systemctl start isc-dhcp-server.service
+$ sudo systemctl enable isc-dhcp-server.service
+
+
+#------------ SysVinit ------------ 
+$ sudo service isc-dhcp-server.service start
+$ sudo service isc-dhcp-server.service enable
+
+## do not forget to permit DHCP service (DHCPD daemon listens on port 67/UDP) on firewall as below:
+
+sudo ufw allow  67/udp
+$ sudo ufw reload
+$ sudo ufw show
+
+
+
+## Now, configuring DHCP Client Machines:
+
+sudo nano /etc/network/interfaces
+-----------------------
+auto  eth0
+allow-hotplug eth0
+iface eth0 inet dhcp
+iface eth0 inet manual                   # for static/manual ip setting.
+-----------------------
+
+
+#----------- SystemD ----------- 
+$ sudo systemctl restart networking
+
+#---------- SysVinit ----------- 
+$ sudo service networking restart
+
+
+dhclient eth0 -v -r                      # use this command to force dhcp request refresh. -v enable verbose log messages, necessary for troubleshooting.
+ifdown                                   # manually bring the network interface down.
+ifup                                     # manually bring the network interface up.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+													End of the document
+
+
+
+
+
+
+
+
+
+
+
+
+
