@@ -1,0 +1,805 @@
+-----------------------------
+Author : Twrcha AD
+email  : twrcha@outlook.com
+version: 0.3
+created: 1st  Dec 2021
+updated: 24th Feb 2022
+disply : 1920 x 1080
+-----------------------------
+@@@ DISCLAIMER: this file is a collection of best practises and know-how gathered from various sources, tested and verified by this document author within the subject linux environment for      the best of the author's knowldage during the document dated period. meanwhile there are few un-verified commands/procedures which are highlighted/marked by the auther, however     discrepancy still may occurs, due to the fact of no 100% matched environments. @@@ 
+
+
+
+
+
+##########################################################################################################################################################
+# Installing Canonical (Microk8s) Kubernetes engine (using Istio & Envoy-proxy EDGE networking & traffic management engines) in WSL2-Ubuntu-20.04-env    #
+##########################################################################################################################################################
+
+https://gist.github.com/djfdyuruiry/6720faa3f9fc59bfdf6284ee1f41f950/ (This one) (use one of these two systemd scripts as there are different other systemd scripts on github)
+https://github.com/damiongans/ubuntu-wsl2-systemd-script/  (use one of these two systemd installation scripts as there are different other "systemd" scripts on github)
+https://github.com/arkane-systems/genie/
+https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md/
+https://ubuntu.com/tutorials/install-a-local-kubernetes-with-microk8s#1-overview/
+https://microk8s.io/docs/getting-started/
+https://www.envoyproxy.io/
+https://istio.io/latest/
+https://nodejs.org/
+https://brew.sh/
+
+
+
+##################################################################################################################################################
+# tested with the below wsl2-ubuntu-20.04.x-LTS-focal-fossa, kernel version or later (5.10.x-microsoft-standard-WSL2_x86_64) & (v5.4.x-generic)  #
+##################################################################################################################################################
+
+pwsh:
+-----
+Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion"
+Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion" | Select-Object -ExpandProperty CurrentMajorVersionNumber
+Get-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-Hypervisor -Online
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+SystemRoot                : C:\WINDOWS
+BaseBuildRevisionNumber   : 1
+BuildBranch               : ni_release
+BuildGUID                 : ffffffff-ffff-ffff-ffff-ffffffffffff
+BuildLab                  : 22567.ni_release.220225-1325
+BuildLabEx                : 22567.1.amd64fre.ni_release.220225-1325
+CompositionEditionID      : Enterprise
+CurrentBuild              : 22567
+CurrentBuildNumber        : 22567
+CurrentMajorVersionNumber : 10                                                   # (this one).
+CurrentMinorVersionNumber : 0
+CurrentType               : Multiprocessor Free
+CurrentVersion            : 6.3
+DisplayVersion            : 22H2
+EditionID                 : Professional
+EditionSubManufacturer    :
+EditionSubstring          :
+EditionSubVersion         :
+InstallationType          : Client
+InstallDate               : 1646266640
+ProductName               : Windows 10 Pro
+ReleaseId                 : 2009
+SoftwareType              : System
+UBR                       : 1
+PathName                  : C:\Windows
+PendingInstall            : 0
+ProductId                 : xxxxx-xxxxx-xxxxx-AAOEM
+DigitalProductId          : {164, 0, 0, 0…}
+DigitalProductId4         : {248, 4, 0, 0…}
+RegisteredOwner           : twrcha
+InstallTime               : 132907402407929766
+PSPath                    : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion
+PSParentPath              : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT
+PSChildName               : CurrentVersion
+PSDrive                   : HKLM
+PSProvider                : Microsoft.PowerShell.Core\Registry
+-------------------------------------------------------------------------------------------------------------------------------------
+
+FeatureName      : Microsoft-Hyper-V-Hypervisor
+DisplayName      : Hyper-V Hypervisor
+Description      : Provides the Hyper-V Hypervisor.
+RestartRequired  : Possible
+State            : Enabled
+CustomProperties :
+-------------------------------------------------------
+
+
+bash:
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Welcome to Ubuntu 20.04.4 LTS (GNU/Linux 5.10.93.2-microsoft-standard-WSL2 x86_64)/(5.10.x-generic)
+Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 5.10.81.1-microsoft-standard-WSL2 x86_64)/(5.8.x-generic)
+Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 5.10.74.3-microsoft-standard-WSL2 x86_64)/(5.4.0.96-generic)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Jan 18 21:42:55 GMT 2022
+
+  System load:  1.73               Processes:                81
+  Usage of /:   3.8% of 250.98GB   Users logged in:          0
+  Memory usage: 47%                IPv4 address for docker0: 172.17.0.1
+  Swap usage:   4%                 IPv4 address for eth0:    172.18.225.75
+
+ * Super-optimized for small spaces - read how we shrank the memory
+   footprint of MicroK8s to make it the smallest full K8s around.
+
+   https://ubuntu.com/blog/microk8s-memory-optimisation
+
+0 updates can be applied immediately.
+
+
+Last login: Tue Jan 18 19:11:41 GMT 2022 on pts/0
+$
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Pre-Requisits:
+--------------
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -                                 # add 'yarn' source to avoid the default conflecting version ''.
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list     # 
+
+sudo apt install yarn                                 # will generate '~/yarn.lock' file which conflects with '~/npm.lock' file and both depends on 'package.json' file.
+
+# you have to chose to use one of these two nodejs repositories, yarn is a modren and more advance while npm is the legacy repository with a long history and many dependancies: 
+sudo yarn init                                        # to generate the 'package.json' file in the current folder.
+sudo npm init                                         # to generate the 'package.json' file in the current folder.
+
+
+sudo apt install wget gdebi                                                                            # 
+sudo wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb               # download Microsoft powershell & dotnet repository source.
+sudo gdebi packages-microsoft-prod.deb                                                                 # add/install Microsoft powershell & dotnet repository source.
+
+
+sudo apt-get install -y wget curl git tar dpkg sudo apt gdebi gnupg rpm make cmake tree yaml-mode unzip lzip bash zsh nano man nuget cargo flatpak aptitude python3-pip python3 python3.9 mono-runtime mono-utils wine winetricks wine64-tools rustc ruby elixir perl bison meson flex ninja-build gcc-10 g++-10 clang-12 erlang lsb llvm-12 exfat* ntfs* zfs-fuse net-tools whois nmap atop htop opensp openjdk-17-jre powershell dotnet-sdk-6.0 yarn apt-transport-https ca-certificates software-properties-common
+
+sudo apt-get build-dep wget curl git tar dpkg sudo apt gdebi gnupg2 rpm make-dfsg cmake tree yaml-mode unzip lzip bash zsh nano nuget cargo flatpak aptitude python-pip python3-defaults mono wine winetricks rustc ruby-defaults elixir-lang perl bison meson flex ninja-build gcc-10 llvm-toolchain-12 erlang lsb zfs-fuse net-tools whois nmap atop htop opensp openjdk-17 apt ca-certificates software-properties
+
+
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
+sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-12 12
+
+
+sudo cargo install exa                                # a modren replacment for 'ls', also add '/root/.cargo/bin' to the system PATH. 
+sudo cp /root/.cargo/bin/exa /usr/bin/exa             # to be able to access the exa executable.
+
+# install one of the below three file-system inxeding tools:
+sudo apt install plocate                                                                               # file system indexing will start at 60% and will take some time so be patient.
+sudo apt install mlocate                                                                               # 
+sudo apt install locate                                                                                # 
+sudo updatedb                                                                                          # for manual reindexing.
+
+
+# working ssh connection to your distro (Openssh-server openssh-client), generate the necessary auth-keys for the required admin/users.
+# specify the ssh port (default is TCP 22) and allow ufw access, enable password and token-key authentication, enable root login (if required).
+
+
+# install the github 'systemd-genie':
+sudo apt install systemd-genie                        #  required 'dotnet-jdk-5.0' or above.
+
+
+# disable swap file/disk:
+sudo nano /etc/fstab                                  # comment the '/swapfile' line.
+sudo swapoff -a                                       # add this command to the user profile '~/.bash_profile'.
+source ~/.bash_profile                                # reload the user profile '~/.bash_profile'.
+su ${USER}                                            # or this to reload the user profile/session.
+
+
+
+############################################################
+# nodejs & npm Install the latest LTS or none-LTS version  #
+############################################################
+# download the tarball package 'tar.xz'.
+sudo wget https://nodejs.org/dist/v16.14.0/node-v16.14.0-linux-x64.tar.xz              # download the selected package.
+tar -xf node-v16.14.0-linux-x64.tar.xz                                                 # this will extract the package into folder '~/node-v16.14.0-linux-x64'.
+# add the 'node' and 'npm' binaries location to the system PATH '~/node-v16.14.0-linux-x64/bin'.
+
+
+
+###################
+# install php8.1  #
+###################
+sudo add-apt-repository ppa:ondrej/php               #
+sudo apt update && sudo apt upgrade -y               #
+sudo apt install php8.0                              #
+sudo apt install nginx-core                          # reverse-proxy used by kubernetes / microk8s / k3s for public access to container resources.
+
+# CAVEATS:
+# 1. If you are using php-gearman, you need to add ppa:ondrej/pkg-gearman
+# 2. If you are using apache2, you are advised to add ppa:ondrej/apache2
+# 3. If you are using nginx, you are advised to add ppa:ondrej/nginx-mainline or ppa:ondrej/nginx
+
+
+
+#############################################
+# home-brew installation MacOS env command  #
+#############################################
+https://brew.sh/
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"         # installation script download and install.
+# add the brew bin folder path to the system PATH as the 1st item '/home/linuxbrew/.linuxbrew/bin/'.
+# add the home brew env to the '~/.bash_profile' to be loaded at startup:
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+ 
+
+###########################################################################
+# download and install 'systemd' installation scrip for wsl from github   #
+###########################################################################
+# the 1st github script:
+# https://gist.github.com/djfdyuruiry/6720faa3f9fc59bfdf6284ee1f41f950/
+
+wget --content-disposition \
+"https://gist.githubusercontent.com/djfdyuruiry/6720faa3f9fc59bfdf6284ee1f41f950/raw/952347f805045ba0e6ef7868b18f4a9a8dd2e47a/install-sg.sh"
+
+
+# the 2nd github script:
+# https://github.com/damiongans/ubuntu-wsl2-systemd-script/
+
+git clone https://github.com/DamionGans/ubuntu-wsl2-systemd-script.git                    #
+cd ubuntu-wsl2-systemd-script                                                             #
+bash ubuntu-wsl2-systemd-script.sh                                                        #
+
+
+# once systemd is installed make sure to shutdown wsl and start it as below:
+
+from pwsh (v7.2.1 or later):
+----------------------------
+wsl genie -s
+
+
+
+#######################
+# Docker installation #
+#######################
+# Docker Engine on Ubuntu supports (overlay2, aufs & btrfs) storage drivers.
+# Docker Engine uses the overlay2 storage driver by default. If you need to use aufs instead, you need to configure it manually,
+# https://docs.docker.com/storage/storagedriver/aufs-driver/
+
+sudo apt remove docker docker-engine docker.io containerd runc                                          # remove any old docker component. 
+sudo apt purge docker-ce docker-ce-cli containerd.io                                                    # 
+sudo rm -rf /var/lib/docker                                                                             # 
+sudo rm -rf /var/lib/containerd                                                                         # 
+
+
+method-1:
+---------
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -                            # 
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"        #
+
+method-2:
+---------
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+ 
+sudo apt update && sudo apt upgrade -y                                       # 
+
+apt-cache madison docker-ce                                                  # check the apt-get multi-source for docker, automatically the higher version will be installed.
+
+sudo apt install docker-ce docker-ce-cli containerd.io                       #
+
+sudo usermod -aG docker $USER                                                # add the current user to docker admin group '${USER}' or '$USER'.
+id                                                                           # check the current user role / permission / access control.
+groups                                                                       # check the user group memberships.
+docker run hello-world                                                       # verify that docker is functioning properly.
+docker ps -a                                                                 # view all containers.
+docker ps -l                                                                 # view latest container.
+
+
+sudo hostnamectl set-hostname kube-master                                    # if you like to change the kubernetes node name (master, node01, node02, etc.).
+
+
+
+###########################
+# kubernetes installation #
+###########################
+Source-1 (google.com):
+----------------------
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add                        # use (this one).
+sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"                          #
+sudo apt install kubernetes kubernetes-cni kubectl kubeadm kubelet                                      #
+
+
+Source-2 (Amazon AWS):
+----------------------
+curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl          # download the file.
+openssl sha1 -sha256 kubectl                                                                                     # verify the file hash.
+chmod +x ./kubectl                                                                                               # make the binary file executable.
+sudo cp ./kubectl /usr/bin/kubectl                                                                               # add it to the system bin folder.
+
+
+sudo kubeadm init                                                                                                # 
+
+
+
+#########################################################
+# install snapd (core, core18, core20, lxd, snapcraft)  #
+#########################################################
+sudo apt install snap snapd
+sudo snap install core
+sudo snap install core18
+sudo snap install core20
+sudo snap install lxd
+sudo snap install snapcraft --classic
+
+
+snap list                                                                   #
+----------------------------------------------------------------------------#
+Name       Version    Rev    Tracking       Publisher   Notes
+core       16-2.54.3  12725  latest/stable  canonical✓  core
+core18     20211215   2284   latest/stable  canonical✓  base
+core20     20220114   1328   latest/stable  canonical✓  base
+lxd        4.0.8      21835  4.0/stable/…   canonical✓  -
+microk8s   v1.23.3    2948   1.23/stable    canonical✓  classic             # microk8s will be installed under '~/snap' directory.
+snapcraft  6.0.2      7010   latest/stable  canonical✓  classic
+snapd      2.54.3     14978  latest/stable  canonical✓  snapd
+$                 
+----------------------------------------------------------------------------#
+
+
+sudo snap install microk8s --classic                                        # snapd & systemctl were installed before installing the systemd scrip obtianed from from github.
+sudo usermod -aG microk8s ${USER}                                           # You can keep using sudo or add the user to the 'microk8s' admin group.
+sudo chown -f -R twrcha ~/.kube                                             # taking ownership of the '.kube' folder.
+su ${USER}                                                                  # For the changes to take effect, either reboot or reload the user groups by running the following command.
+newgrp microk8s                                                             # the above or this command. 
+microk8s enable dashboard dns registry istio                                #
+
+# set port-forwarding to enable external access,
+sudo apt install iptables-persistent                                        #
+sudo iptables -P FORWARD ACCEPT                                             # 
+microk8s kubectl port-forward -n kube-system service/kubernetes-dashboard --address 0.0.0.0 10443:443 
+
+
+# In an RBAC enabled setup (microk8s enable RBAC) you need to create a user with restricted. permissions as shown in:
+# https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+# then create a role as 'cluster-admin':
+
+
+microk8s enable rbac                                                        # role based access control.
+
+microk8s kubectl create clusterrolebinding deployment-controller --clusterrole=cluster-admin --serviceaccount=kube-system:deployment-controller
+
+sudo nano ~/.kube/config.yaml                                               # paste the below in the file and save then run the create command below.
+----------------------------------------------------------------------------# 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: deployment-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: deployment-controller
+  namespace: kube-system
+----------------------------------------------------------------------------# 
+
+kubectl create -f ~/.kube/config.yaml                                       # 
+
+
+microk8s kubectl get services -n kube-system                                #
+
+
+# If RBAC is not enabled access the dashboard using the default token retrieved with:
+microk8s kubectl -n kube-system describe secret $(microk8s kubectl -n kube-system get secret | grep default-token | awk '{print $1}')
+
+# or by, 
+token=$(microk8s kubectl -n kube-system get secret | grep default-token | cut -d " " -f1)
+microk8s kubectl -n kube-system describe secret $token
+
+
+# dashboard will be accessable on local machine URL - https://localhost:10443 or https://127.0.0.1:10443 -.
+microk8s dashboard-proxy &
+
+
+
+microk8s kubectl create clusterrolebinding deployment-controller --clusterrole=cluster-admin --serviceaccount=kube-system:deployment-controller
+------------------------------------------------------------------------------#
+clusterrolebinding.rbac.authorization.k8s.io/deployment-controller created
+$
+------------------------------------------------------------------------------#
+
+
+microk8s dashboard-proxy &                                             #
+-----------------------------------------------------------------------#
+Dashboard will be available at https://127.0.0.1:10443
+Use the following token to login:
+eyJhbGciOiJSUzI1NiIsImtpZCI6ImZ2MmlYWHlXRFF2dUg4SHZ2ZmNWaTlNSlJDenB4bGRYODFZWVdkRDFxOVkifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLTZ4NmpzIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJlN2VmMmIyOC1iMzZmLTRhNDEtYjc5ZS00NmVkZGE1NDM1MTAiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06ZGVmYXVsdCJ9.wF9_W5pjgCjKFC9OO0E3aMZdp98JQ2jycgyFRlpx3UI1U-_Krv9ppB4hieN-DPm9otlQ1agdU81ualunae8YSMiXRA2P-6SKGtyqVHaTSmmE1cH9wuAB98lPhtIyuVt0jhRvkaDe8-Rj_gaUHAx0YZAIP5T_Vqhu9f54ADCYkRPWfxw1SOu7V4UC_xRz4HyrZFEM2xFxvPl31_qRgyKi2BXuCWUbl4cA_cKvVxs7AqEHL_AZ_K448ImhVuGsTYcAbLLGd4h5dUCu9g3ziXU1v-15QBJi__xPSJY7kRzZR-tkq_FMCFl5P3SpibBLpgc0mCNvjGhLpA-OAnEMVCAn2A
+-----------------------------------------------------------------------#
+https://127.0.0.1:10443                                                # select Token login and copy/paste the key above. 
+
+
+
+microk8s enable dashboard dns registry istio                                                            #
+--------------------------------------------------------------------------------------------------------#
+# Enabling DNS
+# Applying manifest
+# serviceaccount/coredns created
+# configmap/coredns created
+# deployment.apps/coredns created
+# service/kube-dns created
+# clusterrole.rbac.authorization.k8s.io/coredns created
+# clusterrolebinding.rbac.authorization.k8s.io/coredns created
+# Restarting kubelet
+# DNS is enabled
+# The registry will be created with the default size of 20Gi.
+# You can use the "size" argument while enabling the registry, eg microk8s.enable registry:size=30Gi
+# Enabling default storage class
+# deployment.apps/hostpath-provisioner created
+# storageclass.storage.k8s.io/microk8s-hostpath created
+# serviceaccount/microk8s-hostpath created
+# clusterrole.rbac.authorization.k8s.io/microk8s-hostpath created
+# clusterrolebinding.rbac.authorization.k8s.io/microk8s-hostpath created
+# Storage will be available soon
+# Applying registry manifest
+# namespace/container-registry created
+# persistentvolumeclaim/registry-claim created
+# deployment.apps/registry created
+# service/registry created
+# configmap/local-registry-hosting configured
+# The registry is enabled
+# Enabling Istio
+# Fetching istioctl version v1.10.3.
+
+# DNS is enabled
+# ✔ Istio core installed
+# ✔ Istiod installed
+# ✔ Ingress gateways installed
+# ✔ Egress gateways installed
+# ✔ Installation complete                                                                                                                                                                      # Thank you for installing Istio 1.10.  Please take a few minutes to tell us about your install/upgrade experience!  https://forms.gle/KjkrDnMPByq7akrYA
+# Istio is starting
+# To configure mutual TLS authentication consult the Istio documentation.
+------------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+microk8s kubectl get services -n kube-system                                                         #
+-----------------------------------------------------------------------------------------------------#
+NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                  AGE
+kube-dns                    ClusterIP   10.152.183.10    <none>        53/UDP,53/TCP,9153/TCP   36h
+metrics-server              ClusterIP   10.152.183.210   <none>        443/TCP                  36h
+kubernetes-dashboard        ClusterIP   10.152.183.30    <none>        443/TCP                  36h
+dashboard-metrics-scraper   ClusterIP   10.152.183.146   <none>        8000/TCP                 36h
+$
+-----------------------------------------------------------------------------------------------------#
+
+
+
+microk8s status                                                                #
+-------------------------------------------------------------------------------#
+microk8s is running
+high-availability: no
+  datastore master nodes: 127.0.0.1:19001
+  datastore standby nodes: none
+addons:
+  enabled:
+    dashboard            # The Kubernetes dashboard
+    dns                  # CoreDNS
+    ha-cluster           # Configure high availability on the current node
+    istio                # Core Istio service mesh services
+    metrics-server       # K8s Metrics Server for API access to service metrics
+    rbac                 # Role-Based Access Control for authorisation
+    registry             # Private image registry exposed on localhost:32000
+    storage              # Storage class; allocates storage from host directory
+  disabled:
+    ambassador           # Ambassador API Gateway and Ingress
+    cilium               # SDN, fast with full network policy
+    dashboard-ingress    # Ingress definition for Kubernetes dashboard
+    fluentd              # Elasticsearch-Fluentd-Kibana logging and monitoring
+    gpu                  # Automatic enablement of Nvidia CUDA
+    helm                 # Helm 2 - the package manager for Kubernetes
+    helm3                # Helm 3 - Kubernetes package manager
+    host-access          # Allow Pods connecting to Host services smoothly
+    inaccel              # Simplifying FPGA management in Kubernetes
+    ingress              # Ingress controller for external access
+    jaeger               # Kubernetes Jaeger operator with its simple config
+    kata                 # Kata Containers is a secure runtime with lightweight VMS
+    keda                 # Kubernetes-based Event Driven Autoscaling
+    knative              # The Knative framework on Kubernetes.
+    kubeflow             # Kubeflow for easy ML deployments
+    linkerd              # Linkerd is a service mesh for Kubernetes and other frameworks
+    metallb              # Loadbalancer for your Kubernetes cluster
+    multus               # Multus CNI enables attaching multiple network interfaces to pods
+    openebs              # OpenEBS is the open-source storage solution for Kubernetes
+    openfaas             # OpenFaaS serverless framework
+    portainer            # Portainer UI for your Kubernetes cluster
+    prometheus           # Prometheus operator for monitoring and logging
+    traefik              # traefik Ingress controller for external access
+$
+------------------------------------------------------------------------------------------------#
+
+
+microk8s inspect                                                      #
+----------------------------------------------------------------------#
+Inspecting Certificates
+Inspecting services
+  Service snap.microk8s.daemon-cluster-agent is running
+  Service snap.microk8s.daemon-containerd is running
+  Service snap.microk8s.daemon-k8s-dqlite is running
+  Service snap.microk8s.daemon-kubelite is running
+  Service snap.microk8s.daemon-apiserver-kicker is running
+  Copy service arguments to the final report tarball
+Inspecting AppArmor configuration
+Gathering system information
+  Copy processes list to the final report tarball
+  Copy snap list to the final report tarball
+  Copy VM name (or none) to the final report tarball
+  Copy disk usage information to the final report tarball
+  Copy memory usage information to the final report tarball
+  Copy server uptime to the final report tarball
+  Copy current linux distribution to the final report tarball
+  Copy openSSL information to the final report tarball
+  Copy network configuration to the final report tarball
+Inspecting kubernetes cluster
+  Inspect kubernetes cluster
+Inspecting juju
+  Inspect Juju
+Inspecting kubeflow
+  Inspect Kubeflow
+Inspecting dqlite
+  Inspect dqlite
+
+ WARNING:  IPtables FORWARD policy is DROP. Consider enabling traffic forwarding with: sudo iptables -P FORWARD ACCEPT
+The change can be made persistent with: sudo apt-get install iptables-persistent
+Building the report tarball
+  Report tarball is at /var/snap/microk8s/2948/inspection-report-20220222_131202.tar.gz
+$
+------------------------------------------------------------------------------------------------------------------------#
+
+
+microk8s kubectl get all --all-namespaces                                                                        #
+-----------------------------------------------------------------------------------------------------------------#
+NAMESPACE            NAME                                             READY   STATUS    RESTARTS      AGE
+kube-system          pod/calico-node-m6ncn                            1/1     Running   4 (36m ago)   36h
+container-registry   pod/registry-5f697bb7df-lvchk                    1/1     Running   4 (36m ago)   35h
+kube-system          pod/kubernetes-dashboard-585bdb5648-pgmxp        1/1     Running   4 (36m ago)   36h
+kube-system          pod/dashboard-metrics-scraper-69d9497b54-v69ff   1/1     Running   4 (36m ago)   36h
+istio-system         pod/istiod-6f94fb9786-xmvf2                      1/1     Running   4 (36m ago)   35h
+kube-system          pod/coredns-64c6478b6c-rlv6t                     1/1     Running   4 (36m ago)   36h
+kube-system          pod/metrics-server-679c5f986d-lfqbl              1/1     Running   4 (36m ago)   36h
+istio-system         pod/istio-ingressgateway-f9cd5d59d-qgdnb         1/1     Running   4 (36m ago)   35h
+istio-system         pod/istio-egressgateway-77c5c9d46d-lvb7r         1/1     Running   4 (36m ago)   35h
+kube-system          pod/calico-kube-controllers-65c57696ff-l57sx     1/1     Running   4 (36m ago)   36h
+kube-system          pod/hostpath-provisioner-7764447d7c-hrjlm        1/1     Running   6 (10m ago)   35h
+
+NAMESPACE            NAME                                TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                      AGE
+default              service/kubernetes                  ClusterIP      10.152.183.1     <none>        443/TCP                                                                      36h
+kube-system          service/kube-dns                    ClusterIP      10.152.183.10    <none>        53/UDP,53/TCP,9153/TCP                                                       36h
+kube-system          service/metrics-server              ClusterIP      10.152.183.210   <none>        443/TCP                                                                      36h
+kube-system          service/kubernetes-dashboard        ClusterIP      10.152.183.30    <none>        443/TCP                                                                      36h
+kube-system          service/dashboard-metrics-scraper   ClusterIP      10.152.183.146   <none>        8000/TCP                                                                     36h
+container-registry   service/registry                    NodePort       10.152.183.248   <none>        5000:32000/TCP                                                               35h
+istio-system         service/istiod                      ClusterIP      10.152.183.167   <none>        15010/TCP,15012/TCP,443/TCP,15014/TCP                                        35h
+istio-system         service/istio-egressgateway         ClusterIP      10.152.183.70    <none>        80/TCP,443/TCP                                                               35h
+istio-system         service/istio-ingressgateway        LoadBalancer   10.152.183.186   <pending>     15021:31014/TCP,80:31682/TCP,443:32370/TCP,31400:30022/TCP,15443:30023/TCP   35h
+
+NAMESPACE     NAME                         DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-system   daemonset.apps/calico-node   1         1         1       1            1           kubernetes.io/os=linux   36h
+
+NAMESPACE            NAME                                        READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system          deployment.apps/calico-kube-controllers     1/1     1            1           36h
+kube-system          deployment.apps/coredns                     1/1     1            1           36h
+kube-system          deployment.apps/kubernetes-dashboard        1/1     1            1           36h
+kube-system          deployment.apps/dashboard-metrics-scraper   1/1     1            1           36h
+istio-system         deployment.apps/istiod                      1/1     1            1           35h
+container-registry   deployment.apps/registry                    1/1     1            1           35h
+kube-system          deployment.apps/metrics-server              1/1     1            1           36h
+istio-system         deployment.apps/istio-ingressgateway        1/1     1            1           35h
+istio-system         deployment.apps/istio-egressgateway         1/1     1            1           35h
+kube-system          deployment.apps/hostpath-provisioner        1/1     1            1           35h
+
+NAMESPACE            NAME                                                   DESIRED   CURRENT   READY   AGE
+kube-system          replicaset.apps/calico-kube-controllers-6966456d6b     0         0         0       36h
+kube-system          replicaset.apps/calico-kube-controllers-65c57696ff     1         1         1       36h
+kube-system          replicaset.apps/coredns-64c6478b6c                     1         1         1       36h
+kube-system          replicaset.apps/kubernetes-dashboard-585bdb5648        1         1         1       36h
+kube-system          replicaset.apps/dashboard-metrics-scraper-69d9497b54   1         1         1       36h
+istio-system         replicaset.apps/istiod-6f94fb9786                      1         1         1       35h
+container-registry   replicaset.apps/registry-5f697bb7df                    1         1         1       35h
+kube-system          replicaset.apps/metrics-server-679c5f986d              1         1         1       36h
+istio-system         replicaset.apps/istio-ingressgateway-f9cd5d59d         1         1         1       35h
+istio-system         replicaset.apps/istio-egressgateway-77c5c9d46d         1         1         1       35h
+kube-system          replicaset.apps/hostpath-provisioner-7764447d7c        1         1         1       35h
+$
+-----------------------------------------------------------------------------------------------------------------#
+
+
+microk8s.kubectl run agix-nginx --image=nginx:alpine --port=80
+microk8s kubectl expose pod agix-nginx --type=NodePort --port=80 --name=agix-nginx
+http://127.0.0.1:30105/
+
+microk8s.kubectl get pod                                 #
+---------------------------------------------------------#
+NAME         READY   STATUS    RESTARTS   AGE
+agix-nginx   1/1     Running   0          60m
+---------------------------------------------------------#
+
+
+microk8s kubectl get services                                                   #
+--------------------------------------------------------------------------------#
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.152.183.1    <none>        443/TCP        4h35m
+agix-nginx   NodePort    10.152.183.63   <none>        80:30105/TCP   2m40s
+--------------------------------------------------------------------------------#
+
+
+# to create your own microservice follow the below steps:
+
+sudo microk8s kubectl create deployment microbot --image=dontrebootme/microbot:v1
+sudo microk8s kubectl scale deployment microbot --replicas=2
+microk8s kubectl expose deployment microbot --type=NodePort --port=80 --name=microbot-service
+
+
+docker images                                                 #
+--------------------------------------------------------------#
+REPOSITORY    TAG       IMAGE ID       CREATED        SIZE
+hello-world   latest    feb5d9fea6a5   3 months ago   13.3kB
+--------------------------------------------------------------#
+
+
+docker version                                                #
+--------------------------------------------------------------#
+Client:
+ Version:           20.10.7
+ API version:       1.41
+ Go version:        go1.13.8
+ Git commit:        20.10.7-0ubuntu5~20.04.2
+ Built:             Mon Nov  1 00:34:17 2021
+ OS/Arch:           linux/amd64
+ Context:           default
+ Experimental:      true
+
+Server:
+ Engine:
+  Version:          20.10.7
+  API version:      1.41 (minimum version 1.12)
+  Go version:       go1.13.8
+  Git commit:       20.10.7-0ubuntu5~20.04.2
+  Built:            Fri Oct 22 00:45:53 2021
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.5.5-0ubuntu3~20.04.1
+  GitCommit:
+ runc:
+  Version:          1.0.1-0ubuntu2~20.04.1
+  GitCommit:
+ docker-init:
+  Version:          0.19.0
+  GitCommit:
+$
+--------------------------------------------------------------#
+
+
+#############################################################
+# Install the latest Nodejs (current v17.x), Yarn & npm     # 
+#############################################################
+
+## You may also need development tools to build native addons:
+sudo apt-get install gcc g++ make
+
+
+## To install the Yarn package manager, run:
+     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
+     echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+     
+sudo apt-get update && sudo apt-get install yarn
+
+
+## to install the latest Node.js:
+# go to the github library for the latest version https://github.com/nodesource/distributions/
+curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash -
+sudo apt-get install nodejs
+
+
+# or manually add the NodeSource package signing key:
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+KEYRING=/usr/share/keyrings/nodesource.gpg
+
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | sudo tee "$KEYRING" >/dev/null
+# or
+wget --quiet -O - https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | sudo tee "$KEYRING" >/dev/null
+
+gpg --no-default-keyring --keyring "$KEYRING" --list-keys
+
+
+# Replace with the branch of Node.js or io.js you want to install: node_6.x, node_8.x, etc...
+VERSION=node_17.x
+# Replace with the keyring above, if different
+KEYRING=/usr/share/keyrings/nodesource.gpg
+# The below command will set this correctly, but if lsb_release isn't available, you can set it manually:
+# - For Debian distributions: jessie, sid, etc...
+# - For Ubuntu distributions: xenial, bionic, etc...
+# - For Debian or Ubuntu derived distributions your best option is to use the codename corresponding to the upstream release your distribution is based off. This is an advanced scenario and unsupported if your distribution is not listed as supported per earlier in this README.
+DISTRO="$(lsb_release -s -c)"
+echo "deb [signed-by=$KEYRING] https://deb.nodesource.com/$VERSION $DISTRO main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+echo "deb-src [signed-by=$KEYRING] https://deb.nodesource.com/$VERSION $DISTRO main" | sudo tee -a /etc/apt/sources.list.d/nodesource.list
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+# To test an installation is working (and that the setup scripts are working!) then fix it if required use:
+curl -fsSL https://deb.nodesource.com/test | bash -
+
+sudo npm audit fix --force
+
+npm i --package-lock-only
+
+--------------------------------------------------------------------------------------------------#
+## Testing Node.js and npm installation ...
+
++ mkdir _test-node-install && cd _test-node-install
+
+## Creating test package ...
+
+
+## Installing dependencies ...
+
++ npm install --spin=false --loglevel=info --cache=.npm-test-cache
+npm info using npm@8.3.1
+npm info using node@v17.4.0
+# added 9 packages, and audited 10 packages in 37s
+# 1 high severity vulnerability
+# To address all issues (including breaking changes), run:
+npm audit fix --force
+
+Run `npm audit` for details.
+npm timing command:install Completed in 36260ms
+npm notice
+npm notice New patch version of npm available! 8.3.1 -> 8.3.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v8.3.2
+npm notice Run npm install -g npm@8.3.2 to update!
+npm notice
+npm timing npm Completed in 36529ms
+npm info ok
+
+## Running test ...
+
++ npm test
+
+> test@1.0.0 test
+> npm start; node test.js
+
+
+> test@1.0.0 start
+> node server.js &
+
+(node:17131) TimeoutOverflowWarning: 4294967296000 does not fit into a 32-bit signed integer.
+Timer duration was truncated to 2147483647.
+(Use `node --trace-warnings ...` to show where the warning was created)
+SUCCESS
+npm notice
+npm notice New patch version of npm available! 8.3.1 -> 8.3.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v8.3.2
+npm notice Run npm install -g npm@8.3.2 to update!
+npm notice
+
+## Cleaning up ...
+
++ rm -rf _test-node-install
+$
+
+
+$ npm audit fix --force
+npm audit fix --force
+npm WARN using --force Recommended protections disabled.
+npm ERR! code ENOLOCK
+npm ERR! audit This command requires an existing lockfile.
+npm ERR! audit Try creating one first with: npm i --package-lock-only
+npm ERR! audit Original error: loadVirtual requires existing shrinkwrap file
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /home/twrcha/.npm/_logs/2022-01-24T16_26_37_630Z-debug-0.log
+twrcha@PineGap:~$ npm i --package-lock-only
+
+up to date, audited 1 package in 250ms
+
+found 0 vulnerabilities
+
+
+$ npm audit fix --force
+npm WARN using --force Recommended protections disabled.
+
+up to date, audited 1 package in 271ms
+
+found 0 vulnerabilities
+$
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+                                                                               End of the document

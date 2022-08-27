@@ -1,0 +1,69 @@
+-----------------------------
+Author : Twrcha AD
+email  : twrcha@outlook.com
+version: 0.5
+created: 20th Nov 2021
+updated: 27th Aug 2022
+disply : 1920 x 1080
+-----------------------------
+@@@ DISCLAIMER: this file is a collection of best practises and know-how gathered from various sources, tested and verified by this document author within the subject linux environment for      the best of the author's knowldage during the document dated period. meanwhile there are few un-verified commands/procedures which are highlighted/marked by the auther, however     discrepancy still may occurs, due to the fact of no 100% matched environments. @@@ 
+
+
+
+
+
+##########################################################################
+# Install/enable Systemd as PID1 - WSL2 environment - Ubuntu20.04 distro #
+##########################################################################
+
+# a screeshot of this file was Published on github 4th Dec 2021 based on genie v1.44 under the link below;
+# for systemd installation script refer to https://gist.github.com/djfdyuruiry/6720faa3f9fc59bfdf6284ee1f41f950/
+# copy the script content of the installation file "install-sg.sh" from the github source above.
+# for the latest genie version refer to https://github.com/arkane-systems/genie/releases/tag/v2.4/
+# copy the script content of the installation file "install-sg.sh" from the github source above.
+
+
+# start ubuntu 20.04
+from bash:
+----------
+sudo apt install systemd-genie                 # or manually download and install the latest version available on the above provided github source.
+cd /tmp                                        # "/tmp" NOT "~/tmp" not sure why.
+sudo nano install-sg.sh                        # paste the script raw content copied from the github source above and save the file. 
+chmod +x install-sg.sh                         # allow the script file to be executed from bash. 
+./install-sg.sh                                # run/execute the script to install systemd as PID1 on your wsl distro.
+exit                                           # close the distro.
+
+
+from pwsh:
+----------
+wsl --shutdown                                 # or restart the "LxssManager" service in Windows 11 or 10.
+wsl genie -s                                   # run this command to do the magic.
+sudo systemctl status time-sync.target         # make sure it works with and without "sudo", then the genie is in the bottle ("genie -s" worked succesfully).
+sudo nano ~/.bash_profile                      # set the command "genie -s" as the 1st line to keep the genie in the bottle all the time.                
+
+
+# start ubuntu 20.04
+from bash:
+----------
+sudo apt install snapd                         #  
+sudo snap install microk8s --classic           # Canonical Kubernetes cluster engine for cloud.
+snap list                                      # core, core18, core20, microk8s, snapcraft, hellow-world
+microk8s                                       # microk8s commands.
+microk8s kubectl                               # kubectl commands.
+sudo usermod -a -G microk8s twrcha             # add user to microk8s access group.
+sudo chown -f -R twrcha ~/.kube                # give the user ownership over the "~/.kube" folder.
+exit                                           # close the distro.
+
+
+# start ubuntu 20.04
+# now you are ready to setup your microk8s single node kubernete cluster.
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+                 			                                                 End of the document
+                                                                 

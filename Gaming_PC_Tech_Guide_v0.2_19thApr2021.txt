@@ -1,0 +1,1097 @@
+------------------------------
+Author  : Twrcha AD
+contacts: twrcha@outlook.com
+version : v1.1.0
+created: 28th March-2021
+updated: 19th April 2021
+disply  : 1920 x 1080
+------------------------------
+@@@ DISCLAIMER: this file is a collection of best practises and know-how gathered from various sources, tested and verified by this document author within the subject linux environment for      the best of the author's knowldage during the document dated period. meanwhile there are few un-verified commands/procedures which are highlighted/marked by the auther, however     discrepancy still may occurs, due to the fact of no 100% matched environments. @@@
+
+
+
+
+
+                                           #####################################################################################
+                                           #           Gaming PC buying guide and HW/OS specifications explained               #
+                                           #####################################################################################
+
+https://cpu.userbenchmark.com/Compare/AMD-Ryzen-7-4800H-vs-AMD-Ryzen-5-5600H/m1032976vsm1522632/
+
+
+############################################
+# PC/WS caseing form-factors               #
+############################################
+
+# there are many computer case form factors, however below are the current market standard,
+
+---------------------------------------------------------------------
+#       size               H     W      H       W     slots,sockets |
+---------------------------------------------------------------------
+#       EATX              13" x  12" (330mm x 305mm)     7,2S       |
+#        ATX              12" x 9.6" (305mm x 244mm)     7,1S       |
+#  Micro-ATX (µATX)      9.6" x 9.6" (244mm x 244mm)     4,1S       |
+#        DTX               8" x 9.6" (203mm x 244mm)     2,1S       |  PC/WS
+#   Mini-DTX               8" x 6.7" (203mm x 170mm)     2,1S       |
+#   Mini-ITX             6.7" x 6.7" (170mm x 170mm)     1,1S       |  
+#-------------------------------------------------------------------|
+#   Nano-ITX                         (120mm x 120mm)                |
+#   Pico-ITX                         (100mm x  72mm)                |  Micro-controllers / Terminal-Devices / Raspberry-pi / ARM  
+# Mobile-ITX                         ( 45mm x  45mm)                |  
+---------------------------------------------------------------------
+
+
+#############################################
+# Motherboard Brands and naming convention  #
+#############################################
+
+-----------
+Asus
+-----------
+??????
+
+
+-----------
+Gigabyte
+-----------
+# Gigabyte Internal conventions (Gigabyte -B150M-D3H)
+D= Durable, full solid state capacitors
+UD = Ultra Durable
+H = Vga, HDMI ports
+1/2/3/4/5 = How premium the board is, ie UD3, UD4, UD5 (more likely to have advanced features like SLI)
+
+
+-------
+MSI
+-------
+# MSI naming conventions (MSI H97M-G43 Motherboard)
+# First Letter (X- Extreme overclocking, G- Gaming, E- Entertainment, P- Professional)
+# Numbers 20-80 indicate how premium the board is, higher the better.
+
+
+---------------------------------------------------------------------------------------------------------
+  Integrated Device Fabrications (IDF) & Integrated Device Manufacturer (IDM) & Fabless classifications : 
+---------------------------------------------------------------------------------------------------------
+# TSMC              Taiwan (Fab) also known as (IDF) or (PurPlay business model)
+# UMC               Taiwan (Fab)
+# SMIC               China (Fab)
+# Hua-Hong           China (Fab)
+# Tower             Israel (Fab) 
+# Globalfoundries      UAE (Fab) based in the US but owned by Emirate of Abu Dhabi through its subsidiary Advanced Technology Investment Company (ATIC).
+
+# SAMSUNG            Koria (IDM) also known as (Foundry model) which is a combination of (Design & Fab).
+# SK Hynix           Koria (IDM)
+# DB-HiTek           Koria (IDM)
+# MagnaChip          Koria (IDM) (or Luxembourg-based?!)
+# Vanguard(VIS)     Taiwan (IDM) (TSMC is the major shareholder)
+# Powerchip         Taiwan (IDM)
+# Win               Taiwan (IDM)
+# TwinMOS           Taiwan (IDM) a big brand based in Dubai. big company with lots of products.
+# X-FAB             German (IDM)
+# NXP                Dutch (IDM) non-memory semiconductor supplier and the co-inventor of NFC (formerly Philips & Freescale Semiconductors).
+# STMicroelectronics French/Italian/Dutch  (IDM)
+# Ruselectronics    Russia (IDM)
+# CNE               Russia (IDM) (Crocus-Nano-Electronics)
+# Texas-Instruments     US (IDM)
+# Intel                 US (IDM) (turning to Fabless starting 2022)
+# Micron                US (IDM) (Owns IM Flash Singapore, AIM/AI-Micron Shanghai, Inotera-Taiwan, Elpida-Japan, Rexchip, Powerchip)
+# Toshiba            Japan (IDM)
+# Hitachi            Japan (IDM)
+# Fujitsu            Japan (IDM)
+# Matsushita         Japan (IDM)
+# Mitsubishi         Japan (IDM)
+# Sony               Japan (IDM) (Sony are planning to go Fabless in the near future).
+# Shanghai-Belling   China (IDM)
+# Longsys            China (IDM) Shenzhen-Longsys-Electronics (Owns Lexar).
+
+# NVIDIA                US (Fabless) (Design Only).
+# AMD                   US (Fabless) (Owns ATI, Xilinx).
+# Apple                 US (Fabless)
+# Broadcom              US (Fabless) (Owns LSI, Emulex, Brocade, Infineon, Avago, CA, Symantec, Norton).
+# Qualcomm              US (Fabless)
+# Marvell               US (Fabless)
+# Amlogic               US (Fabless)
+# IBM                   US (Fabless)
+# Fresco-Microchip      US (Fabless) (Owns AVR).
+# Rambus                US (Fabless)
+# Digi-International    US (Fabless)
+# ARM                   UK (Fabless) (Owned by SoftBank Japan) (The NVIDIA acquisition offer in Q4 2020 still pending UK Gov. approval).
+# Raspberry-Pi          UK (Fabless)
+# MediaTek          Taiwan (Fabless)
+# Faraday           Taiwan (Fabless)
+# Banana-Pi          China (Fabless)
+# Huawei             China (Fabless)
+# ZTE                China (Fabless)
+# Montage-Technology China (Fabless)
+
+# Applied Materials     US (Electronics-Fab) provides equipments, software and services to the semiconductor development and manufacturing industry.
+# Foxconn           Taiwan (Electronics-Fab)
+# Valmet           Finnish (Electronics-Fab)
+# Magna             Canada (Electronics-Fab)
+# UMAX               China (Electronics-Fab) (Apple clone producers).
+
+
+Analog Devices
+ams AG
+Cypress Semiconductor
+CR Microelectronics
+Good-Ark Electronics
+IM Flash Technologies
+Infineon
+Intersil
+Maxim Integrated Products
+National Semiconductor
+Nexperia
+OMMIC
+ON Semiconductor
+Pericom
+Qorvo
+Renesas (formerly NEC semiconductor)
+
+Tsinghua Unigroup
+
+
+## List of semiconductor IP core vendors,  https://en.wikipedia.org/wiki/List_of_semiconductor_IP_core_vendors/ ##
+
+## On 27 October 2016, it was announced that Qualcomm would try to buy NXP, but because the Chinese merger authority did not approve the acquisition before the deadline set by Qualcomm, it was effectively cancelled on 26 July 2018. ##
+
+## In November 2017, Broadcom proposed to purchase Qualcomm for US$130 billion, which was rejected by Qualcomm's board. President Trump blocked the revised $117 billion merger by an    executive order that cited national security concerns. ##
+
+
+---------------------
+  Top Memory Brands :
+---------------------
+## Mr.Memory UK, https://www.mrmemory.co.uk. ##
+
+----------------------------
+  Memory RAM Manufacturers :
+----------------------------
+1st group: top brands (the legal stuff):
+# Samsung     Koria  SSD/Flash/OTG/RAM 
+# SK-hynix   Taiwan  SSD/Flash/OTG/RAM     (Samsungs main competitor) (merger between SK-Telcom & Hyundai Electric Industry & LG Semiconductor Co. Ltd)
+# ADATA      Taiwan  SSD/Flash/OTG/RAM     (Samsungs main competitor)
+# Micron         US  SSD/Flash/OTG/RAM     (own Crucial, Lexar, Ballistix Gaming)
+# ADDLINK    Taiwan  SSD/Flash/OTG/RAM     (This is not ADLINK) https://www.addlink.com.tw/       
+# YMTC        China  SSD/Flash/OTG/RAM     Yangtze Memory Technologies Corp. http://www.ymtc.com/
+# PNY            US  SSD/Flash/OTG/RAM      
+
+2nd group: (the boring stuff):
+# Kingston            US  RAM only  (own HyperX)
+# Integral            UK  RAM only  
+# Nanya           Taiwan  RAM only  
+
+3rd group: out of warranty brands, (O.C.) comunity (the exciting illegal stuff):
+# Corsair             US  RAM only (consumer products)
+# Patriot-Memory      US  RAM only (consumer products)
+# TeamGroup       Taiwan  RAM only (consumer products)
+# G.Skill         Taiwan  RAM only (consumer products)
+# Timetec                 RAM only (consumer products) (unknown, Dont buy) 
+
+
+---------------------------------
+  Storage & Flash memory brands : 
+---------------------------------
+# Western-Digital(WD)      US  HDD/SSD/Flash/No_RAM  (Own SanDisk, Hgst)
+# Seagate              Irland  HDD/SSD/Flash/No_RAM  (Own Maxtor, LACIE and Samsung HDD). 
+# Toshiba               Japan  HDD/SSD/Flash/No_RAM  
+# KIOXIA                Japan      SSD/Flash/No_RAM  (Own Lite-On, Taiwan) (KIOXIA is owned by Toshiba),(as of 31st-Mar-2021 WD & Micron are competing to aquire KIOXIA for $30B/-). 
+# ADLINK               Taiwan      SSD/Flash/No_RAM  (NVIDIA GPU OEM partner) (Own Ampro, LiPPERT, PENTA, Prismtech) https://www.adlinktech.com/
+
+
+---------------------
+  GPU manufacturers :
+---------------------
+# NVIDIA       US  (Signature models & OEM models)
+# AMD          US   
+# Intel        US   
+# Apple        US   
+# ARM          UK  (Owned by SoftBank Japan) (The NVIDIA acquisition offer in Q4 2020 still pending UK Gov. approval).
+# Amlogic      US  (specialised Multimedia processors)
+# Qualcomm     US  ARM-AI-SoC Communication Chipset & DSP.
+# Huawei    China  ARM-AI-SoC 5G & IoT communications Chipset. 
+
+
+--------------------
+  NVIDIA GPU OEM   :
+--------------------
+# ASUS        Taiwan  GPU-OEM/MB
+# Gigabyte    Taiwan  GPU-OEM/MB
+# MSI         Taiwan  GPU-OEM/MB  Micro-Star International
+# EVGA            US  GPU-OEM/MB
+# PNY             US  GPU-OEM/SSD/Flash/OTG
+# PALIT       Taiwan  GPU-OEM/SSD
+# ZOTAC     China-HK  GPU-OEM/MB/SSD (makes cheap non-gaming MBs)
+
+
+-----------------------------
+  Data Protection Solutions :
+-----------------------------
+
+# Veritas          US (Products NetBackup & BackupExec) (VxFS, VxVM, VCS) (Owned by The Carlyle Group).
+# Commvault        US (Ownes Hedvig).
+# DELL-EMC         US (NetWorker, Avamar, RecoverPoint, PowerProtect-Data-Manager) (ownes EMC, Data-Domain, IOMega, VMWare, RSA, Alienware, Boomi, SecureWorks, Virtustream) (Owned by DELL).
+# Oracle           US
+# IBM              US
+# HP               US
+# Acronis   Singapore 
+
+
+---------------------------------------------------------
+  Consumer Motherboard/PCB manufacturers (OEM)          :
+---------------------------------------------------------
+# ASUS               Taiwan  AsusTek Computer         (Intel & AMD CPU/APU OEM partners) (NVIDIA & AMD GPU OEM partner)   
+# MSI                Taiwan  Micro-Star International (Intel & AMD CPU/APU OEM partners) (NVIDIA & AMD GPU OEM partner)
+# Gigabyte           Taiwan  GIGA-BYTE Technology     (Intel & AMD CPU/APU OEM partners) (NVIDIA & AMD GPU OEM partner) (own Aorus Pte. Ltd, Singapor).
+
+
+----------------------------------------------
+  Commercial HW Manufacturers & (OEM)        :
+----------------------------------------------
+# ADLINK             Taiwan  SSD/Flash/No_RAM  (Intel & AMD CPU/APU OEM partners) (NVIDIA GPU OEM partner)
+# Supermicro             US  MB/Servers
+# DELL                   US  MB/Servers/Storage/BackupHW
+# HPE                    US  MB/Servers/Storage/BackupHW
+# Oracle                 US  MB/Servers/
+# IBM                    US  MB/Servers/Storage/BackupHW
+# Fujitsu             Japan  MB/Servers/
+# Broadcom               US (Fabless)  (owns HW: AVAGO, Brocade, Emulex, LSI, PLX, Infineon & SW: CA, Symantec, Norton) 
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+PC/WS parts & accessories Pre & Custom built specialised retailers:
+
+# check PCCG (US only) website https://www.pccasegear.com/ they have a good catalog with sorting and filters or any other similar website. #
+
+# https://www.pcspecialist.co.uk/ # 
+
+# https://www.cyberpowersystem.co.uk/ #
+
+# https://uk.pcpartpicker.com/ #
+
+# https://www.overclockers.co.uk/ #
+
+# https://www.very.co.uk/ #
+
+
+-----------------
+Benchmark tools:
+-----------------
+
+# (SPEC)
+# (VMmark)
+# (TPC)
+# (STREAM) memory benchmark.
+
+
+###############################
+# Windows10 OS HW limitations #
+###############################
+
+-------------------------------------------
+Microsoft Related Acronyms & Abbreviations:
+-------------------------------------------
+
+# (Wintel) Windows Intel: a computer platform based on Microsoft Windows OS over Intel x86/x64/AMD/AMD64/IBM-compatible (32bit/64bit) HW Architecture. 
+# (VL)     Volume Licenseing.
+# (AVL)    Academic VL.
+# (OEM)    Original Equipment Manufacturer.
+# (RDS)    Remote desktop services (RD & RA) modes.
+# (RAS)    SW: Remote Access Server.
+# (RAS)    HW: Reliability, Availability and Serviceability.
+# (RD)     Remote Desktop - (RDS) in desktop connection mode.
+# (RA)     Remote App - (RDS) in published application connection mode.
+# (RDMA)   Remote Direct Memory Access.
+# (AD)     Active Directory.
+# (AAD)    Azure Active Directory.
+# (FS)     file system.
+# (UWF)    Unified Write Filter, flush the VDI changes after logoff, reboot, dissconnecting or shutdown.
+# (UE-V)   User Experience vertualisation v2.1.
+# (MS)     Microsoft.
+# (VS)     Visual Studio.
+# (VLSC)   Volume License Service Center. 
+# (ECL)    SW: Enterprise Control Language. 
+
+
+# Windows10 Home Edition is missing couple of dozense of advanced features, such as (Hyper-V,Sandbox,Encryptions,AD,specialFS,advance security,etc.).
+
+Windows10_X86&x64 Home          Edition - upto 128GB RAM - 1S/ 64C (1x64C CPU) - Retail-OEM(PC&laptop HW only)-(RD Client-only).
+--------------------------------------------------------------------------------------------------------------------------------
+Windwos10_X86&x64 Pro           Edition - upto   2TB RAM - 2S/128C (2x64c or 1x128 CPU) - Retail-OEM(PC&laptop HW only)-VL.
+Windows10_X86&x64 Pro Education Edition - upto   2TB RAM - 2S/128C (2x64c or 1x128 CPU) - AVL.
+Windows10_X86&x64 Education     Edition - upto   2TB RAM - 2S/128C (2x64c or 1x128 CPU) - AVL - (RA host,UE-V,App-V,UWF).
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Windows10_X86&x64 Pro WS        Edition - upto   6TB RAM (NVDIMM & RDMA) - 4S/256C (4x64C or 2x128C or 1x256C CPU) - Retail(upgrade-only)-OEM(WS-HW-only)-VL.
+Windows10_X86&x64 Ent           Edition - upto   6TB RAM (NVDIMM & RDMA) - 4S/256C (4x64C or 2x128C or 1x256C CPU) - VL only -(RA host,UE-V,App-V,UWF)-(LTSC).
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+######################################################
+# PC HW components specifications and compatibility  #
+######################################################
+
+## Fabless manufacturing: is the design and sale of hardware devices and semiconductor chips while outsourcing their fabrication (or fab) to a specialized manufacturer called a                semiconductor foundry. ##
+
+## The consumer market mass adoption and support for new bus, memory and interface technology is about 24 months and further more for the technology matures. ##
+
+## every two years CPU producers move to a smaller generation of solidstate manufacturing (14nm, 10nm, 7nm, 5nm, 4nm, 3nm). ##
+
+## N5P (Mar 2021) is the latest chip design process developed by TSMC based on the 5nm solidstate chips and adopted by many firms worldwide such as (Apple & AMD). ##
+
+## PICMG 3.x (ATCA): PCI Industrial Computer Manufacturers Group.
+
+## (ATCA or AdvancedTCA) Advanced Telecommunications Computing Architecture. is the largest specification effort in the history of the (PICMG) with more than 100 companies participating.    
+
+## as of (Mar 2021) the CPU prices had doubled while GPU, momory, motherboard and Storage disk price spiked by 30% due to several factors listed below;
+     (i) Higher demand: due to COVID-19 pandamic and lockdown the demand for consumer electronics and desktop/laptop devices increased since Q2-2020.
+    (ii) Scalpers who are buying CPU, GPU in bulk to create a shortage in the market and raise the price.
+   (iii) The Geo-political conflect between US & China created a technology race, restrictive tech access and chip vaccume. ##   
+
+## Flash Memory (NOR): is based on Multi-Layers-Multi-bit/Cell-NAND-MOS-IC in various models such as (4D-NAND, 3D-NAND, V-NAND/Gen-1-6, BiCS) (1-176 layers) & (1-8 bits/cell) chips. there      are diffierent methods and teqnuiqes used to ##
+ 
+## NAND transfere rate, layers, and bit/cell rate are constantly chaning due to the tuff competition and technology improvment. Txr reached 1,600MTps via the ONFI interface, with up to 16      NAND cubes per package. ##
+
+ #3D-NAND production methods:      
+  (i) (WLP)      Wafer-Level Packaging:        
+ (ii) (IBI)      Interposer Based Integration: 
+(iii) (3DSIC)    3D Stacked ICs:               
+ (iv) (M3DIC)    Monolithic 3D ICs:            
+  (v) (3DHI)     3D Heterogeneous Integration: 
+ (vi) (3DSI)     3D Systems Integration:
+(vii) (XTacking) NAND architecture:        
+
+# 3D-NAND layers connectivity methods:
+  (i) (TSV)   Through-Silicon Vias.
+ (ii) (TCV)   Through-Chip Vias.
+(iii) (TGV)   Through-glass Vias.
+ (iV) (Cu-Cu) connections. 
+
+# (SLC)   Single Layer/level Cell: SSD with cell capacity of 1bit.
+# (MLC)   Multi Layer        Cell: SSD with cell capacity of 2bit.
+# (TLC)   Tri/Triple Layer   Cell: SSD with cell capacity of 3bit. TLC is the most stable and effecint mode with (24,32,48,64,9x,100,112,128,176) layers NAND.
+# (QLC)   Quad Layer         Cell: SSD with cell capacity of 4bit.
+# (PLC)   Penta Layer        Cell: SSD with cell capacity of 5bit.
+# (OLC)   Octa Layer         Cell: SSD with cell capacity of 8bit.
+
+
+###############################
+# Acronyms & Abbreviations    #
+###############################
+
+# (HW)    Hardware.
+# (SW)    SoftWare.
+# (SW)    Silicon Wafers: is a thin slice/layer of semiconductor.
+# (PC)    Personal Computer.
+# (WS)    WorkStation.
+# (OS)    Operating System.
+# (CD)    Compact Disc: capacity upto 700MB.
+# (DVD)   Digital Video Disc: with capacity ranged from 4.7GB to 17.08GB double with the side double layers disc. DVD+RW (Read/Write) & DVD-RAM (read only).
+# (BD)    Blue-Ray Disc: HDTV 720p and 1080p, with capacity from 25GB to 128GB on a four layers disc.
+# (FDD)   Floppy Disk Drive: sizes 8", 5.25" & 3.5"/90mm 1.44MB max capacity.   
+# (CPU)   Central Processing Unit.
+# (GPU)   Graph Processing Unit.
+# (APU)   Accelerated Processing Unit: a Micro Processor consist of a CPU & a GPU on a single die.
+# (IPU)   intelligence processing unit.
+# (VPU)   Vision Processing Unit. 
+# (NPU)   Neural Processing Unit.
+# (NPU)   Network Processing Unit.
+# (TPU)   Tensor Processing Unit: Victor Processor.
+# (NNP)   Neural Network Processor.
+# (ANN)   Artificial Neural Networks.
+# (AI)    Artificial Intelligence.
+# (S)     Socket: physical CPU. 
+# (C)     Core: is a CPU or GPU Core, logical processors.
+# (T)     Thread: if it is related to CPU clock cycle processing.
+# (T)     Transfer: if it is related to throughput/speed/transmission (USB, SSD, RAM, PCIe, NVMe, cable, communication media, etc.).
+# (IC)    Integrated Circuit.
+# (MPC)   Media Processing Capability.
+# (HPC)   High Performance Computing: or Super Computing similar to Mainframe Computing.
+# (PMIC)  Power Management IC.
+# (HCL)   Hardware Compatability List.
+# (QVL)   Qualified Vendors Lists.
+
+# (Via)
+# (SBC)   Session Border Controller: is a network element (HW module) deployed to protect SIP based (VoIP).
+# (SIP)   Session initiation Protocol.
+# (VoIP)  Voice Over Internet Protocol. 
+# (SMT)   Surface Mount Technology.
+# (EMS)   HW: Electronics Manufacturing Service-provider.
+# (EMS)   SW: Enterprise Management Solution.     
+# (Flip-Chip/C4) Controlled Collapse Chip Connector: is a method of interconnecting semiconductor devices such as IC and MEMS.
+# (MEMS)  MicroElectroMechanical Systems.
+# (Wire-Bond): is a method of interconnecting between semiconductor device and its packaging/die.
+# (PoP)   Package-On-Package: is an IC packaging method to combine VDL and memory BGA packages.Two or more packages are stacked, with a standard interface to route signals between them.
+# (VDL)   Vertically Discrete Logic.
+# (BGA)   Ball Grid Array.
+# (BEOL)  Back-End-of-Line.
+# (FEOL)  Front-End-of-Line.
+# (CuA)   CMOS-Under-Array.
+# (TTL)   HW: Transistor-to-Transistor-Logic.
+# (TTL)   SW: Time To Live.
+# (MOS)   Metal Oxide Semiconductor.
+# (TSV)   Through Silicon Vias.
+# (PUC)   Peri. Under Cell.
+# (ONFI)  flash Interface.
+# (CUDA)  Compute Unified Device Architecture. NVIDIA in VRAM memory calculation platform.
+# (OTG)   USB On-The-GO is a standardized specification that allows a device to read data from a USB device without requiring a PC. The device basically becomes a USB host.
+# (CPI)   Clock-cycles Per Instruction.  
+
+# (PCB)   Printed Circuit Board.
+# (SoC)   System On a Chip.
+# (SoM)   System On Module.
+# (SBC)   Single-Board Computer.
+# (COM)   Computer-On-Module.
+# (SiP)   System In a Package.
+# (MCM)   Multi Chip Module.
+# (LGA)   Land Grid Array, is a CPU Socket on the PCB/MB.
+# (MB)    Mother Board/Motherboard.
+# (MC)    Micro Controller.
+# (PDA)   Personal Digital assistant.
+# (CRT)   Cathode-ray tube. 
+# (FPD)   Flat Panel Displays.
+# (TFT)   Thin Film Transistor.
+# (LCD)   Liquid Crystal Display.
+# (LED)   Light-Emitting Diode.
+# (OLED)  Organic LED.
+# (AMOLED) Active-Matrix Organic LED.
+# (QDD)   Quantum Dot Display.
+# (QLED)  Quantum Dot LED, use Photo-Emissive Particles (PEP).
+# (QDLED) Quantum Dot LED, use Electro-Emissive Particles (EEP). (Future Technology)   
+# (register) A processor register is a quickly accessible location available to a computer's processor. Registers usually consist of a small amount of fast storage. 
+
+# (SPARC)  Scalable Processor ARChitecture: based on RISC-ISA the specifications are managed by https://sparc.org/ while Fujitsu are currently the only SPARC CPU producer. 
+# (RISC)   Reduced Instruction Set Computer: is a High performance 32bit/64bit CPU Architecture, such as ARM & MIPS & Fujitsu-SPARC64-XII & IBM-PowerISA & IBM-PowerPC.
+# (RISC-V) RISC-5 is the latest free open source 32/64/128bit RISC-ISA standard designed for built in HW security. 
+# (CISC)   Complex Instruction Set Computer: is a low cost CPU Architecture such as all the IBM x86 & x64 Compartible CPU's (Intel & Intel64 & AMD & AMD64).
+# (EPIC)   Explicitly Parallel Instruction Computing: allows the processor to execute multiple instructions in each clock cycle using VLIW.
+# (VLIW)   Very Long Instruction Word: 
+# (IA)     Itanium Architecture (IA-64): is a variant of the 64bit RISC-ISA       designed by HP and developed and licensed by HPE & Intel for HPC (HPE = HP = Hewlett Packard).
+# (ARM)    Advanced RISC Machines:       is a variant of the 32bit/64bit RISC-ISA desgined and licensed by ARM Ltd UK.
+# (MIPS)   Microprocessor without Interlocked Pipelined Stages: is a variant of the 32bit/64bit RISC-ISA, the latest MIPS-v6 (2014) .
+# (ASIC)   Application Specific Integrated Circuit: chip customized for a particular use, rather than intended for general-purpose use.
+# (ASSP)   Application Specific Standard Product: chips that are intermediate between ASICs and industry standard integrated circuits.
+# (ISA)    Instruction Set Architecture: part of RISC processor architecture design.
+# (ISA)    Industry Standard Architecture: a PC computer bus standard before IDE & PCIe.
+
+# (LFF)   Large Form Facotr. used to determin computer components form factor for compatability purpose (MB, disk, PCIe card, etc.). 
+# (SFF)   Small Form Factor. used to determin computer components form factor for compatability purpose (MB, disk, PCIe card, etc.).
+# (NGFF)  Next Generation Form Factor.
+# (ATA)   Advanced Technology Attachment.
+# (ATX)   Advanced Technology eXtended. a standard for computer case & Motherboard size compatability.
+# (ITX)   Information Technology eXtended. a standard for computer case & Motherboard size compatability.
+# (SATA)  Serial ATA interface.
+# (mSATA) mini-SATA interface.
+# (eSATA) External SATA interface. 
+# (PATA)  Parallel Advanced Technology Attachment (ATA) also known as IDE interface.
+# (IDE)   in HW: Integrated Drive Electronics interface, is an old PATA storage interface standard.
+# (IDE)   in SW: Integrated development environment, such as Microsoft Visual Studio (VS).
+# (SCSI)  Small Computer System Interface. with many different versions and interface types.
+# (SAS)   Serial Attached SCSI.
+# (HDD)   Hard Disk Drive, a mechanical storage disk with diffirent sizes (5.25", 3.5", 2.5", 1.8").
+# (SSD)   Solid-State Drive, a chip based storage disk with different interface types (M.2, U.2, SATA) and protocol (PCIe or SATA3) and form factors (2.5") or NVMe card.
+# (EDSFF) Enterprise & Datacenter SSD Form Factor.
+# (MMC)   Multi-Media-Card: surface-contact low pin-count serial interface using a single memory stack substrate assembly. superseded by SD cards. 
+# (eMMC)  Embedded MMC.
+# (SD)    Secure Digital, a non-volatile memory card comes in different form factors (SD, MiniSD, MicroSD) and capacity (SD upto 2GB, SDHC, SDXC, SDUC upto 128TB).
+# (SDHC)  SD High-Capacity: 2GB to 32GB.
+# (SDXC)  SD eXtended-Capacity: 32GB to 2TB.
+# (SDUC)  SD Ultra-Capacity: 2TB to 128TB. 
+# (TBW)   TeraBytes Written: SSD durability is expressed as TBW, the number of terabytes that can be written to the drive before it fails. (1440TBW is the current highest Mar 2021).
+# (D/A)   Digital and Analongue/Analog.
+# (DAC)   Digital-to-Analog Converter.
+# (DSP)   Digital signal processing.
+# (COM)   Communication Port: aka "Serial Port" is a serial data connector 9 or 25 pins "DB9-RS232"or"DB25-RS232" interfaced by an "UART" IC. used as a console interface. 
+# (LPT)   a 25 pin Parallel data port "DB25 Sub-D". was commonly used for printer connection. also there is also the Bi-directional Parallel interface IEEE1284 a 36-pin interface.  
+# (RCA)   "Component" connector: analogue three wire 2x Audio(R/L) and 1x video connector.
+# (AVR)   Audio & Video Receiver, it is a Home Theater component. 
+# (AV)    3.5mm analog audio interface: inpout or output or both. 
+# (VGA)   Video Graphics Array, analog video interface.
+# (DVI)   Digital Visual Interface: a D/A connector with various physical configuration (DVI-D single or dual D/A link, DVI-I single or dual D/A link, DVI-A single analog only link). 
+# (S/PDIF) Sony/Philips Digital Interface: also known as "Optical Audio interface" with "TOSLINK" connector.
+# (TOSLINK) Toshiba Link: a standard fiber optic connector for "S/PDIF" digital optical audio interfaces. "RC-5720" is the most common physical interface type used.
+# (PCM)     Pulse Code Modulation: Analog to Digital audio sampling technique, the higher bit-depth the better audio quality you get. 
+# (LPCM)    Linear pulse-code modulation:  
+
+# (TB)    (Thunderbolt): is a digital video interface with a transfer rate of v2=20Gbps & v3=40Gbps. it can only accept input from Thunderbolt devices and only over thunderbolt cable.
+# (mDP)    Mini-Display-Port: is Not a Thunderbolt interface however it is also a digital video interface, that can accept input from thunderbolt devices connected over a mDP cable                                        only and shares a similar but not the same transfer rate of 32Gbps = 4.0GB/s.
+# (mDP & TBv1&v2) shares a similar interface (while TBv3 utilises a USB-C interface), however they are not the same and have different symbols on the port.
+
+# (DP)    Disply Port: digital disply interface, DP2.0, 8ch 24bit PCM audio at 192kHz sampling rate (36.864Mbps) with DSC1.2a, video data Transfere rate (77.37Gbps) encoding (128b/132b)                        and UHBR 20 (20.0 Gbit/s per lane).
+# (BNC)   Bayonet Neill–Concelman: an analog RF connector for Coaxial cables Passband typically 0–4 GHz.
+# (HDMI)  High-Definition Multimedia Interface: an HDR digital audio/video signal interface. There are five connector types. "A/B" v1.0-v1.2a, "C" v1.3/a & "D/E" v1.4/b, V2.0/b & v2.1.
+# (Cat3-HDMI-2.1) an Ultra High Speed HDMI Cable with 48Gbps throughput and supports 4K/5K/8K/10K resolution at 120Hz.
+# (HDR)   High Dynamic Range: video signal.
+# (SDR)   Standard Dynamic Range: describes images/rendering/video using a conventional gamma curve, and therefore presenting a dynamic range that is considered standard, compaired to HDR.
+# (HLG)   Hybrid Log-Gamma: video signal.
+# (BT.2020) or (Rec. 2020) is ITU-R Recommendation for defining various aspects of (UHDTV) with standard dynamic range (SDR) and wide color gamut (WCG).  
+# (RGB)   Red Green Blue: the three transmitted colors which are mixed to generate/represent a full spectrum/range consist of 16 million colors.
+# (WCG)   Wide Color Gamut.  
+# (HD)    High Definition: 720p/1080i 50Hz.
+# (FHD)   Full HD: 1080p 60Hz.
+# (UHD)   Ultra HD, includes the 4K/5k/8K/10k TV resolution 60Hz, 120Hz, 144Hz refresh rate. The higher the refresh rate the lower the resolution depending on your TV HW.
+# (UHDTV) Ultra-High-Definition Television.
+# (HEC)   HDMI Ethernet Channel.
+# (ARC)   Audio Return Channel: HDMI feature.
+# (CEC)   Consumer Electronics Control: HDMI feature.
+# (HDCP)  High Definition Digital Content Protection v2.2, a feature of HDMI2.0 and above.
+# Video Decoding standards (AV1, VP9, H.265, AVS2).
+# (Dolby-Vision™): Dolby color management technology. 
+# (Dolby-Atmos®): Dolby surround Audio management technology. is a suite of technologies for immersive audio having both horizontal and vertical sound placement, using a combination of                   channel and object-based mixing and delivery
+# (Dolby-Digital): is an lossy audio compression format (AC-3, AC-4), which can contain audio channels and/or audio objects.
+# (Dolby-Digital-Live) is a real-time hardware encoding technology for interactive media such as video games. It converts any audio signals on a PC or game console into the 5.1-channel                             Dolby Digital format and transports it via a single S/PDIF cable.
+# (DTS-Connect) A similar technology to Dolby digital live from Dolby competitor DTS. 
+# (AC-3)  5.1 surround system format, supports mono upto six ausio channels (5+1 Subwoofer).
+# (AC-4)    
+
+# (REPL)  Read–Eval–Print-Loop: is a simple interactive computer programming environment that takes single user inputs, executes them, and returns the result to the user.
+# (GPIO)  General Purpus Input/Output pins or connectors.
+# (MRU)   Motion Reference Unit.
+# (IMU)   Inertial Measurement Unit: it is a combination of a "Gyro + Accelerometer" sensors working as a one acurate movement mesurment sensor.
+# (DFE)   Decision Feedback Equalisation.
+# (PMIC)  Power Management IC.
+# (ADC)   Analog-to-Digital Converters.
+# (PWM)   Pulse-Width Modulated.
+# (RPM)   Rotations Per Minute. 
+# (Accelerometer) measures in meters per second squared (m/s2), or G-force (g).
+# (Gyro)  Gyroscope: it measure angular velocity, how fast something is spinning about an axis. If you're trying to monitor the orientation of an object in motion, an accelerometer may not            give you enough information to know exactly how it's oriented. measured in (RPM), or degrees per second (°/s).
+
+# (SKU)   Stock Keeping Unit: is a 3-5 digits alphanumeric code defines the chip model also it may refer to a scannable barcode, most often seen printed on product labels in a retail store.
+# (1Ku Price) represet the retail unit price for a minimum purchase of a bulk of 1000 unit.
+# (ASP)   Average Sales Price.
+
+# (UTM)  Universal Threat Management: a L7 application Firewall solution/box.
+# (UTM)  Universal Turing Machine: a Quantum Bio Computer/Machine with Nural CPU, RNA memory, protein I/O and a DNA storage based on Alan Turing "Turing Machine (TM), Automatic Machine (a-           machine)" a mathematical model of computation that defines an abstract machine.
+# (SBOL) is an open standard for the representation of in silico biological design. https://sbolstandard.org/ :
+   SBOL  provides a data format composed of genetic vocabulary terms called SBOL Data.
+   SBOL  also provides schematic glyphs to graphically depict genetic designs called SBOL Visual.
+   SBOL  standardises data used by synthetic biology practitioners, from users to software developers to wet lab biologists.
+# (GenoCAD) is an open source rule-based DNA design tool, available on https://sbolstandard.org/ developed by https://www.genofab.com/.
+# (BOOST) Build-OptimizatiOn Software Tools: is a platform of tools to design DNA sequences for manufacturing. Currently, BOOST consists of three tools:
+     (i) The “Juggler” reverse translates protein sequences into DNA sequences and codon juggles DNA sequences.
+    (ii) The “Polisher” verifies DNA sequences against DNA synthesis constraints. In addition, the “Polisher” can modify the protein coding regions of DNA sequences in order to resolve               eventual violations of DNA synthesis constraints.
+   (iii) The “Partitioner” decomposes large DNA sequences into synthesizable building blocks with assembly-specific overlap sequences.
+
+# (CODEX DNA)  https://codexdna.com/ are a DNA printers manufacturer, The BioXp™ 3250 system provides hands-free, end-to-end automation of DNA assembly, cloning, amplification, and mRNA                    synthesis in a single overnight run.
+# (DNAplotlib) https://github.com/VoigtLab/dnaplotlib.
+# (Cello)      https://github.com/CIDARLAB/cello.
+# (J5 Device Editor & Victor Editor) j5 DNA Assembly Design Automation, by DIVA "https://j5.jbei.org/" .
+# Organic Synthesis in the Solid State via Hydrogen-Bond-Driven Self-Assembly. by (JOC) the Journal of Organic Chemistry.
+  https://pubs.acs.org/doi/pdf/10.1021/jo8001563/
+
+
+----------------------------------------------------------
+Network Cabling / Ethernet Cabling (ISO/IEC 11801 naming):
+----------------------------------------------------------
+Telecommunications Industry Association’s TR-42 Engineering Committee
+IEEE standard body
+#8 wires, 4 twisted pairs, using RJ45 connectors, min=1.5m to max=100m distance.
+
+# (UTP) Unshielded Twisted Pairs: 
+# (STP) Shielded Twisted Pairs:
+# (FTP) Foiled Twisted Pairs:
+
+# (U/FTP) Unshielded FTP:      this type of cables has a plastic cross divider that partitions the four foilded twisted pairs. 
+# (S/FTP) Shielded FTP:        the FTP is shielded by a wrapping of either foil or a flexible braided screening.
+
+# (F/UTP) Foiled UTP:           No Partitioning, while all four twisted pais have an overall foile wrap.
+# (SF/STP) (Do Not exist)
+
+Common industry abbreviations for cable construction
+Industry acronyms  ISO/IEC 11801 name	Cable-shielding	Pair shielding
+UTP	        	U/UTP		none		none
+STP,ScTP,PiMF		U/FTP		none		foil
+FTP,STP,ScTP		F/UTP		foil		none
+STP,ScTP		S/UTP		braiding	none
+SFTP,S-FTP,STP		SF/UTP		braiding,foil	none
+FFTP			F/FTP		foil		foil
+SSTP,SFTP,STP-PiMF	S/FTP		braiding	foil
+SSTP,SFTP		SF/FTP		braiding,foil	foil
+
+# note that flat Ethernet cables sold in the consumer market are not standard and not recommended at all.
+# The code before the slash designates the shielding for the cable itself, while the code after the slash determines the shielding for the individual pairs:
+
+U = unshielded
+F = foil shielding
+S = braided shielding (outer layer only)
+TP = twisted pair
+TQ = twisted pair, individual shielding in quads
+
+two wires telephone cable (PSTN & ISDN) 
+Cat3 (old local telephony network or 10BaseT/10mbps data network) 
+Cat5e (100BaseT/100Mbps data)
+cat6  (1Gbps)
+Cat6A (10Gbps)
+cat7  (10Gbps)
+Cat7A (10Gbps for 100m) & (40Gbps for 50m)
+Cat8  (The standard is not yet finalised) 
+
+# (MMF) Multi-Mode Fiber: (OM1, OM2, OM3, OM4 & OM5) fiber types, (62.5µm/50µm) diameter, upto (550m for 10Gbps speed), Fiber optics cable is thicker in dimeter than the SMF and transmits     optical light, low power short distance   compared to the SMF. 
+# (SMF) Single-Mode Fiber: OS1 and OS2 fiber type , wavelengths of (1550nm & 1310nm) with a maximum attenuation of (1 dB/km and 0.4 dB/km), (10µm & 8µm)/125µm dimeter, upto (10km & 200km      for 100Gbps speed) Fiber optics cable is smaller in diameter than the MMF and transmits Laser signal which is much higher in power than the light and more focused (long distance).
+# PCIe riser cables, 3m max.
+# SCSI cables 3m max.
+# USB cables 3m max, none standard upto 10m.
+# Thunderbolt 3m max.
+# Thunderbolt Optical 100m max.
+# Displyport Cable 1.8m max.
+# HDMI cable 4.5m max, there are longer cables in the market upto 15m however, those are not standard cables and has a compromised quality and reliability. 
+  
+## Note that with any kind of data cable, the higher the data transfer rate the shorter the maximum cable length gets.
+
+
+-------------------------------
+Data Transfer Rate comparison:
+---------------------------------------------------------------------------------
+# GPU x64-GDDR6x (VRAM) transfer rate ?????GB/s. (Not Released yet)
+# GPU x64-GDDR6  (VRAM) transfer rate 128.0GB/s.
+# DDR3-1600, PC3-12800  transfer rate  12.8GB/s.	
+# DDR4-3200, PC4-25600  transfer rate  25.6GB/s.
+# DDR5-6400, PC5-51200  transfer rate  51.2GB/s. 
+# PCIe 3.0              transfer rate x1= 0.985 GB/s upto x16= 15.754 GB/s.
+# PCIe 4.0              transfer rate x1= 1.969 GB/s upto x16= 31.508 GB/s.
+# PCIe 5.0              transfer rate x1= 3.938 GB/s upto x16= 63.015 GB/s.
+# SSD-NVMe-PCIe-3.0_x4  transfer rate  upto   3.938  GB/s.
+# SSD-NVMe-PCIe-4.0_x4  transfer rate  upto   7.877  GB/s.
+# SSD-NVMe-PCIe-4.0_x4  transfer rate  upto  15.754  GB/s.
+# Display Port 2.0      transfer rate 77.37 Gbps = 9.67 GB/s.
+# Thunderbolt2          transfer rate 20    Gbps = 2.5  GB/s.
+# Thunderbolt3          transfer rate 40    Gbps = 5.0  GB/s.
+# USB 2.0               transfer rate 0.48  Gbps = 0.06 GB/s
+# USB 3.1 Gen1(3.0)     transfer rate  5    Gbps = 0.625GB/s.
+# USB 3.1 Gen2          transfer rate 10    Gbps = 1.25 GB/s.
+# USB 3.2_Gen2x2        transfer rate 20    Gbps = 2.5  GB/s.
+# USB 4.0               transfer rate 40    Gbps = 5.0  GB/s.
+# SSD-SATA3             transfer rate 4.8   Gbps = 0.6  GB/s.
+# HDMI 2.0b             transfer rate 21    Gbps = 2.625GB/s.
+# HDMI 2.1              transfer rate 48    Gbps = 6.0  GB/s. 
+----------------------------------------------------------------------------------
+
+
+# M.2 (NGFF) Interface, specifications & compatibility:
+# M.2 M.2_2 slot: (Single mode) means the slot has a direct [CPU] bus. a Socket3 (M-Key, NVMe-PCIe) mode only.
+# M.2 M.2_1 slot: (Dual mode) means the slot is connected through the [chipset] hub with a shared bus. a socket3 with both modes support (B & M keys, SATA & PCIe).
+# M.2 Socket3 slot: means the slot is in SSD storage mode (NVME-PCIe &/or SATA3).
+# M.2 M key: means the slot is a socket3 with x4 bus [CPU]or[chipset]. The physical NVMe card should be either a M or an M&B card.  
+# M.2 B Key: means the slot is a socket3-(SATA3 mode) with x2 bus [chipset]. The physical NVMe card should be either a B or an M&B card.
+# M.2 B key: depending on your motherboard model, using this slot may automatically disable a 4xSATA-ports on your motherboard because of the limited shared [chipset] bus.
+# M.2 PCIe mode: is either PCIe 3.0 or PCIe 4.0 or upcoming PCIe 5.0, knowing that they are all forward and backward compatible with different speed.
+# M.2 SATA mode: is AHCI/SATA3-6Gbps compatible.
+# M.2 slot with NVMe v1.4 specification (current latest) supports, boot from NVMe, RAID (0, 1 & 10) and virtualisation.
+# M.2 slots support different IO devices (SSD storage, USB, FMI, DP, Wifi, Bluetooth, SDIO, HSIC, SSIC, WWA, 5G, NFC, I2C, UART, PCM, UIM, Zigbee, etc.).
+# M.2 Socket3 current top specification supports, (NVMe v1.4 PCIe 4.0 x4, single side module with Intel Optane cache & 3D NAND chips, ECC & Buffer with or without heatsink).
+
+# U.2 (SFF-8639) Interface: is a SSD storage interface that utilises upto x4 PCIe lanes or x2 SATA lanes (Not popular).
+# PCIe-SSD Interface: is the NVMe card interface used by Apple Mac devices instead of M.2 M-Key/B-key connector. you can use a PCIe-SSD to M.2 adapter with standard NVMe cards. 
+
+# PCIe 5.0 is very new with very expensive and limited availability and compatible Motherboards. While PCIe 6.0 is still under development.
+# PCIe is forward and backward compatable with 1 to 16 bus lanes (x1, x2, x4, x8, x16).
+# PCIe 4.0 x16 - throughput is double the PCIe 3.0 x16.
+# PCIe throughbut is measured by GT/s (Transfere per second), which includes the (data + two clock bits), a (128/130) data rate for PCIe 3 & 4. 
+# PCIe Modren CPU/GPU/APU/SoC/SiP/MCM and Motherboards (MB) communication bus is based on PCIe lane technology. however each brand uses a different name to refer to their bus.  
+
+# NVMe interface transfer rates range between 600MB/s to 7.8GB/s.
+# NVMe M.2 module dimentions (2242, 2260, 2280, 22110), for example the 2242 card is 22mm wide and 42mm long. Affects module physical installation compatibility.
+# NVMe module size/chip distribution (single sided or dual sided) - (with heatsinks or without heatsincks), Affects module physical installation compatibility.
+# NVMe knowing the specifications version (v1.4 or v1.3) is important to avoid feature compatibility issues.
+# NVMe v1.4 specifications supports "BIOS bootloader, RAID (0,1 & 10) & Virtualisation" with more than 7Gbps throughput.
+# NVMe card: insure the M.2 slot compatibility, specifications and limitations before installing the card.
+# NVMe current top specification: is NVMe v1.4 PCIe 4.0 x4 single side module with Intel Optane cache & 3D-NAND chips, ECC enabled, with or without heatsink.
+
+# SATA3 interface: connected to [chipset] with 6Gbps bus speed, (600GB/s) read & (550GB/s) write.
+
+# SSD 2.5" Disk: supports SATA3-6Gbps interface, protocol and throughput (600GB/s) read & (550GB/s) write.  
+
+# (RAM)     Random Access Memory: a Volatile Memory.
+# (DRAM)    Dynamic RAM. 
+# (SRAM)    Static  RAM.
+# (SDRAM)   Synchronous-Dynamic RAM.
+# (ROM)     Read-Only Memory: a Non-Volatile Memory. data stored in ROM is called Firmware.
+# (EPROM)   Erasable Programmable ROM: is a type of (FGMOS).
+# (EEPROM)  Electrically Erasable Programmable ROM.
+# (FGMOS)   Floating-Gate MOSFET transistor.
+# (MOSFET)  Metal–Oxide–Semiconductor Field-Effect-Transistor.
+# (O.C.)    Over Clocking: component like CPU, GPU and Momory can be boosted or over clocked in various ways using various tools.
+
+# (DDR2-SDRAM), Double-Data-Rate 2 SDRAM - 2003 - 200/240-pin - 1.8V (O.C.) XMP to ???V
+# (DDR3-SDRAM), Double-Data-Rate 3 SDRAM - 2007 - 204/240-pin - 1.5V (O.C.) XMP to ???V -  
+# (DDR4-SDRAM), Double-Data-Rate 4 SDRAM - 2014 - 260/288-pin - 1.2V (O.C.) XMP to 1.5V - 3.2Gbps PC4-25600 3200MHz standard Non-(O.C.)
+# (DDR5-SDRAM), Double-Data-Rate 5 SDRAM - 2020 - 260/288-pin - 1.1V (O.C.) XMP to 2.6V - 4.8Gbps PC5-41600 5200MHz standard Non-(O.C.) (8-Lyers TSV structure HKMG material).
+# (LPDDR) Low Power DDR-SDRAM.
+# (mDDR) Mobile DDR is a LPDDR memory for low power mobile devices.
+# DDR there are four figures or factors that determin the memory DIMM speed (the memory clock, the IO clock, the Transfer Rate in T/s and the Theoretical Bandwidth in B/s)
+# DDR the (IO clock = 8 x memory clock) measured in MHz.
+# DDR the (Bandwidth = 8 x Transfer rate T/s) measured by B/s. 
+# latest Memory Technologies: DDR5 2020 | HBMnext (2020) | HBM-PIM (Feb 2021).
+# Types of Memory from faster to slower: faster L1/L2/L3 slower cache, GDDR-VRAM, RAM, PCIe, ROM, NOR/Flash, SSD, HDD.
+# (L1) Level-1 cashe memory: is a fast and small capacity built-in memory within the processor core and for its own use.
+# (L2) Level-2 cache memory: is a slower but larger capacity to L1, it is a built-in in the processor core for "Rigister" communication (core to core communication).
+# (L3) Level-3 cache memory: is a on Socket (physical CPU) slower but larger in capacity than L1&L2 facilitates (CPU to/from RAM) rigister coomunications.   
+
+# (DIMM)       Dual In-line Memory Module.
+# (RDIMM)      Registered/Buffered DIMM, 288-pin.
+# (UDIMM/DIMM) Unregistered/Unbuffered DIMM, 288-pin.
+# (SODIMM)     Small Outline Dual In-line Memory Module, 260-pin.
+# (LRDIMM)     load-Reduced DIMM.
+# (ECC)        Error Correction Code (Checksum).
+# (NECC)       None-ECC memory.
+# (CRC)        Cycle Redundancy Check.
+# (HKMG)       High-K Metal Gate: DDR5 manufacturing material.
+# (MemBIST)    Memory Built-In Self-Test.
+# (CL)         CAS Latency: the lower the better. varies between (CL13 to CL19) for current DDR4.
+# (UL)         Unloaded Latency: measured in (nano second), UL= (CL/frequency)x 2000, for example: (DDR4-3200MHz CL16-18-18-38, 1.35V), UL= (16/3200)x 2000 = 10ns.
+# Memory Ranking  1R, 2R, 4R. 
+# (QVL)        Qualified Vendors Lists.
+# (POST)       Power-On Self-Test.
+# (Benchmark)  Memory burn test.
+# (JEDEC)      Joint Electron Device Engineering Council: IC, chips & Industry-standard timings are defined by them. 
+# (SPD)        Serial Presence Detect: is a hardware feature that provides the motherboard with the presence memory speed and timing by reading a tiny ROM chip (SPD ROM) on the memory                      module that holds a table of timing (SPD data) supported by the memory module.
+# (XMP)        Intel’s “Extreme Memory Profiles”: is a HW feature supported by the motherboards with (O.C.) capability. it allows the motherboard to chang/modify the SPD data table to                      achive higher memory speed with lower latency. XMP is not recommended nor supported by the memory maufacturer because it is risky and it will voide your warranty and support                 and may distroy your memory & motherboard. 
+# FCLK ????
+# DOCP ????
+# You will need at least two modules to enable a dual-channel mode on platforms such as AMD’s Socket AM4 or Intel’s LGA 1151, or four to enable the quad-channel modes of AMD’s socket          TR4 and Intel’s LGA 2066.
+# Single rank (with all ICs addressed by one of each module’s dual 64-bit interfaces) or dual-rank (addressed by both interfaces).
+# if you are buying a memory module (DIMM) and you want to pick somthing with the best performance, make sure the UL latency is below 10ns, the lower the more expensive. 
+  for example a PC4-3200MHz CL16 the speed is 3200MT/s and UL=(16/3200)x2000=10ns there for (CL < 16, UL < 10ns).
+# Always buy a single memory kit for your desired capacity. Never combine two memory modules or memory kits even if they're from the same vendor and product line. Mixing and matching          may not always produce a desirable result and sometimes manual tweaking is required to achieve stability.
+# SK-Hynix made the first DDR5 5200MHz,5200MT/s chip and announced a 6400MT/s chip later, this is the highest speed within the DDR5 standard.
+
+
+       ## Older clock speed are not listed here ##
+# DDR4 PC4-17000 2133MHz       288-pin, Gold Connectors
+# DDR4 PC4-19200 2400MHz       288-pin, Gold Connectors
+# DDR4 PC4-21300 2666MHz       288-pin, Gold Connectors  DIMM Non-ECC 1R, 2R, 4R 1.2V CL15-CL16 133.5mm x 31mm (LxH) Full Lifetime Warranty.
+# DDR4 PC4-21300 2666MHz       288-pin, Gold Connectors UDIMM     ECC 1R, 2R, 4R 1.2V CL15-CL16 133.5mm x 31mm (LxH) Full Lifetime Warranty.
+# DDR4 PC4-22400 2800MHz       288-pin, Gold Connectors
+# DDR4 PC4-23466 2933MHz       288-pin, Gold Connectors
+# DDR4 PC4-24000 3000MHz       288-pin, Gold Connectors  DIMM Non-ECC 1R, 2R, 4R 1.2V CL15      133.5mm x 31mm (LxH) Full Lifetime Warranty. 
+
+-------------------------------------------------------The standard clock speed for DDR4
+       ## standard DDR4 memory clock speed ##
+# DDR4 PC4-25600 3200MHz       288-pin, Gold Connectors  DIMM Non-ECC 1R, 2R, 4R 1.2V CL16      133.5mm x 31mm (LxH) Full Lifetime Warranty. 
+-------------------------------------------------------
+       ## None standard (O.C.) starts from here ##
+# DDR4 PC4-27200 3400MHz(O.C.) 288-pin, Gold Connectors    
+# DDR4 PC4-27728 3466MHz(O.C.) 288-pin, Gold Connectors
+# DDR4 PC4-28800 3600MHz(O.C.) 288-pin, Gold Connectors  DIMM Non-ECC 1R, 2R, 4R 1.2V CL17-CL18 133.5mm x 31mm (LxH) Full Lifetime Warranty.
+# DDR4 PC4-29864 3733MHz(O.C.) 288-pin, Gold Connectors 
+# DDR4 PC4-30928 3866MHz(O.C.) 288-pin, Gold Connectors 
+# DDR4 PC4-32000 4000MHz(O.C.) 288-pin, Gold Connectors 
+# DDR4 PC4-33064 4133MHz(O.C.) 288-pin, Gold Connectors 
+# DDR4 PC4-34128 4266MHz(O.C.) 288-pin, Gold Connectors
+# DDR4 PC4-34664 4333MHz(O.C.) 288-pin, Gold Connectors CL14-15-15-28 
+# DDR4 PC4-35200 4400MHz(O.C.) 288-pin, Gold Connectors 
+# DDR4 PC4-36800 4600MHz(O.C.) 288-pin, Gold Connectors 
+# DDR4 PC4-37864 4733MHz(O.C.) 288-pin, Gold Connectors CL14-14-14-28
+# DDR4 PC4-38400 4800MHz(O.C.) 288-pin, Gold Connectors 
+# DDR4 PC4-40000 5000MHz(O.C.) 288-pin, Gold Connectors CL16-17-17-36
+# DDR4 PC4-42664 5333MHz(O.C.) 288-pin, Gold Connectors CL18-24-24-46
+
+------------------------------------------------------- The standard clock speed for DDR5
+       ## AMD Zen4 standard memory clock speed ##
+# DDR5 PC5-41600 5200MHz       288-pin, Gold Connectors
+-------------------------------------------------------
+# DDR5 PC5-51200 6400MHz(O.C.) 288-pin, Gold Connectors
+# DDR5 PC5-67200 8400MHz(O.C.) 288-pin, Gold Connectors
+
+
+##################################
+# AMD (CPU, APU, GPU)            #
+##################################
+
+## In October 2008, AMD announced plans to spin off manufacturing operations in the form of (GlobalFoundries Inc.) (state owned by Abu Dhabi, UAE), a multibillion-dollar joint venture with    (Advanced Technology Investment Co.) owned by (Mubadala Investment Company PJSC), an investment company formed by the government of Abu Dhabi. The partnership and spin-off gave AMD an      infusion of cash and allowed it to focus solely on chip design. To assure the Abu Dhabi investors of the new venture's success, AMD's CEO Hector Ruiz stepped down in July 2008, while      remaining executive chairman, in preparation for becoming chairman of GlobalFoundries in March 2009. President and COO Dirk Meyer became AMD's CEO. Recessionary losses necessitated AMD      cutting 1,100 jobs in 2009.
+
+## http://vrworld.com/2016/05/02/amd-dead-certain-secure-profit-q2-2016/
+
+## https://www.anandtech.com/show/2873 
+  # November 12 2019 AMD has wanted out of the fab game for quite some time, but the cross-licensing agreement prevented that. Now AMD is free to sell off its stake of Global Foundries to       Abu Dhabi’s Advanced Technology Investment Company (ATIC), who already owns the other half of GF. The result will be that ATIC will own a foundry like they’ve always wanted, and AMD         will be rid of the task of operating a foundry like they’ve always wanted.
+    This in turn is going to have two immediate short-term benefits for AMD. The first of course is more cash; selling their share in ATIC is going to net the company a fair bit of cash and     cash equivalents. The second of which is that AMD had to absorb some of GF’s losses; they would have turned a profit last quarter for example if owning part of GF didn’t cause them to     take a $100mil loss. So AMD is going to have more cash on hand, and they’re going to further resolve their long-standing cash bleed. By no means does this make them rich (they still are     up to their eyes in debt), but this opens up a great deal of liquidity to invest in new processor designs. After all, they’ve gone fabless, R&D is where the bulk of their investments        will be.
+
+## Feb 2021 - AMD has published a new patent in which the company talks about an active chiplet serving as a bridge between multiple GPU dies, possibly based on its next-generation RDNA3       architecture for GPUs and APUs. ##
+
+## NVIDIA, is also investing in MCM designs that will be utilized in its next-generation GPUs. ##
+
+## Only AMD APU's has a built-in graphic card (GPU), which means only CPU models with the letter "G" includes a GPU. ##
+
+## Intel CPU's in general has a built-in graphic card (GPU), only the CPU models with the letter "F" do not include a GPU. ## 
+
+## SPARC64-XII is Fujitsu's latest RISC CPU. 
+
+# MB with Gen3-500 & 400 series chipset (X570/B550/A520/X470/B450) while only couple of gen2-400 series (X470/B450) chipset with special BIOS update are compatible with Gen3-Ryzen.
+# Thermal Solution (PIB): Wraith Prism with RGB LED (may or may not be included with the CPU package, depends on the model you buy).
+# (CCX) Core Complexes.
+# (CCD) Core Complex Die.
+# (SMT) Simultaneous Multi-Threading this is AMD version of Intel Hyper-Threading.
+# (IPC) Instruction Per Clock.
+# (Infinity Fabric™) I/O die (bus).
+# (FCLK) Fabric CLocK.
+# (MEMCLK) Memory CLocK.
+# (GMI) link: Global Memory Interconnect.
+# (xGMI) External Global Memory Interconnect.
+# (UMC) Universal Memory Controllers.
+# Memory P-States ????.
+# (NUMA) "Non-Uniform Memory Access" nodes.
+# (NPS) “NUMA Per Socket” BIOS setting. NPS=1, NPS=2, NPS=4, or NPS=0 (not recommended). 
+# (L3CAN) L3 cache as NUMA.
+# 1P/2P Socket: In two-socket configurations, both processors must be identical. Two different processor OPNs, or steppings, cannot be used in the same 2-socket system.
+# AMD Ryzen 5950X is current top CPU model.
+# AMD    7nm CPU (Tj)max=  90°C VRM controlled & Overclocked.
+# Intel 14nm CPU (Tj)max= 100°C VRM controlled & Overclocked.
+# Unlocked = overclocking is possible, however not recommended or supported.
+# Q) AMD page say "System Memory Specification Up to 3200MHz" I thought it was supposed to be the infinity fabric limit.
+  A) That's the officially supported clock. Anything above that is technically overclocking.
+  A) XMP is technically and legally considered overclocking (Just don't say you enabled XMP if you need to RMA! Never admit that XMP or DOCP was enabled if they ask you!
+
+
+Ryzen CPU different seriese:
+# 1000 series.
+# 2000 seires.
+# 3000 series.
+# 4000 series.
+# 5000 series.
+
+
+Ryzen - Zen Architectures & Generations:
+# you may notice below a confusion in mapping the AMD CPU Architecture to its technology Generation, thats because there are two of them the actual and the commercial classifications:
+# Zen/Zen1 - Gen1/Gen1 - 14nm - socket SP3R1         & TR4   & AM4.
+# Zen+     - Gen1/Gen2 - 12nm - socket SP3r2         & TR4   & AM4.
+# Zen2     - Gen2/Gen3 - 7nm  - socket SP3r3         & sTRX4 & AM4   - x64 -    2/4ch DDR4 - PCIe 3.0 - upto  32C/ 64T - TDP upto ????. (Previous Generation)
+# Zen3     - Gen3/Gen4 - 7nm+ - socket SP3-1P/SP3-2P & sWRX8 & AM4   - x64 -    4/8ch DDR4 - PCIe 4.0 - upto  64C/128T - TDP upto 280W. (Current Generation)
+# Zen4     - Gen4/Gen5 - 5nm  - socket ???????????????????????????   - x64 - 4/8/12ch DDR5 - PCIe 5.0 - upto 128C/256T - TDP upto 450W. (Not Released Yet, 2022)
+
+
+Naming Convention:  
+# "X" menas higher clock speed & higher TDP than the model without "X".
+# "G" menas the processor is an APU (Soc) a CPU & GPU on a single die.
+# "H" high performance mobile processor.
+# "U" power efficent mobile processor.
+# "Y" eXtreme low power mobile processor.
+# "T" low power consumption processor.
+# "W" means Workstation edition.
+# "S" means ???? laptop high TDP.
+# "B" means ???? Zen CPU - V1500B (Embedded CPU die / No Socket, direct on PCB). 
+# "C" means ???? Athlon 1400C.
+# "P" means ???? low power EPYC server CPU. 
+# "A" means ???? Zen+ CPU - Ryzen 5 1600 AF.
+# "F" means ???? Zen+ CPU - Ryzen 5 1600 AF.
+# "E" means ???? Zen+ CPU - Ryzen 7 2700E.
+
+
+AMD Ryzen - (3/5/7/9) - Zen3 - Gen3 - 7nm CPU (TSMC-7FF) - categories: 
+# Mobile (Laptop/Tablet, Graphics) (4/6/8) APU - socket   FP6               - SoC-integrated - 2-ch/128GB DDR4-3200/LPDDR4-4266 (NECC, DIMM) - TDP 10/25W & 35/54W - 16 lanes PCIe 3.0.
+# Desktop Pro (with Graphics)      (4/6/8) APU - socket   AM4 upto   8MB-L3 - X570  chipset  - 2-ch/256GB DDR4-3200 (NECC, DIMM)             - TDP 35W/ 65W        - 16 lanes PCIe 3.0.
+# Desktop (PC)                             CPU - socket   AM4 upto  64MB-L3 - X570  chipset  - 2-ch/256GB DDR4-3200 (NECC, DIMM)             - TDP 65W/105W        - 24 lanes PCIe 4.0.
+# Threadripper High-End Desktop (HEDT)     CPU - socket sRTX4 upto 256MB-L3 - RTX40 chipset  - 4-ch/2TB   DDR4-3200 (ECC-RDIMM)              - TDP max 280W        - 44 lanes PCIe 4.0.
+# Threadripper Pro (Workstation/Business)  CPU - socket sWTX4 upto 256MB-L3 - WTX80 chipset  - 8-ch/2TB   DDR4-3200 (ECC-RDIMM)              - TDP     280W        - 88 lanes PCIe 4.0.
+
+
+AMD Zen1 - Gen1 - 14nm Server CPU: (released 2017)
+# EPYC-7001_series-(Naples) Server CPU - Socket SP3/LGA4094 (1P/2P) upto 32C/64T- upto 128MB-L3 -   4/ 8ch (+0xIO) upto 1TB/2TB DDR4-3200 (ECC,RDIMM) - TDP max 200W - 128 lanes PCIe 3.0. 
+
+AMD Zen2 - Gen2 - 7nm Server CPU: (released 2019)
+# EPYC-7002_series-( Rome ) Server CPU - Socket SP3/LGA4094 (1P/2P) upto 64C/128T- upto 256MB-L3 -  8/16ch (+1xIO) upto 2TB/4TB DDR4-3200 (ECC,RDIMM) - TDP max 280W - 128 lanes PCIe 4.0. 
+
+AMD Zen3 - Gen3 - 7nm Server CPU: (released 15th Mar 2021)
+# EPYC-7003_series-( Milan) Server CPU - Socket SP3/LGA4094 (1P/2P) upto 64C/128T- upto 256MB-L3 -  8/16ch (+1xIO) upto 2TB/4TB DDR4-3200 (ECC,RDIMM) - TDP max 280W - 128 lanes PCIe 4.0. 
+
+AMD Zen4 - Gen4 - 5nm Server CPU: (will be release in 2022)
+# EPYC-7004_series-( Genoa) Server CPU - Socket SP3/LGA6096 (1P/2P) upto 96C/192T- upto ????? L3 - 12/24ch (+1xIO) upto 2TB/4TB DDR5-5200 (ECC,RDIMM) - TDP max 320W - 128 lanes PCIe 5.0. 
+
+
+AMD-Ryzen-Mobile (laptop/tablet) APU with - AMD-Radeon-Graphics (Zen2- 5000U/5000H/5000HS/5000HX/ - TDP -95°C-Locked)
+# AMD PRO technologies direct APU (DP & HDMI) channels.
+# 16x PCIe 3.0 bus.
+# Ryzen 3 APU - 4C/ 8T/6C - 4MB/L3. 
+# Ryzen 5 APU - 6C/12T/7C - 8MB/L3.
+# Ryzen 7 APU - 8C/16T/8C - 8MB/L3. 
+
+
+AMD-Ryzen-Desktop-Pro APU (Zen2- 3000GE/3000G/4000GE/4000G/5000G series - TDP 35W/45W/65W -95°C-Locked):
+# the CPU has an DP & HDMI direct channel.
+# 16x PCIe 3.0 bus.
+--------------------------------------------5000 series with TDP 65W - AMD Radeon™ Vega Graphics
+# Ryzen 3 CPU - "300" = 4C/ 8T/C -  8MB/L3
+# Ryzen 5 CPU - "600" = 6C/12T/C - 16MB/L3
+# Ryzen 7 CPU - "700" = 8C/16T/C - 16MB/L3
+--------------------------------------------4000 series (OEM Only) - TDP 65W - AMD Radeon™ Vega Graphics
+# Ryzen 3 CPU - "350" = 4C/ 8T/6C - 4MB/L3
+# Ryzen 5 CPU - "650" = 6C/12T/7C - 8MB/L3
+# Ryzen 7 CPU - "750" = 8C/16T/8C - 8MB/L3
+--------------------------------------------3000 series with TDP W -AMD Radeon™ Vega Graphics
+# Ryzen 3 CPU - "200" = 4C/4T/ 8C - 4MB/L3
+# Ryzen 5 CPU - "400" = 4C/8T/11C - 4MB/L3
+
+
+The AMD Ryzen-Desktop CPU (Zen3- 5000/5000X series & Zen2- 3000/3000X/3000XT series- TDP 65W/95W/105W -90°C-Unlocked):
+# Ryzen 3 - "100" =  4C/ 8T - 16MB/L3 - Zen2   (Zen2 L3=1x16MB)
+# Ryzen 3 - "300" =  4C/ 8T - 16MB/L3 - Zen2   (Zen2 L3=1x16MB)
+# Ryzen 5 - "600" =  6C/12T - 32MB/L3 - Zen2&3 (zen3 L3=1x32MB & Zen2 L3=2x16MB) (only the Zen2 of this series containes 95W CPU)
+# Ryzen 7 - "700" =  8C/16T - 32MB/L3 - Zen2   (Zen2 L3=2x16MB)
+# Ryzen 7 - "800" =  8C/16T - 32MB/L3 - Zen2&3 (zen3 L3=1x32MB & Zen2 L3=2x16MB)
+# Ryzen 9 - "900" = 12C/24T - 64MB/L3 - Zen2&3 (zen3 L3=2x32MB & Zen2 L3=4x16MB)
+# Ryzen 9 - "950" = 16C/32T - 64MB/L3 - Zen2&3 (zen3 L3=2x32MB & Zen2 L3=4x16MB)
+-------------------------------------------------------------------------------------
+Zen3-AMD-Ryzen-desktop CPU Models:
+# Ryzen 3 - (this range is not available in Zen3 architecture yet).
+# Ryzen 5 - 5600X.
+# Ryzen 7 - 5800 (OEM only) & 5800X.
+# Ryzen 9 - 5900 (OEM only), 5900X & 5950X.
+
+
+Ryzen-Threadripper-HEDT CPU (Zen2- 1000X/2000X/2000WX/3000X series - TDP 180W/250W/280W -95°C-Unlocked):
+# the 2000WX series Max temp 68°C & 250W.
+# Ryzen Threadripper "900" =  8C/16T             - 256MB/L3.
+# Ryzen Threadripper "920" = 12C/24T             - 256MB/L3.
+# Ryzen Threadripper "950" = 16C/32T             - 256MB/L3.
+# Ryzen Threadripper "960" = 24C/48T             - 256MB/L3.
+# Ryzen Threadripper "970" = 24C/48T or 32C/ 64T - 256MB/L3.
+# Ryzen Threadripper "990" = 32C/64T or 64C/128T - 256MB/L3.
+
+
+Ryzen Threadripper Pro - Workstation CPU (Zen2- 3000WX series - TDP 280W -95°C-Unlocked):
+# "945" = 12C/ 24T - 256MB/L3.
+# "955" = 16C/ 32T - 256MB/L3.
+# "975" = 32C/ 64T - 256MB/L3.
+# "995" = 64C/128T - 256MB/L3.
+
+
+AMD-EYPC-Milan-Server Zen3-Gen3-7nm CPU (Zen3- 7000/7000P series - TDP 120/155/165/180/190/200/225/240/280W -90°C-Locked):
+# "2F3" =
+# "313" =
+# "343" =
+# "3F3" =
+# "413" = 
+# "443" = 
+# "453" =
+# "4F3" =
+# "513" = 
+# "543" = 32C/64T.
+# "5F3" = 
+# "643" =
+# "663" =
+# "713" = 64C/128T.
+# "763" = 64C/128T.
+# "H12" = 64C/128T. top of the line
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+########################################################
+# NVIDIA-GeForce-Gen2-RTX-(AMPERE)_&_Gen3-Tensor GPU   #
+########################################################
+
+-----------------------------
+NVIDIA-GeForce-RTX-30-series:
+-----------------------------
+RTX 3090    - 
+RTX 3080    - 6144 core - 8GB/16GB memory  Desktop/Laptop
+RTX 3070    - 5120 core - 8GB      memory  Desktop/Laptop
+RTX 3060    - 3840 core - 6GB      memory  Desktop/Laptop
+RTX 3060-Ti - 
+
+
+-----------------------------
+NVIDIA-GeForce-RTX-20-series:
+-----------------------------
+# RTX-2080-Ti
+# RTX-2080-SUPER
+# RTX-2070-SUPER
+# RTX-2060-SUPER
+# RTX-2060
+# RTX SUPER laptop
+
+
+-----------------------------
+NVIDIA-GeForce-GTX-16-series:
+-----------------------------
+# GTX-1660-Ti
+# GTX-1660-SUPER
+# GTX-1660
+# GTX-1650-SUPER
+# GTX-1650
+
+
+# (NVIDIA AMPERE-Gen2-RTX ARCHITECTURE)  Gen2-RT-Core & Gen3-Tensor-Core & SM-FP32 and streaming multiprocessors with real-time ray-tracing graphics and cutting-edge AI.
+# (Ray Tracing)  simulating the physical behaviour of light.
+# NVIDIA CUDA Cores.  
+# GDDR6 VRAM.
+# NVIDIA Studio platform of dedicated drivers and exclusive tools, advanced VR rendering.
+# NVIDIA new NVLink system (the successor to SLI): enable using up to four GPU cards as one on the same computer.
+# The PC required to run a game at 144 frames per second (fps) in 4K, or even at 120fps, will set you back quite the bundle of green too.
+  In our testing, we found that at the bare minimum, most gamers will need a PC that uses dual GeForce RTX 2080 graphics cards just to hit 100fps at 4K. To get to 120fps or 144fps, dual     GeForce RTX 2080 Ti cards are what you'll need. In either case, the cards would be linked through Nvidia's new NVLink system.
+# Also you need a Monitor or TV that supports (4K HDR 144Hz) with HDMI2.1 or DP interfaces and cable in order to get 144fps at 4k resolution.
+
+
+----------------------------
+# NVIDIA® G-SYNC® displays :
+----------------------------
+  (i) G-SYNC ULTIMATE,   top NVIDIA G-SYNC processors, including lifelike HDR, Certified+300 Tests, stunning contrast, cinematic color, and ultra-low latency gameplay.
+ (ii) G-SYNC,            full variable refresh rate (VRR) range and variable overdrive, Certified+300 Tests. 
+(iii) G-SYNC COMPATIBLE, Doesn’t use NVIDIA processors, but have been validated by NVIDIA, basic (VRR) experience for tear-free, stutter-free gaming.
+
+# (BFGD) Big Format Gaming Displays: starting at 48" size, unparalleled 75Hz to 360Hz gameplay.
+# (BFGPU) Big Ferocious GPU, with TITAN class performance.
+# (LifeLike HDR) Get realistic brightness that’s similar to what a human eye can see, and a wide range of colors.
+# (VRR) Variable Refresh Rate, high refresh rate.
+# (VO) Variable Overdrive.
+# (VRS) variable Rate Shading.
+# (RT) Ray Tracing.
+# (MS) Mesh Shaders.
+# (TFGD) Tear-Free gaming disply.
+# (SFGD) Stutter-Free gaming display.
+# (LIL) Low Input Lag.
+# (Advanced G-SYNC ULTIMATE) monitors support the DCI-P3 color gamut for more realistic color reproduction with smoother grades.
+# (DCI-P3) is a common RGB color space for digital movie projection.
+# (ULMB) fast response times of impulse displays for moving objects that are silky-smooth and crystal-clear.
+# (Windowed Mode) 3D gaming in a Windows.
+# GeForce Cloud gaming.
+# (DirectX 12 Ultimate) is the new standard for next-gen games. New level of realism and performance with ray tracing, variable rate shading, mesh shaders.
+
+
+----------------------
+NVIDIA Gaming Laptops:
+----------------------
+-------------------------------------------------------------------------------------------------
+# (Max-Q) is a system wide approach to deliver high performance in thin and light gaming laptops: 
+-------------------------------------------------------------------------------------------------        
+  (i) (DLSS) AI rendering that boosts frame rates with uncompromised image quality using the dedicated AI processing Tensor Cores on GeForce RTX. This gives you the performance                           headroom to crank up settings and resolutions. (Doubles the FPS)          
+ (ii) (Resizable Bar) Advance PCIe feature allows the CPU to access the entier GPU frame buffer at once, similar to the AMD PCIe x16 memory bus utilisation).
+(iii) (DYNAMIC BOOST 2.0) system power managment for obtimal performance management.
+ (iv) (WHISPERMODE 2.0) acoustic control for gaming laptops. 
+-------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# (NOOBS) "New Out Of the Box Software" v1.9.2, a 32bit OS (x86 & ARM) makes it easy to install Raspbian (or other OS's) on your Raspberry-Pi.
+# Compatable with PC & MAC HW.
+# There are Third-party software for various applications.
+# Raspberry Pi OS with desktop and recommended software: Kernel v5.10.17
+# Raspberry Pi OS with desktop:                          Kernel v5.10.17 (Offline & Network installed NOOBS).
+# Raspberry Pi OS Lite:                                  Kernel v5.10.17 (Network installed NOOBS).
+
+# Raspberry Pi Desktop:                                  Kernel v4.19    (Debian Buster with Raspberry Pi Desktop, full PC HW OS).                 
+
+# Raspberry Pi-Pico, ( £5/starter kit) - this is the smallest Micro Controller "RP2040" board with (1x micro-USB-sub-mgmt&power and 25 GPIO, control with MicroPython 1.14.x command).
+# Raspberry Pi-Zero, (£25/starter kit) - this is the smallest PC board with multi interfaces (1x HDMI, 1x microSD-slot-OS, 1x USB-Keyboard, 1x USB-master-mgmt&power, 1x FFC interface,                                                                                               uses Python3 for programing other MC's).
+# Raspberry Pi-4,    
+
+# Raspberry Pi is a complete Linux computer that can provide all expected functionalities at a low-power consumption level. The foundation behind Raspberry Pi is a registered educational   charity based in the UK whose aim is to advance the education of children in the field of computer science and related subjects.
+
+# Two of the most popular Linux distros for Raspberry Pi are Raspbian, based on the Debian operating system and Pidora, based on the Fedora operating system. 
+
+# Banana Pi is compatible with Raspberry Pi boards. It can also run on various operating systems like Raspbian, NetBSD, Android, Debian etc. It uses Allwinner SoC (System on a chip) and       covered by a Linux-sunxi port.
+
+# Banana pi provides an open-source hardware platform that was produced to run Elastos.org’s open-source operating system. It is a dual-core Android 4.2 product that is better than   Raspberry Pi. It is highly efficient with several Linux distributions in the market like Debian, Ubuntu, OpenSuse and images that run on Raspberry Pi and Cubieboard.
+
+# The GPIO is compatible with Raspberry Pi, and it can run Raspberry Pi images directly. Several versions of Banana pi are available in the market like Banana pi M1, Banana pi M+, Banana pi   Pro, Banana pi G1.
+
+# Raspberry-Pi uses a Multi core "ARM-Cortex-A7" CPUs while Banana-Pi uses a multi core "Allwinner-A20-Cortex-A7" CPUs.
+# uses LPDDR2 while uses DDR3.
+# Despite having Google support, Raspberry Pi is facing some problems to become fully Android compatible, whereas Banana pi is perfectly supportive of the Android operating system.
+# Raspberry Pi model 3 has on onboard 2.4 GHz 802.11n Wi-Fi which works out of the box, whereas Banana pi, most models have onboard Wi-Fi.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                
+                                                                                 
+                                                                                 End of the Document
+

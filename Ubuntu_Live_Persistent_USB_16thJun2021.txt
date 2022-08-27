@@ -1,0 +1,2836 @@
+------------------------------
+Author : Twrcha AD
+email  : twrcha@outlook.com
+version: 1.2.0
+created: 28th April 2021
+updated: 16th June 2021
+disply  : 1920 x 1080
+------------------------------
+@@@ DISCLAIMER: this file is a collection of best practises and know-how gathered from various sources, tested and verified by this document author within the subject linux environment for      the best of the author's knowldage during the document dated period. meanwhile there are few un-verified commands/procedures which are highlighted/marked by the auther, however     discrepancy still may occurs, due to the fact of no 100% matched environments. @@@ 
+
+
+
+
+  ############################################################################################################################################### 
+  #                        Create a Persistent (live) USB storage with a full Linux OS (Ubuntu 20.04-LTS-Focal-Fossa)                           #
+  #                  Create an Independent Bootable Portable OS on a USB3.x disk that works in both UEFI & MBR BIOS modes HW                    #
+  #                             WSL2 version: (CanonicalGroupLimited.Ubuntu20.04onWindows_2004.2021.222.0_x64)                                  #
+  #                                   Kernel version (Linux 5.4.0.73-generic & 5.4.72-microsoft-standard-WSL2)                                  #
+  ###############################################################################################################################################
+
+## (LSB) Linux Standard Base: is a joint project by several Linux distributions under the organizational structure of the Linux Foundation to standardize the software system structure,
+   including the Filesystem Hierarchy Standard used in the Linux kernel. ##
+## (GiB) Gibibytes: is a standard unit used in the field of data processing and transmission and is defined as base 1024 rather than base 1000. ##
+## There are different tools that can be used to create a bootable USB device, here are few opensource utilities/commands (dd command & Mkusb toolset) as linux CLI commands, while
+   there are many GUI utilities with various capabilities and OS/filesystem support. for example (Rufus, UNetbootin, Universal-USB-Installer, Multi-writer, etc.). ##
+## The “static-hostname" is the traditional hostname, which can be chosen by the user.
+   The “pretty-hostname" is a free-form UTF8 host name for presentation to the user. ##
+## Note that while DNS allows domain name up to 255 characters, the hostname in Linux is limited to 64 characters only. ##
+## The static-hostname is stored in "/etc/hostname" file, while pretty-hostname and icon-name are stored in the "/etc/machine-info" file. ##
+
+lsb_release -a                  # check your LSB core version & distro release.
+hostnamectl                     # returns the Kernel version, OS/Distro, Architecture, Hostname(Static&Pretty), Icon-name, chassis and IDs.
+hostnamectl --static            # returns the static-hostname of your system.
+hostnamectl --pretty            # returns the pretty-hostname of your system.
+uname -r                        # returns the Kernel version, "Generic" means Desktop edition otherwise "Server" for server edition.
+uname -a                        # for more details.
+hostname                        # check the "Static-hostname", the "Pretty-hostname"="ComputerName" in the GUI mode. 
+cat /etc/hostname               # returns static-hostname.
+cat /etc/machine-info           # returns the pretty-hostname, the "machine-info" file is created after setting the hostname from the GUI.
+
+sudo hostnamectl set-hostname <TheNewHostName>         # set the static-hostname.
+
+## to have two different hostnames (static-hostname & Pretty-hostname),set the static hostname after setting the hostname from the GUI,
+## two methods to change the deviceName/ComputerName from the GUI.
+   GUI > Settings > Sharing > ComputerName.
+   GUI > Settings > About > DeviceName.      ##
+
+--------------------------------------------------------
+$ hostnamectl
+   Static hostname: bananagap
+   Pretty hostname: BananaGap
+         Icon name: computer-laptop
+           Chassis: laptop
+        Machine ID: d34d11fb687d4784be6b02c3db8c15f8
+           Boot ID: 65bce81f0b0741d68df13d3cc5f177f2
+  Operating System: Ubuntu 20.04.2 LTS
+            Kernel: Linux 5.8.0-43-generic
+      Architecture: x86-64
+$ 
+--------------------------------------------------------
+
+
+Sources:
+--------
+https://www.58bits.com/blog/2020/02/28/how-create-truly-portable-ubuntu-installation-external-usb-hdd-or-ssd
+
+https://askubuntu.com/questions/1217832/how-to-create-a-full-install-of-ubuntu-20-04-to-usb-device-step-by-step
+
+https://itectec.com/ubuntu/ubuntu-how-to-create-a-full-install-of-ubuntu-19-10-to-usb-device-step-by-step/
+
+https://www.dionysopoulos.me/making-a-portable-full-installation-of-ubuntu-on-a-usb-hdd.html
+
+https://gparted.org/display-doc.php?name=help-manual&lang=C#gparted-fix-grub-boot-problem
+
+https://askubuntu.com/questions/1332371/creating-a-pc-boot-able-ubuntu-installation/1332619#1332619
+
+#(1)# https://ubuntu.com/tutorials/create-a-usb-stick-on-windows#1-overview  (Create a bootable USB stick on Windows)
+
+
+## GParted: is the GNOME Partition Editor for creating, reorganizing, and deleting disk partitions. GParted enables you to change the partition organization while preserving the partition    contents. ##
+
+## Creating an ISO image from a physical disc or from a set of files is very easy to do through the use of a CD burning application, such as the freely available "InfraRecorder" or    "CDBurnerXP". ##
+
+http://infrarecorder.org/
+https://cdburnerxp.se/
+http://www.iometer.org/
+
+
+########################################################
+# Rufus bootable USB creation tool for Windows & Linux #
+########################################################
+## (Rufus) is a GPL3 standalone tiny digitlly signed opensource free utility that helps format and create bootable USB flash drives, such as USB keys/pendrives, memory sticks, etc.
+   and it is recommended by Ubuntu.
+
+# Rufus is missing two syslinux files (idlinux.sys & idlinux.bss) download them from the link below:
+
+https://silentdragon.com/download/Rufus/rufus_files/syslinux-6.03/
+https://www.youtube.com/watch?v=URBPzlU13Ls
+https://www.linuxuprising.com/2019/08/rufus-creating-persistent-storage-live.html#:~:text=Starting%20with%20Rufus%20version%203.7%2C%20the%20application%20has,Live%20ISOs%20created%20after%201st%20of%20August%2C%202019.
+
+
+# if you are using a USB disk (HDD or SSD) make sure to enable Disk listing, as it is not enable by default.
+
+@@@ USB with ExFat filesystem format is detected however not supported as the target filesystem for the bootable USB (only FAT32 & NTFS). @@@
+
+https://rufus.ie/en/
+https://pete.akeo.ie/
+
+git clone git://github.com/pbatard/rufus                                                 #
+
+
+It can be especially useful for cases where:
+you need to create USB installation media from bootable ISOs (Windows, Linux, UEFI, etc.).
+you need to work on a system that doesn't have an OS installed.
+you need to flash a BIOS or other firmware from DOS.
+you want to run a low-level utility.
+
+
+What is persistent partition:
+-----------------------------
+https://searchstorage.techtarget.com/definition/Persistent-storage
+https://usbubuntu.wordpress.com/make-it-persistent/
+
+Persistent storage is any data storage device that retains data after power to that device is shut off. It is also sometimes referred to as non-volatile storage. Magnetic media, such as hard disk drives and tape are common types of persistent storage, as are the various forms of optical media such as DVD. Persistent storage systems can be in the form of file, block or object storage.
+
+For the most part, storage persistence is a given, the very basic requirement of any storage system, whether it refers to a single drive, a shared networked storage system or a cloud storage service. Because persistence is assumed, it is rare that it is even mentioned among the technical specifications for storage devices and systems.
+
+Persistent storage and containerization
+There is, however, one exception related to recent developments in virtualized computing that has helped raise storage persistence as an issue. In recent years, containerization has become a popular way to bundle applications with their operating systems into discreet, transportable modules that be created and destroyed as often as needed. But containers initially didn’t support persistent storage which meant that the data created with a containerized app would disappear when the app finished its work and the container was destroyed.
+
+Recently, however, a number of software and storage vendors have developed methods to retain the data created by container applications and maintain it in familiar storage volumes. Storage volumes are usually associated with stateful applications such as databases that remain available even if the application is shut down or finishes its processing. These advances in storage for containers solve the problem of retaining the more ephemeral storage volumes that live and die with the stateless apps that are run from containers.
+
+
+#########################
+# Multi-Writer utility  #
+#########################
+sudo apt install gnome-multi-writer
+
+
+#############################
+# UNetbootin a GUI utility  #
+#############################
+wget unetbootin.sourceforge.net/unetbootin-linux-latest
+chmod +x ./unetbootin-linux-*                               # ??? may not be necessary ???
+sudo apt-get install p7zip-full
+sudo ./unetbootin-linux-*                                   # ???? Not working ????
+
+
+#######################################
+# Startup-Disk-Creator a GUI utility  #
+#######################################
+sudo apt install usb-creator-gtk
+
+
+###################################
+# USB-Image-Writer a GUI utility  #
+###################################
+
+
+
+###################################
+# UUByte-LiteBoot a GUI utility   #
+###################################
+
+
+
+###############################
+# dus command a GUI utility   #
+###############################
+## run dus GUI and select the Restore Persistent-live Home and follow the instructions.
+
+
+####################################################
+# Mkusb a GUI bootable USB creation tool for Linux #
+####################################################
+## mkusb tool v12.4.3 or later (includes mkusb-plug v2.5.5 or later, that supports "persistent partition"):
+
+# mkusb can create persistent live drives that work in both UEFI and BIOS mode. The persistence storage partition created by mkusb uses casper-rw,
+  so it can have a size of more than 4 GB, unlike some other similar tools.
+# This tool can not only create persistent storage live USB drives, but also regular bootable live USBs of Linux distributions, wipe a device, and more.
+  The only downside of mkusb is its user interface, which uses Zenity and can be a bit confusing, but other than that the application works great.
+
+https://help.ubuntu.com/community/mkusb
+https://help.ubuntu.com/community/mkusb/plug
+https://phillw.net/isos/linux-tools/mkusb/
+https://ubuntuforums.org/showthread.php?t=1958073
+https://www.linuxuprising.com/2019/03/create-persistent-storage-live-usb-with.html#:~:text=The%20persistence%20storage%20partition%20created%20by%20mkusb%20uses,of%20Linux%20distributions%2C%20wipe%20a%20device%2C%20and%20more.
+
+
+sudo apt install ntfs-3g                  # support for NTFS & ExFat filesystem format.
+sudo apt install zenity                   # Zenity is command line GUI creator, that is pre-installed on most versions of Linux, including Raspberry PI’s. it is also available for MacOS and                                             Windows.
+
+sudo add-apt-repository ppa:mkusb/ppa     #
+sudo apt install mkusb                    # 
+sudo apt install usb-pack-efi             # for persistent live drives that work in UEFI and BIOS mode with 32-bit iso files.
+
+mkusb-plug -h                             # check the supported OS's, distro's, .img & .iso images. 
+
+--------------------------------------------------------------------
+$ mkusb-plug -h
+ Tool to create boot drive, typically a live USB drive
+ Usage:    mkusb-plug [source file]
+ Examples:
+           mkusb-plug linux.iso           # make live drive
+           mkusb-plug linux.img           # clone image file
+           mkusb-plug ubuntu-19.10+.iso   # make persistent live
+           mkusb-plug debian-10+.iso      # make persistent live
+           mkusb-plug -v                  # version
+           mkusb-plug -h                  # help
+$
+--------------------------------------------------------------------
+
+
+##  With Ubuntu-20.04-LTS_Focal-Fossa, the default label of the partition for persistence is changed from casper-rw to writable.
+    This is implemented in mkusb-plug version 2.5.5, (which is bundled with mkusb version 12.4.3 in the PPA).
+
+## Where can mkusb-plug work?
+
+ # mkusb-plug needs a graphical user interface (desktop environment or window manager).
+
+ # All features of mkusb-plug work in Ubuntu 18.04.x LTS, Debian 10 and newer versions.
+
+ # In Ubuntu 16.04.x LTS the tool 'fdisk' is packaged in util-linux, while it is in an own package in 18.04 and newer versions.
+   For this reason the PPA is configured so that you cannot install mkusb-plug from PPA. You can install mkusb-plug version 2.5.0 and newer versions from the tarball and use it.
+
+ # mkusb-plug does not work in Ubuntu 15.10 and older versions. Use mkusb-dus (or mkusb-bas if it is a very old version).
+   Cloning works in all linux distros with a fairly new version of Linux with for example 'lsblk' and a modern version of 'dd'.
+   It means that you can create standard live-only boot drives from hybrid iso files. But the installer in the tarball is using apt to install some standard linux programs,
+   that mkusb-plug depends on, and in linux distros that use other tools (than apt), you have to install those programs manually.
+
+
+## mkusb-plug - plug-in to identify target:
+
+ # mkusb-plug is a wrapper shellscript for the plug-in method using
+
+ # xorriso-dd-target to indentify the correct target device, which is a very safe way to identify the target device,
+
+ # and creates input for mkusb-sedd 'sed and dd', which is developed from mkusb-minp. mkusb-sedd has better monitoring of the progress and there are several minor improvements and bugfixes.    mkusb-sedd uses zenity when available, but it can also work as a stand-alone tool in text mode (but mkusb-plug needs graphics mode and zenity).
+
+ # and creates input for mkusb-tow 'TO Windows', which is developed from iso2usb/diy/windows-installer-for-big-files, mkusb-tow can manage current Windows 10 iso files with a file    'install.wim', that exceeds 4 GiB. mkusb-tow uses zenity when available, but it can also work as a stand-alone tool in text mode (but mkusb-plug needs graphics mode and zenity).
+
+ # watch-flush helps watching the progress, when the iso file is flashed via sed or xzcat or extracted via rsync to the target device.
+
+## What can mkusb-plug do?
+
+ # clone from a hybrid iso file to a standard live (live-only) boot drive in a removable drive.
+
+ # clone from a general image file (for example an image of a Raspberry Pi installed system).
+
+ # create live drives with a usbdata partition for storage with all linux distros that provide hybrid iso files.
+
+ # create a persistent live drive with Ubuntu-19.10 or Debian-live-10 or later.
+
+ # and newer versions of Ubuntu and Ubuntu family flavours as well as Debian and some but not all linux distros created from them create a 'nopersistent' live drive,
+   where no logs are saved past shutdown/reboot .
+
+ # create an installer drive for Windows implemented in version 2.6.0.
+
+
+##################################################
+# dd command for bootable USB creation on Linux  #
+##################################################
+
+@@@ WARNING:
+The dd command is a very powerful command, such that if you are not careful you can wipe out all data on your computer or other devices very easily. Please read and follow all commands in this tutorial carefully. @@@
+
+## Even if the USB device is not mounted after formatting it the lsblk command will still list all block devices on the system, including the USB device. pipe the output to grep so you can cut out the noise of the “loop” devices and just see anything that matches a /dev/sdX device. ##
+
+## Ubuntu should have automatically mounted the USB device after dd was finished. You can check to see if it’s mounted with the df command. ##
+
+## Since Ubuntu creates a “snap partition” for every Snap application installed, filter out that noise by piping to grep with a negative (-v) case insensitive (-i) search for snap. ##
+
+lsblk | grep -i sd                                                                                         #
+
+sudo dd bs=4M if=~/download/ubuntu-20.04.2.0-desktop-amd64.iso of=/dev/sdb status=progress oflag=sync      #  $$$ Don't use, unless you know what UR doing $$$
+
+df -h | grep -i -v snap                                                                                    #
+
+
+Breakdown of the above dd command:
+----------------------------------
+bs=4M: Specify that a 4 MB block size should be used
+if=ubuntu-18.04.2-desktop-amd64.iso: Input file we want to copy
+of=/dev/sdb: Output file (device) that we want to write to
+status=progress: Show the progress of the dd command
+oflag=sync: Sync after each output block. This can slow down our write time to our device, but it ensures that all data gets effectively “synced” to our USB device as it’s being written.
+
+
+## You may omit disabling the hard drive in BIOS boot if after partitioning you choose to install grub to the root of the USB drive you are installing Ubuntu to, (ie    sdx not sdx1). Be cautious, many people have overwritten the HDD MBR as default location for boot loader is sda, any items in the internal drive's grub will be    added to the USB's grub. You may do an update-grub later. If you leave the HDD plugged in with UEFI install, fstab may use the HDD's UUID for /boot/efi. In this    case # or delete the /boot/efi.UUID line in fstab. ##
+
+
+#############################################
+# Activate the Wifi adapter on Ubuntu 20.x  #
+#############################################
+
+## The default netplan configuration files in Ubuntu Core leave management of networking devices to networkd. But, when network-manager is installed,
+   it creates new netplan configuration files, setting itself as the default network renderer and taking control of all devices.
+
+   It is possible to control this behavior with the defaultrenderer snap option. It is set by default to true , but if we set it to false ,
+   network-manager reverts the netplan configuration and networkd takes control of the devices again. Note however that networkd will take control only of devices explicitly configured
+   by netplan configuration files, which is usually only ethernet or wifi devices. To do that: ##
+
+sudo snap install network-manager                      # install linux Network-Manager GUI utility.
+snap set network-manager defaultrenderer=false         # handover network management back to the default built-in Netplan-networkd. 
+
+# All necessary plugs and slots will be automatically connected within the installation process. You can verify this with:
+
+------------------------------------------------------------
+$ snap connections
+Interface       Plug                Slot             Notes
+lxd-support     lxd:lxd-support     :lxd-support     -
+network         lxd:network         :network         -
+network-bind    lxd:network-bind    :network-bind    -
+system-observe  lxd:system-observe  :system-observe  -
+$
+-----------------------------------------------------------
+
+sudo systemctl status ufw                              # ubuntu firewall
+sudo systemctl enable ufw
+sudo systemctl start ufw
+sudo ufw enable
+sudo ufw status
+sudo ufw allow 80/tcp
+sudo ufw allow https
+sudo ufw allow from IP
+sudo ufw deny IP
+sudo ufw deafult deny incoming
+
+sudo apt install gufw                                   # GUI for ubuntu built-in firewall.
+sudo apt install golang-github-vmware-govmomi-dev      # to enable the VMWare "networks" command.
+
+snap connections                                       #
+lshw -C network                                        # show only the network adapters and status.
+lsusb                                                  # show all the HW devices connected to the system USB bus.
+lspci                                                  # show all the HW devices connected to the system PCIe bus.
+tail -f /var/log/messages                              # for PCMCIA wifi adapters run this command then connect the adapter to be detected.
+
+nmcli dev wifi                                                                      # list available Wifi hotspots to connect to.
+nmcli dev wifi connect [essid_name]  password  [insert your password]               # 
+
+sudo cp /lib/firmware/rtlwifi/rtl8822befw.bin /lib/firmware/rtw88/                  # copy the RealTek wifi driver to that folder.
+sudo mv /lib/firmware/rtw88/rtl8822befw.bin /lib/firmware/rtw88/rtw8822b_fw.bin     # rename the driver file to be loaded after restart.
+
+pv                                               # to monitor a running activity like disk format, disk encryption, running script, etc. . 
+rfkill                                           # show RF devices in the system.
+lspci -knn                                       # shows more details.
+lspci -knn | grep Net -A3; rfkill list           # 
+
+sudo nmcli networking off                        # Turn the network adapter off and then on instead of restarting the system.
+sudo nmcli networking on                         #
+
+iwconfig                                         # display the wireless interfaces on your system and check their status
+iw dev                                           # to list wireless interfaces only.
+iw dev <interface_name> link                     # check whether the interface is connected to any wireless device.
+sudo iwlist <wifi_adapter> scan | grep -i ESSID  # search/scan for available wifi hotspot to connect to.
+
+nano /etc/netplan/01-network-manager-all.yaml    # this where you can manually configure your network interfaces.
+sudo netplan generate                            #
+sudo netplan apply                               #
+reboot                                           #
+
+## If NetworkManager is enabled it will takeover this file "/etc/netplan/01-network-manager-all.yaml" with the below input:
+
+--------------------------------------------------------
+# Let NetworkManager manage all devices on this system
+network:
+  version: 2
+  renderer: NetworkManager
+--------------------------------------------------------
+
+---------------------
+Manual configuration:
+-----------------------------------------------------------
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    en01:
+      dhcp4: true
+      dhcp6: true
+      optional: true
+  wifis:
+    wlp6s0:
+      dhcp4: true
+      dhcp6: true
+      access-points:
+        "YourWifiNetworkName":
+          password: "WifiNetworkPassword"
+--------------------------------------------------------##
+
+---------------------------------------------------------------------------------------------
+$ sudo lshw -C network
+  *-usb                     
+       description: Wireless interface
+       product: 802.11 bg WLAN
+       vendor: Ralink
+       physical id: 1
+       bus info: usb@2:1.1
+       logical name: wlx7844767a910a
+       version: 0.01
+       serial: 78:44:76:7a:91:0a
+       capabilities: usb-2.00 ethernet physical wireless
+       configuration: broadcast=yes driver=rt73usb driverversion=5.8.0-43-generic firmware=1.7 ip=192.168.1.148 link=yes maxpower=300mA multicast=yes speed=480Mbit/s wireless=IEEE 802.11
+  
+  *-network UNCLAIMED
+       description: Network controller
+       product: BCM43142 802.11b/g/n
+       vendor: Broadcom Inc. and subsidiaries
+       physical id: 0
+       bus info: pci@0000:08:00.0
+       version: 01
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi pciexpress cap_list
+       configuration: latency=0
+       resources: memory:b5500000-b5507fff
+       
+  *-network
+       description: Ethernet interface
+       product: RTL810xE PCI Express Fast Ethernet controller
+       vendor: Realtek Semiconductor Co., Ltd.
+       physical id: 0
+       bus info: pci@0000:09:00.0
+       logical name: eno1
+       version: 08
+       serial: 8c:dc:d4:70:e8:6c
+       capacity: 100Mbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi pciexpress msix vpd bus_master cap_list ethernet physical tp mii 10bt 10bt-fd 100bt 100bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=r8169 driverversion=5.8.0-43-generic firmware=rtl8106e-2_0.0.1 04/23/13 latency=0 link=no multicast=yes port=MII
+       resources: irq:19 ioport:4000(size=256) memory:b5404000-b5404fff memory:b5400000-b5403fff
+  *-network DISABLED
+       description: Ethernet interface
+       physical id: 3
+       logical name: mpqemubr0-dummy
+       serial: 52:54:00:c2:fc:17
+       capabilities: ethernet physical
+       configuration: broadcast=yes driver=dummy driverversion=5.8.0-43-generic
+$ 
+--------------------------------------------------------------------------------------------------
+$ sudo iwlist wlx7844767a910a scan | grep -i ESSID
+                    ESSID:"KOKASF"
+                    ESSID:"\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+                    ESSID:"SKY56FSA"
+                    ESSID:"DIRECT-XODESKTOP-UTM93U1msCE"
+                    ESSID:"SKYBINLH"
+                    ESSID:"BTWi-fi"
+                    ESSID:"SKY56FSA"
+                    ESSID:"BTWi-fi"
+                    ESSID:"SKYBINLH"
+                    ESSID:"SKY56FSA"
+$ 
+--------------------------------------------------------------------------
+
+from pwsh:
+----------
+
+netstat                                  # list the current used ports (real-time).
+netstat -an                              # lists the available network ports and the process, application or service occupying it.  
+netstat -aon                             # this will in addtion shows the Process-ID (PID). 
+
+## $$WARNING$$ tools and softwares from Nirsoft can be triggered as HackTools and may containe Trojans & Malwares due to its nature and use it on your own responsibility in an isolated                environment.
+## you can downlaod and use "Nirsoft CurrPorts" to View What is Listening on a Port, https://www.nirsoft.net/  ##
+
+
+
+
+############################################
+# Install/Upgrade & Manage System Drivers  #
+############################################
+
+## FFmpeg is a free and open-source collection of tools for handling multimedia files. It contains a set of shared audio and video libraries such as libavcodec, libavformat, and libavutil.    With FFmpeg, you can convert between various video and audio formats, set sample rates, capture streaming audio/video, and resize videos. ##
+
+sudo apt install ffmpeg                                          # this will install the FFMPEG Audio & Video codec managaement package which includes the following three                                                                                       libraries: (libavcodec, libavformat, libavutil).
+
+sudo apt install wireless-tools                                  #
+sudo apt install ubuntu-drivers-common                           # enable the "ubuntu-drivers" command.
+ubuntu-drivers devices                                           # 
+
+sudo ubuntu-drivers autoinstall                                  # this will install the recommended default driver for your distro.
+ 
+apt search nvidia-driver
+sudo apt install xserver-xorg-video-nvidia-440                   # install a specific driver.
+
+dpkg -l | grep -i nvidia                                         # check the installed nvidia packages.
+sudo apt remove --purge '^nvidia-.*'                             # remove & purge the nvidia driver, data & settings. 
+sudo apt install ubuntu-desktop                                  # in case removing the nvidia driver stops the desktop mode.
+sudo add-apt-repository --remove ppa:<ppa-repository-name>/ppa   # remove a PPA repository source.
+
+
+#########################################################
+# WSL2 "Ext4.VHDX" disk/image cleanup & optimisation    #
+#########################################################
+
+from pwsh:
+----------
+wsl --shutdown
+Get-AppxPackage -Name "Ubuntu-20.4" | Select <PackageFamilyName>              # for example CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc
+
+optimize-vhd -Path D:\wsl -Mode full 
+
+# optimize-vhd command does not exist on Windows Home Edition only Pro & Enteprise instead follow the below procedure to get the same results:
+                                         
+diskpart
+select vdisk file="D:\WSL\ext4.vhdx"
+attach vdisk readonly
+compact vdisk
+detach vdisk
+exit
+
+###############################################################
+# Windows10 repaire upgrade (No data, app or setting loss)    #
+###############################################################
+## https://www.catalog.update.microsoft.com/home.aspx ##
+## https://www.tenforums.com/tutorials/16397-repair-install-windows-10-place-upgrade.html ##
+## https://www.tenforums.com/windows-10-news/168239-kb4586853-cu-windows-10-v2004-build-19041-662-v20h2-19042-662-a.html ##
+@@@ WARNINGS @@@
+## Make sure your Windows build is at or higher than, Windows-10-version-20H2-build-19042.662 with (KB4586853) installed, to be able to do a repair install and keep everything. ##
+## Disable or uninstall any 3rd party AV or security program you have installed first to prevent it from interfering with the upgrade to Windows 10. You can enable or reinstall it after    Windows 10 has finished installing. ##
+## if Windows is encrypted by BitLocker, then you will need to either suspend or turn off BitLocker for the Windows drive before doing a repair install. Once installation has finished, you     can resume or turn on BitLocker again. ##
+## Before you get started doing a repair install of Windows 10, be sure that you also temporarily disable Secure Boot in your UEFI firmware settings. Once installation has finished, you can    enable Secure Boot again if you like. ##
+## Do not use the Media Creation Tool to do a repair install with if you have an older build of Windows 10 installed and wish to retain it since the Media Creation Tool will not include    support for older builds. You will be upgraded to the latest build provided by the Media Creation Tool. ##
+## Some users are having the repair install fail when using an USB in Windows 10 version 1903. If this happens to you, you can use an ISO instead. ##
+
+## Do the step below depending on what you are using to do a repair install of Windows 10 with.
+
+a): To do a repair install of Windows 10 with an ISO file (Recommended)
+or
+b): To do a repair install of Windows 10 with USB installation media
+or
+c): To do a repair install of Windows 10 with Media Creation Tool.
+# mount the ISO image, the run the setup.exe,
+# discard the need for downloading drivers and update and uncheck the Windows improvment feedback program,
+# select the option to keep all your data, apps and setting.
+# start the repair update.
+
+
+##############################################
+# Replace python2.7 with python3.8           #
+##############################################
+
+whereis python3.8                                                           # 
+sudo apt install python-is-python3                                          # this package will move your system dependancy from python2.7 to python3.8. 
+sudo apt build-dep python-is-python3                                        # 
+
+
+## this will hold python2.7 and prevent it from becoming a dependency for any other application. ##
+
+sudo apt-mark hold python2 python2-minimal python2.7 python2.7-minimal libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib    #
+
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10                                                        #
+sudo update-alternatives --force --install /usr/bin/python python /usr/bin/python3 10                                                #
+sudo update-alternatives --config python                                                                                             #
+
+cd /usr/lib/python3.8                                                                                                                # (no configure file).
+sudo ./configure ––enable–optimizations                                                                                              # 
+
+pip install python-gnutls                                                   # (Not supported) anymore (get the new python3 version).
+
+-------------------------------------------------------------------------------------------------------------------------------------
+$ sudo apt-mark hold python2 python2-minimal python2.7 python2.7-minimal libpython2-stdlib libpython2.7-minimal libpython2.7-stdlib
+python2 set on hold.
+python2-minimal set on hold.
+python2.7 set on hold.
+python2.7-minimal set on hold.
+libpython2-stdlib set on hold.
+libpython2.7-minimal set on hold.
+libpython2.7-stdlib set on hold.
+$
+
+$ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+update-alternatives: using /usr/bin/python3 to provide /usr/bin/python (python) in auto mode
+$
+
+$ sudo update-alternatives --config python
+There is only one alternative in link group python (providing /usr/bin/python): /usr/bin/python3
+Nothing to configure.
+$
+
+$ whereis python3
+python3: /usr/bin/python3.8 /usr/bin/python3.9 /usr/bin/python3 /usr/bin/python3.8-config /usr/lib/python3.8 /usr/lib/python3.9 /usr/lib/python3 /etc/python3.8 /etc/python3.9 /etc/python3 /usr/local/lib/python3.8 /usr/local/lib/python3.9 /usr/include/python3.8 /usr/share/python3 /mnt/c/Programdata/anaconda3/python3.dll /mnt/c/Programdata/anaconda3/python38.dll /mnt/c/Programdata/anaconda3/python38.pdb /mnt/c/Users/ardal/AppData/Local/Programs/Python/Python36/python3.dll /mnt/c/Users/ardal/AppData/Local/Programs/Python/Python36/python36.dll /mnt/c/Users/ardal/AppData/Local/Programs/Python/Python39/python3.dll /mnt/c/Users/ardal/AppData/Local/Programs/Python/Python39/python39.dll /mnt/c/Users/ardal/AppData/Local/Programs/Python/Python39/python39.pdb /mnt/c/Users/ardal/AppData/Local/Programs/Python/Python38/python3.dll /mnt/c/Users/ardal/AppData/Local/Programs/Python/Python38/python38.dll /mnt/c/Users/ardal/AppData/Local/Microsoft/WindowsApps/python3.exe /usr/share/man/man1/python3.1.gz
+$
+
+$
+lrwxrwxrwx  1 root   root           9 Mar 13  2020  python3 -> python3.8
+lrwxrwxrwx  1 root   root          16 Mar 13  2020  python3-config -> python3.8-config
+-rwxr-xr-x  1 root   root         152 Apr  9  2020  python3-pbr
+-rwxr-xr-x  2 root   root     5203064 May  3 03:51  python3.6
+-rwxr-xr-x  2 root   root     5203064 May  3 03:51  python3.6m
+-rwxr-xr-x  2 root   root     5488624 May  3 03:44  python3.7
+-rwxr-xr-x  2 root   root     5488624 May  3 03:44  python3.7m
+-rwxr-xr-x  1 root   root     5486384 Jan 27 15:41  python3.8
+lrwxrwxrwx  1 root   root          33 Jan 27 15:41  python3.8-config -> x86_64-linux-gnu-python3.8-config
+-rwxr-xr-x  1 root   root     5389488 May  5 03:20  python3.9
+lrwxrwxrwx  1 root   root          10 Mar 13  2020  pyvenv -> pyvenv-3.8
+$
+--------------------------------------------------------------------------------------------------------------------------------------
+
+######################################################################################################
+# Fixing Python-setuptools & Python-pkg-resources wrong library/python version installation erros    #
+######################################################################################################
+@@@@ $$$$ CAUTION $$$$ the PPA repository below installs an old version of "python-pkg-resources" and scripts which leads to "Python-setuptools" setup failure and starts a domino effect          that dystroies the Python3 & pip on your environment. to resolve first remove the bad PPA repository then try to remove the old packages and restore the latest available from your           distros offical repository. @@@@ 
+
+## https://towardsdatascience.com/building-python-from-source-on-ubuntu-20-04-2ed29eec152b ##
+## https://www.python.org/ftp/python/ ##
+
+sudo add-apt-repository --remove ppa:nilarimogard/webupd8 
+
+sudo apt reinstall Python-setuptools
+sudo apt install Python3-setuptools
+sudo apt install --reinstall python-pkg-resources
+sudo apt install --reinstall python3-pkg-resources 
+sudo apt-mark hold python-gi cython python-pytest gyp matplotlib 3.4.2
+
+python -m pip install --upgrade
+
+sudo pip install --upgrade --pre -f <online-repository-URL> <packageName>
+
+sudo dpkg -r --force-depends python-pkg-resources              # (important step to root out the faulty stuck packages that cant be installed or uninstalled).
+sudo dpkg --force-depends --configure -a                       # (not required)
+
+cd /var/lib/dpkg/info                                          # the following three steps are the problem solver then setup pyenv.
+
+sudo rm /var/lib/dpkg/info/<FaultyPackageName>*
+sudo dpkg --configure -D 777 <FaultyPackageName>
+sudo apt -f install
+
+sudo sed -i 's/2.7/3.8/g' <FaultyPackageName>.list            # (Not required)
+
+--------------------------------------------------------------#
+$ pipenv
+Usage: pipenv [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --where          Output project home information.
+  --venv           Output virtualenv information.
+  --py             Output Python interpreter information.
+  --envs           Output Environment Variable options.
+  --rm             Remove the virtualenv.
+  --bare           Minimal output.
+  --completion     Output completion (to be eval'd).
+  --man            Display manpage.
+  --three / --two  Use Python 3/2 when creating virtualenv.
+  --python TEXT    Specify which version of Python virtualenv should use.
+  --site-packages  Enable site-packages for the virtualenv.
+  --version        Show the version and exit.
+  -h, --help       Show this message and exit.
+
+
+Usage Examples:
+   Create a new project using Python 3.6, specifically:
+   $ pipenv --python 3.6
+
+   Install all dependencies for a project (including dev):
+   $ pipenv install --dev
+
+   Create a lockfile containing pre-releases:
+   $ pipenv lock --pre
+
+   Show a graph of your installed dependencies:
+   $ pipenv graph
+
+   Check your installed dependencies for security vulnerabilities:
+   $ pipenv check
+
+   Install a local setup.py into your virtual environment/Pipfile:
+   $ pipenv install -e .
+
+   Use a lower-level pip command:
+   $ pipenv run pip freeze
+
+Commands:
+  check      Checks for security vulnerabilities and against PEP 508 markers
+             provided in Pipfile.
+  clean      Uninstalls all packages not specified in Pipfile.lock.
+  graph      Displays currently–installed dependency graph information.
+  install    Installs provided packages and adds them to Pipfile, or (if none
+             is given), installs all packages.
+  lock       Generates Pipfile.lock.
+  open       View a given module in your editor.
+  run        Spawns a command installed into the virtualenv.
+  shell      Spawns a shell within the virtualenv.
+  sync       Installs all packages specified in Pipfile.lock.
+  uninstall  Un-installs a provided package and removes it from Pipfile.
+  update     Runs lock, then sync.
+$
+-----------------------------------------------------------------------#
+
+
+########################################################################
+# Setup (pyenv) Python Global Environment, (PYTHONHOME & PYTHONPATH)   #
+########################################################################
+## (pyenv) Python-Environment setup: make sure system is first choice in global configuration: "pyenv global system" or set the python version for the current shell with
+   "pyenv shell system". If you use global you only have set it once. ##
+## https://askubuntu.com/questions/1259914/playonlinux-not-working-with-on-wxpython-4-1-0-importerror-no-module-named-wx ##
+
+git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+
+$ pyenv init
+
+# (The below instructions are intended for common
+# shell setups. See the README for more guidance
+# if they don't apply and/or don't work for you.)
+
+# Add pyenv executable to PATH and
+# enable shims by adding the following
+# to ~/.profile:
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+
+# If your ~/.profile sources ~/.bashrc,
+# the lines need to be inserted before the part
+# that does that. See the README for another option.
+
+# If you have ~/.bash_profile, make sure that it
+# also executes the above lines -- e.g. by
+# copying them there or by sourcing ~/.profile
+
+# Load pyenv into the shell by adding
+# the following to ~/.bashrc:
+
+eval "$(pyenv init -)"
+
+# Make sure to restart your entire logon session
+# for changes to profile files to take effect.
+$
+
+$ pyenv --version
+pyenv 2.0.1-5-gbbcecc75
+$
+
+$ pyenv local system              # (Dont use this).
+$ pyenv shell system              # set the pyenv on the user level, one user.
+Or
+$ pyenv global system             # (recommended) set the pyenv on the system level all users.
+
+Other commands & settings:
+--------------------------
+python3 -m venv env
+unset PYTHONHOME
+unset PYTHONPATH
+pipenv shell
+pycompile
+pyclean
+
+/usr/share/playonlinux/bash/find_python
+/usr/share/playonlinux/python/check_python.py
+playonlinux                                        # is based on Python 2.7
+python-wxgtk3.0
+python-wxversion
+
+$ cat ~/.bash_profile
+------------------------------------
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+source ~/.bashrc
+source ~/.xsessionrc
+#source ~/.profile
+export PATH="$PATH:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.dotnet/dotnet:/snap/bin:/usr/bin/snap:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/python3/dist-p>echo "PYTHONHOME=$PYENV_ROOT"
+eval $(ssh-agent)
+-----------------------------------
+
+update-alternatives --install /usr/lib/wx/python/wx.pth  wx.pth /usr/lib/wx/python/wx3.0.pth
+
+
+--------------------------------------------------
+ (pyenv) & Python version related issues & Errors:
+--------------------------------------------------------------------------------------------------------
+python-setuptools python-pkg-resources /var/cache/apt/archives/python-pkg-resources_44.0.0-2_all.deb
+
+$ playonlinux
+Looking for python... 3.8.5 - skipped
+Looking for python2.7... 2.7.9 - Traceback (most recent call last):
+  File "/usr/share/playonlinux/python/check_python.py", line 1, in <module>
+    import os, wxversion
+ImportError: No module named wxversion
+failed tests
+Looking for python2.6...
+Looking for python2...
+Please install python before trying to run this program
+$
+
+$ whereis python2.7
+python2: /usr/bin/python2 /usr/bin/python2.7 /usr/lib/python2.7 /etc/python2.7 /usr/local/bin/python2.7-config /usr/local/bin/python2 /usr/local/bin/python2.7 /usr/local/lib/python2.7 /usr/share/man/man1/python2.1.gz
+$
+
+$ pipenv shell
+Spawning environment shell (/bin/bash). Use 'exit' to leave.
+. /home/twrcha/.local/share/virtualenvs/twrcha-DekPzk4L/bin/activate
+$ . /home/twrcha/.local/share/virtualenvs/twrcha-DekPzk4L/bin/activate
+(twrcha-DekPzk4L) twrcha@PineGap:~$
+
+$ sudo dpkg --configure python2.7
+Setting up python2.7 (2.7.18-1~20.04.1) ...
+Could not find platform independent libraries <prefix>
+Consider setting $PYTHONHOME to <prefix>[:<exec_prefix>]
+/usr/bin/python2.7: can't open file '/usr/lib/python2.7/py_compile.py': [Errno 2] No such file or directory
+dpkg: error processing package python2.7 (--configure):
+ installed python2.7 package post-installation script subprocess returned error exit status 2
+Errors were encountered while processing:
+ python2.7
+$
+
+$ sudo apt reinstall python-pkg-resources -f
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+0 upgraded, 0 newly installed, 1 reinstalled, 0 to remove and 0 not upgraded.
+4 not fully installed or removed.
+Need to get 0 B/129 kB of archives.
+After this operation, 0 B of additional disk space will be used.
+(Reading database ... 481679 files and directories currently installed.)
+Preparing to unpack .../python-pkg-resources_44.0.0-2_all.deb ...
+Could not find platform independent libraries <prefix>
+Consider setting $PYTHONHOME to <prefix>[:<exec_prefix>]
+ImportError: No module named site
+dpkg: warning: old python-pkg-resources package pre-removal script subprocess returned error exit status 1    <---
+dpkg: trying script from the new package instead ...
+Could not find platform independent libraries <prefix>
+Consider setting $PYTHONHOME to <prefix>[:<exec_prefix>]
+ImportError: No module named site
+dpkg: error processing archive /var/cache/apt/archives/python-pkg-resources_44.0.0-2_all.deb (--unpack):
+ new python-pkg-resources package pre-removal script subprocess returned error exit status 1
+Could not find platform independent libraries <prefix>
+Consider setting $PYTHONHOME to <prefix>[:<exec_prefix>]
+ImportError: No module named site
+dpkg: error while cleaning up:
+ installed python-pkg-resources package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ /var/cache/apt/archives/python-pkg-resources_44.0.0-2_all.deb                                                 <---
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+
+$ sudo dpkg --configure python-setuptools
+Setting up python-setuptools (44.0.0-2) ...
+Could not find platform independent libraries <prefix>
+Could not find platform dependent libraries <exec_prefix>
+Consider setting $PYTHONHOME to <prefix>[:<exec_prefix>]
+ImportError: No module named site
+dpkg: error processing package python-setuptools (--configure):
+ installed python-setuptools package post-installation script subprocess returned error exit status 1
+Errors were encountered while processing:
+ python-setuptools
+$
+
+$ cd /var/lib/dpkg/info/
+$ sudo dpkg --configure -D 777 libpaper1
+D000001: ensure_diversions: new, (re)loading
+D000001: process queue pkg libpaper1:amd64 queue.len 0 progress 1, try 1
+dpkg: error processing package libpaper1:amd64 (--configure):             <---
+ package libpaper1:amd64 is already installed and configured
+
+Errors were encountered while processing:    <---
+ libpaper1:amd64
+$
+
+$ pip
+Could not find platform independent libraries <prefix>
+Could not find platform dependent libraries <exec_prefix>
+Consider setting $PYTHONHOME to <prefix>[:<exec_prefix>]
+ImportError: No module named site
+$
+
+$ pipenv shell
+Creating a virtualenv for this project…
+Using /usr/bin/python3 (3.8.5) to create virtualenv…
+⠋created virtual environment CPython3.8.5.final.0-64 in 692ms
+  creator CPython3Posix(dest=/home/twrcha/.local/share/virtualenvs/twrcha-DekPzk4L, clear=False, global=False)
+  seeder FromAppData(download=False, pip=latest, setuptools=latest, wheel=latest, pkg_resources=latest, via=copy, app_data_dir=/home/twrcha/.local/share/virtualenv/seed-app-data/v1.0.1.debian.1)
+  activators BashActivator,CShellActivator,FishActivator,PowerShellActivator,PythonActivator,XonshActivator
+
+Virtualenv location: /home/twrcha/.local/share/virtualenvs/twrcha-DekPzk4L
+Creating a Pipfile for this project…
+Spawning environment shell (/bin/bash). Use 'exit' to leave.
+. /home/twrcha/.local/share/virtualenvs/twrcha-DekPzk4L/bin/activate
+twrcha@PineGap:~$ . /home/twrcha/.local/share/virtualenvs/twrcha-DekPzk4L/bin/activate
+(twrcha-DekPzk4L) twrcha@PineGap:~$ pipenv --venv
+/home/twrcha/.local/share/virtualenvs/twrcha-DekPzk4L
+(twrcha-DekPzk4L) twrcha@PineGap:~$
+
+#if you run any python or pip commands you will get the below insted of the command syntex
+$
+Python path configuration:
+  PYTHONHOME = '/home/twrcha/.local/lib/python3.8/site-packages'
+  PYTHONPATH = '/home/twrcha/.local/lib/python3.8/site-packages:/usr/lib/python3.8/site-packages:/usr/local/lib/python3.8/dist-packages:/home/twrcha/.local/share/virtualenvs/twrcha-DekPzk4L'
+  program name = '/usr/bin/python3'
+  isolated = 0
+  environment = 1
+  user site = 1
+  import site = 1
+  sys._base_executable = '/usr/bin/python3'
+  sys.base_prefix = '/home/twrcha/.local/lib/python3.8/site-packages'
+  sys.base_exec_prefix = '/home/twrcha/.local/lib/python3.8/site-packages'
+  sys.executable = '/usr/bin/python3'
+  sys.prefix = '/home/twrcha/.local/lib/python3.8/site-packages'
+  sys.exec_prefix = '/home/twrcha/.local/lib/python3.8/site-packages'
+  sys.path = [
+    '/home/twrcha/.local/lib/python3.8/site-packages',
+    '/usr/lib/python3.8/site-packages',
+    '/usr/local/lib/python3.8/dist-packages',
+    '/home/twrcha/.local/share/virtualenvs/twrcha-DekPzk4L',
+    '/home/twrcha/.local/lib/python3.8/site-packages/lib/python38.zip',
+    '/home/twrcha/.local/lib/python3.8/site-packages/lib/python3.8',
+    '/home/twrcha/.local/lib/python3.8/site-packages/lib/python3.8/lib-dynload',
+  ]
+Fatal Python error: init_fs_encoding: failed to get the Python codec of the filesystem encoding
+Python runtime state: core initialized
+ModuleNotFoundError: No module named 'encodings'
+
+Current thread 0x00007f8e283b5740 (most recent call first):
+<no Python frame>
+$
+-------------------------------------------------------------------------------------------------------------------------------
+
+
+#################################################################
+# How to compile a new kernel version and upgrade your Ubuntu   #
+#################################################################
+# https://unix.stackexchange.com/questions/594470/wsl-2-does-not-have-lib-modules
+# https://falco.org/blog/falco-wsl2-custom-kernel/
+# https://github.com/darlinghq/darling/issues/260
+
+# (https://ostechnix.com/different-methods-upgrade-ubuntu-latest-version/)
+# (https://ostechnix.com/different-ways-to-update-linux-kernel-for-ubuntu/)
+
+## the i386 libraries are all dependent on the old and demoted python2.7. ##
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+sudo apt install libc6-dev:i386 libfreetype6-dev:i386 libfreetype6:i386 libfreetype-dev:i386 libc6:i386 libc-dev:i386 zlib1g-dev:i386 libz-dev:i386 libpng-dev:i386 libcrypt-dev:i386 linux-libc-dev:i386 libc-dev-bin:i386
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# install the below prerequisites:
+
+sudo apt install g++ gcc git make cmake clang bison flex nasm linux-headers-generic pkg-config
+
+sudo dpkg --add-architecture i386                                           # add system support for 32bit/i386 libraries to your amd64 ubuntu distro.
+sudo dpkg --print-architecture                                              # output should be "amd64".
+
+sudo apt install libc6-dev-i386-x32-cross                                   # install this library for i386 support in python3.
+sudo apt build-dep libc6-dev-i386-x32-cross                                 #
+
+sudo apt install aptitude                                                   #
+sudo apt build-dep aptitude                                                 # aptitude command is an advance apt with auto dependency solving capability.
+
+sudo apt install g++-10                                                     # 
+sudo apt build-dep g++-10                                                   # (Not working, dependency problem).
+
+sudo aptitude install gcc-10-multilib                                       #    
+sudo aptitude build-dep gcc-10-multilib                                     #
+
+
+sudo apt install linux-generic                                              # upgrade to the latest kernal libraries.
+sudo apt install linux-virtual                                              # upgrade to the latest kernel.
+
+sudo update-grub                                                            # this will update the grup config file and environment setting.
+dpkg -l | grep linux-image
+/boot/grub/grub.cfg
+/etc/default/grub
+sudo cp /etc/default/grub /etc/default/grub.bak
+grep -A100 submenu  /boot/grub/grub.cfg |grep menuentry
+uname -r
+
+sudo vim /etc/default/grub
+# by editing the grub file switch to this kernel version by setting the GRUB_DEFAULT value to the below kernel value (With Quotes):
+  menuentry_id_option "gnulinux-5.4.0-73-generic-advanced-3255683f-53a2-4fdf-91cf-b4c1041e2a62"
+
+save and exit the terminal
+sudo update-grub
+sudo reboot
+
+-----------------------------------------------------------
+$ uname -r
+5.4.72-microsoft-standard-WSL2
+$
+
+$ dpkg -l | grep linux-image
+ii  linux-image-5.4.0-72-generic         5.4.0-72.80       amd64        Signed kernel image generic
+ii  linux-image-5.4.0-73-generic         5.4.0-73.82       amd64        Signed kernel image generic
+ii  linux-image-generic                  5.4.0.73.76       amd64        Generic Linux kernel image
+ii  linux-image-virtual                  5.4.0.73.76       amd64        Virtual Linux kernel image
+$
+
+$ grep -A100 submenu  /boot/grub/grub.cfg |grep menuentry
+submenu 'Advanced options for Ubuntu' $menuentry_id_option 'gnulinux-advanced-3255683f-53a2-4fdf-91cf-b4c1041e2a62' {
+        menuentry 'Ubuntu, with Linux 5.4.0-73-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.4.0-73-generic-advanced-3255683f-53a2-4fdf-91cf-b4c1041e2a62' {
+        menuentry 'Ubuntu, with Linux 5.4.0-73-generic (recovery mode)' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.4.0-73-generic-recovery-3255683f-53a2-4fdf-91cf-b4c1041e2a62' {
+        menuentry 'Ubuntu, with Linux 5.4.0-72-generic' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.4.0-72-generic-advanced-3255683f-53a2-4fdf-91cf-b4c1041e2a62' {
+        menuentry 'Ubuntu, with Linux 5.4.0-72-generic (recovery mode)' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-5.4.0-72-generic-recovery-3255683f-53a2-4fdf-91cf-b4c1041e2a62' {
+$
+
+$ sudo update-grub
+[sudo] password for twrcha:
+Sourcing file `/etc/default/grub'
+Sourcing file `/etc/default/grub.d/50-cloudimg-settings.cfg'
+Sourcing file `/etc/default/grub.d/init-select.cfg'
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-5.4.0-73-generic
+Found initrd image: /boot/initrd.img-5.4.0-73-generic
+Found linux image: /boot/vmlinuz-5.4.0-72-generic
+Found initrd image: /boot/initrd.img-5.4.0-72-generic
+done
+$
+-----------------------------------------------------------
+
+
+##############################################################
+# Install & Configure lxd server and generate the YAML file  #
+##############################################################
+
+## Refer to the below link for lxd server container management: 
+   https://www.cyberciti.biz/faq/install-lxd-on-ubuntu-20-04-lts-using-apt/   ##
+## how to create your first lxd container:
+lxc launch images:{distro}/{version}/{arch} {container-name-here}             ##
+
+$ip link show                                                # check the network interface name that will be used by lxd.
+4: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000
+    link/ether 00:15:5d:f4:0f:75 brd ff:ff:ff:ff:ff:ff
+$
+
+$ ip address show
+4: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:15:5d:f4:0f:75 brd ff:ff:ff:ff:ff:ff
+    inet 172.30.223.122/20 brd 172.30.223.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::215:5dff:fef4:f75/64 scope link
+       valid_lft forever preferred_lft forever
+$
+
+# this step is very important to set systemd to multi-user support and disable systemd name resolution, otherwise snap services will fail after the first start:
+
+sudo snap install canonical-livepatch
+
+$ sudo snap install snap-store
+
+2021-05-14T01:49:15+01:00 INFO Waiting for conflicting change in progress: conflicting snap snap-store with task "setup-profiles"
+error: cannot perform the following tasks:
+- Run configure hook of "snap-store" snap if present (run hook "configure": cannot perform operation: mount --rbind /dev /tmp/snap.rootfs_cv1T7u//dev: No such file or directory)
+$
+
+$ cd ~/ubuntu-wsl2-systemd-script
+sudo nano  start-systemd-namespace                                 # hash the below line and add the second line.
+#SYSTEMD_EXE="/lib/systemd/systemd --unit=basic.target"            # Signle user support.
+ SYSTEMD_EXE="/lib/systemd/systemd --unit=multi-user.target"       # (Not supported on WSL2, the distro will crash at startup) Multi-user support. 
+
+bash ubuntu-wsl2-systemd-script.sh --force                         # reinstall systemd to enable the failed services "multipathd.socket" & "systemd-remount-fs.service services".
+
+
+# edit the snap config file "/etc/default/grub" and set your kernel as the default grub the save, run the update-grup to apply the new changes then reboot:  
+sudo nano /etc/default/grub
+GRUB_DEFAULT='gnulinux-5.4.0-73-generic-advanced-3255683f-53a2-4fdf-91cf-b4c1041e2a62'
+#GRUB_DEFAULT=0
+
+sudo update-grub
+sudo reboot 
+
+twrcha@PineGap:~/ubuntu-wsl2-systemd-script$ bash -c "./ubuntu-wsl2-systemd-script.sh --force"
+
+$ sudo systemctl disable systemd-resolved.service
+Removed /etc/systemd/system/multi-user.target.wants/systemd-resolved.service.
+Removed /etc/systemd/system/dbus-org.freedesktop.resolve1.service.
+$
+# save the changes and reboot
+
+sudo systemctl status ufw                                    # (Important) make sure the firewall is running.
+
+$ snap version
+snap    2.48.3+20.04
+snapd   2.48.3+20.04
+series  16
+ubuntu  20.04
+kernel  5.4.72-microsoft-standard-WSL2
+$
+
+/etc/apparmor.d/tunables/home.d/
+
+sudo apt install lxd                                         # (recommended) this will install lxd v4.x for ubuntu 20.04 focal.
+or
+sudo snap install lxd                                        # 
+
+sudo snap refresh lxd --candidate
+sudo snap refresh lxd --stable
+
+snap changes
+snap change ID
+sudo snap abort <ID>
+snap list
+
+sudo adduser <userName> lxd                                 # grant the required user access to manage the lxd server.
+# or run below for cuurent user 
+sudo adduser $USER lxd
+newgrp lxd
+id
+lxc list
+
+sudo lxd init                                               # initiate the lxd server configuration and activattion.
+
+sudo systemctl status snap.lxd.activate.service
+sudo systemctl status snap.lxd.daemon
+sudo systemctl reload snap.lxd.daemon 
+sudo snap restart lxd
+journalctl -xe
+lxc info
+
+sudo iptables -A INPUT
+sudo iptables-save
+lxc info | grep firewall:
+lxc network show eth0
+
+-------------------------------
+Other commands & manual config:
+-------------------------------
+lxc network set eth0 ipv4.nat=true
+sysctl net.ipv6.conf.all.accept_ra
+sudo iptables -P FORWARD ACCEPT
+
+# "ipv6.disable=1" add this line to the grub config file "/etc/default/grub" to enable or disbale IPv6, save and exit then load the new grup config:
+sudo update-grub
+sudo reboot 
+----------------------
+lxc.network.type=veth
+lxc.network.link=eth0
+lxc.network.name=eth0
+
+# on the host:
+pid=$(lxc-info -pHn foobar)
+ip link add name eth0 type veth peer name veth0_container
+brctl addif br0 eth0
+ip link set dev eth0_container netns $pid name veth0
+---------------------
+
+
+# create manually "lxdbr0" with lxc network, the add the interface to the default LXD profile, using lxc profile add.
+
+lxc image list images: | grep -i ubuntu
+lxc network list
+lxc storage list
+lxc profile list
+lxc profile show default
+lxc storage show default
+lxc network show eth0
+
+sudo snap stop lxd
+sudo snap start lxd
+sudo snap refresh --candidate lxd
+sudo snap remove lxd --purge
+
+## if the "apt install lxd" (v4.x) failed, remove and purge snapd the i=try to install lxd again, this will install the lxd package of snapd. 
+## ignore this error when purging snapd: dpkg: warning: while removing snapd, unable to remove directory '/snap': Device or resource busy - directory may be a mount point?
+
+--------------------------------------------------------------------------------------------------------
+$ sudo snap refresh lxd --candidate
+lxd (4.0/candidate) 4.0.6 from Canonical✓ refreshed
+$
+
+$ sudo snap refresh lxd --stable
+lxd (4.0/stable) 4.0.6 from Canonical✓ refreshed
+$
+
+$ sysctl net.ipv6.conf.all.accept_ra
+net.ipv6.conf.all.accept_ra = 2
+$
+
+$ lxc info | grep firewall
+- network_firewall_filtering
+- firewall_driver
+  firewall: nftables
+$
+
+$ lxc network show eth0
+config: {}
+description: ""
+name: eth0
+type: physical
+used_by:
+- /1.0/profiles/default
+managed: false
+status: ""
+locations: []
+$
+
+$ grep -i nft /boot/config-5.0.0-20-generic
+grep: /boot/config-5.0.0-20-generic: No such file or directory
+$
+
+$ sudo lxd init
+Would you like to use LXD clustering? (yes/no) [default=no]:
+Do you want to configure a new storage pool? (yes/no) [default=yes]:
+Name of the new storage pool [default=default]: xendisk
+Name of the storage backend to use (dir, lvm, ceph, btrfs) [default=btrfs]:
+Create a new BTRFS pool? (yes/no) [default=yes]:
+Would you like to use an existing empty block device (e.g. a disk or partition)? (yes/no) [default=no]:
+Size in GB of the new loop device (1GB minimum) [default=30GB]: 5GB
+Would you like to connect to a MAAS server? (yes/no) [default=no]:
+Would you like to create a new local network bridge? (yes/no) [default=yes]: no
+Would you like to configure LXD to use an existing bridge or host interface? (yes/no) [default=no]: yes
+Name of the existing bridge or host interface: eth0
+Would you like the LXD server to be available over the network? (yes/no) [default=no]:
+Would you like stale cached images to be updated automatically? (yes/no) [default=yes]
+Would you like a YAML "lxd init" preseed to be printed? (yes/no) [default=no]:
+$
+
+$ sudo update-grub
+Sourcing file `/etc/default/grub'
+Sourcing file `/etc/default/grub.d/50-cloudimg-settings.cfg'
+Sourcing file `/etc/default/grub.d/init-select.cfg'
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-5.4.0-73-generic
+Found initrd image: /boot/initrd.img-5.4.0-73-generic
+Found linux image: /boot/vmlinuz-5.4.0-72-generic
+Found initrd image: /boot/initrd.img-5.4.0-72-generic
+done
+$
+
+$ ps -ef
+or
+$ ps fauxww
+
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root        2162  0.0  0.0   7684  4612 pts/0    S    23:52   0:00 /bin/login -p -f        'HOSTTYPE=x86_64' 'PWD=/home/twrcha' 'TERM=xterm-256color' 'WSLENV=BASH_ENV/u' 'WSL_DISTRO_NAME=Ubuntu-20.04' 'WSL_INTEROP=/run/WSL/4414_interop'
+twrcha      2234  2.0  0.0   7164  5172 pts/0    S    23:52   0:00  \_ -bash
+twrcha      2340  0.0  0.0   7812  3304 pts/0    R+   23:52   0:00      \_ ps fauxww
+root           1  0.2  0.2 172448 13884 ?        Ss   23:46   0:00 /lib/systemd/systemd --unit=basic.target
+root          33  0.0  0.2  53296 18596 ?        S<s  23:46   0:00 /lib/systemd/systemd-journald
+root          52  0.0  0.1  22120  6856 ?        Ss   23:46   0:00 /lib/systemd/systemd-udevd
+systemd+      57  0.0  0.1  18416  6452 ?        Ss   23:46   0:00 /lib/systemd/systemd-networkd
+root         197  0.0  0.0   3640  1496 ?        Ss   23:46   0:00 snapfuse /var/lib/snapd/snaps/lxd_20326.snap /snap/lxd/20326 -o ro,nodev,allow_other,suid
+message+     219  0.1  0.0   7948  4968 ?        Ss   23:46   0:00 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+root         220  0.0  0.2 257884 18452 ?        Ssl  23:46   0:00 /usr/sbin/NetworkManager --no-daemon
+root         272  0.0  0.1  16788  7676 ?        Ss   23:46   0:00 /lib/systemd/systemd-logind
+rtkit        311  0.0  0.0 152932  3072 ?        SNsl 23:46   0:00 /usr/libexec/rtkit-daemon
+root         314  0.0  0.1 235120  9352 ?        Ssl  23:46   0:00 /usr/lib/policykit-1/polkitd --no-debug
+root         349  0.0  0.2 392804 14500 ?        Ssl  23:46   0:00 /usr/lib/udisks2/udisksd
+root         397  0.0  0.1 240028  9452 ?        Ssl  23:46   0:00 /usr/lib/upower/upowerd
+root        1235  0.0  0.2 280876 15732 ?        Ssl  23:46   0:00 /usr/lib/packagekit/packagekitd
+twrcha      2218  1.2  0.1  18476  9788 ?        Ss   23:52   0:00 /lib/systemd/systemd --user
+twrcha      2219  0.0  0.0 173716  5520 ?        S    23:52   0:00  \_ (sd-pam)
+twrcha      2228  1.4  0.2 276520 14108 ?        Ssl  23:52   0:00  \_ /usr/bin/pulseaudio --daemonize=no --log-target=journal
+twrcha      2229  2.8  0.6 1204776 41544 ?       SNsl 23:52   0:00  \_ /usr/libexec/tracker-extract
+twrcha      2230  2.0  0.3 507584 24196 ?        SNsl 23:52   0:00  \_ /usr/libexec/tracker-miner-fs
+twrcha      2233  0.8  0.0   7400  4444 ?        Ss   23:52   0:00  \_ /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+twrcha      2253  0.2  0.1 235896  7408 ?        Ssl  23:52   0:00  \_ /usr/libexec/gvfsd
+twrcha      2261  0.2  0.1 312808  6524 ?        Sl   23:52   0:00  \_ /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -f -o big_writes
+twrcha      2263  0.6  0.1 310008 10996 ?        Ssl  23:52   0:00  \_ /usr/libexec/gvfs-udisks2-volume-monitor
+twrcha      2279  0.2  0.1 232060  7912 ?        Ssl  23:52   0:00  \_ /usr/libexec/gvfs-goa-volume-monitor
+twrcha      2285  1.0  0.5 545324 36380 ?        Sl   23:52   0:00  \_ /usr/libexec/goa-daemon
+twrcha      2299  0.2  0.1 310940  8376 ?        Sl   23:52   0:00  \_ /usr/libexec/goa-identity-service
+twrcha      2305  0.2  0.1 312912  8180 ?        Ssl  23:52   0:00  \_ /usr/libexec/gvfs-afc-volume-monitor
+twrcha      2310  0.0  0.0 231840  5612 ?        Ssl  23:52   0:00  \_ /usr/libexec/gvfs-mtp-volume-monitor
+twrcha      2314  0.0  0.1 234116  8540 ?        Ssl  23:52   0:00  \_ /usr/libexec/gvfs-gphoto2-volume-monitor
+twrcha      2321  1.6  0.3 357144 21992 ?        Ssl  23:52   0:00  \_ /usr/libexec/tracker-store
+------------------------------------------------------------------------------------------------------------------
+
+
+########################################################################
+# Install Ruby IDE & HomeBrow package manager with "brew" command      #
+########################################################################
+
+sudo apt install checkinstall gitk gobjc++ pandoc fort77 openjdk-8-jdk r-base r-base-dev xorg-dev libblas-dev libcurl4-openssl-dev
+
+sudo snap install rubymine --classic                                                   # Ruby 2.7.x
+sudo apt install ruby-full                                                             #
+
+wget https://raw.githubusercontent.com/Homebrew/install/master/install.sh              # (working).
+
+## line 257 of the "install.sh" calls the "ruby.sh" which will download and install homebrew-portable-Ruby ,
+   wget https://github.com/Homebrew/brew/tree/master/Library/Homebrew/utils/ruby.sh      
+   git clone https://github.com/Homebrew/homebrew-portable-ruby.git portable-ruby     ##
+
+
+nano install.sh                                                                        # make sure the file format is (Not HTML), this script depends on Ruby-IDE-classic.
+chmod +x install.sh                                                                    # set the required file permission.
+bash install.sh                                                                        # do not sudo this line.
+
+echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bash_profile                    # add Homebrew 3.1.8 to the system $PATH.
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"                                              #
+
+brew doctor                                                                                         #
+brew update                                                                                         #
+
+brew install gcc                                                                                    # gcc-11 recommended by the brew installation.
+alias gcc=gcc-11                                                                                    # add this alias to the ~/.bash_aliases.
+
+sudo aptitude install lxd                                                                           #
+sudo snap refresh lxd                                                                               #
+
+systemctl status snap.lxd.activate.service
+systemctl enable snap.lxd.activate.service
+journalctl -xe
+
+----------------------------------------------------------------------------
+$ brew -v
+Homebrew 3.1.8
+Homebrew/homebrew-core (git revision 2649201254e; last commit 2021-05-21)
+$
+
+$ brew doctor
+Your system is ready to brew.
+$
+
+$ bash install.sh
+==> This script will install:
+/home/linuxbrew/.linuxbrew/bin/brew
+/home/linuxbrew/.linuxbrew/share/doc/homebrew
+/home/linuxbrew/.linuxbrew/share/man/man1/brew.1
+/home/linuxbrew/.linuxbrew/share/zsh/site-functions/_brew
+/home/linuxbrew/.linuxbrew/etc/bash_completion.d/brew
+/home/linuxbrew/.linuxbrew/Homebrew
+==> The following new directories will be created:
+/home/linuxbrew/.linuxbrew/bin
+/home/linuxbrew/.linuxbrew/etc
+/home/linuxbrew/.linuxbrew/include
+/home/linuxbrew/.linuxbrew/lib
+/home/linuxbrew/.linuxbrew/sbin
+/home/linuxbrew/.linuxbrew/share
+/home/linuxbrew/.linuxbrew/var
+/home/linuxbrew/.linuxbrew/opt
+/home/linuxbrew/.linuxbrew/share/zsh
+/home/linuxbrew/.linuxbrew/share/zsh/site-functions
+/home/linuxbrew/.linuxbrew/var/homebrew
+/home/linuxbrew/.linuxbrew/var/homebrew/linked
+/home/linuxbrew/.linuxbrew/Cellar
+/home/linuxbrew/.linuxbrew/Caskroom
+/home/linuxbrew/.linuxbrew/Frameworks
+$
+
+$ getconf ARG_MAX
+2097152
+$
+
+$ env | wc -c
+5589
+$
+
+$ env -i HOME=$HOME PATH=$PATH gmake ...
+env: ‘Files/WindowsApps/CanonicalGroupLimited.Ubuntu20.04onWindows_2004.2021.222.0_x64__79rhkp1fndgsc:/mnt/c/ActiveTcl/bin:/mnt/c/Program’: No such file or directory
+$
+
+$ dpkg -l | grep snap
+ii  gir1.2-snapd-1:amd64               1.58-0ubuntu0.20.04.0                                              amd64        Typelib file for libsnapd-glib1
+ii  gnome-software-plugin-snap         3.36.1-0ubuntu0.20.04.0                                            amd64        Snap support for GNOME Software
+ii  libsnapd-glib-dev:amd64            1.58-0ubuntu0.20.04.0                                              amd64        GLib snapd library (development files)
+ii  libsnapd-glib1:amd64               1.58-0ubuntu0.20.04.0                                              amd64        GLib snapd library
+ii  libsnappy-dev:amd64                1.1.8-1build1                                                      amd64        fast compression/decompression library (development files)
+ii  libsnappy1v5:amd64                 1.1.8-1build1                                                      amd64        fast compression/decompression library
+ii  snap                               2013-11-29-9                                                       amd64        location of genes from DNA sequence with hidden markov model
+ii  snapcraft                          3.0ubuntu1.1                                                       all          Transitional package - snapcraft -> snap (snapcraft)
+ii  snapd                              2.48.3+20.04                                                       amd64        Daemon and tooling that enable snap packages
+ii  lxd                                1:0.9                                                              all          Transitional package - lxd -> snap (lxd)
+
+ii  snapserver                         0.18.1-1build1                                                     amd64        Snapcast server
+$
+
+$ snap list
+Name                    Version   Rev    Tracking         Publisher   Notes
+core                    16-2.50   11081  latest/stable    canonical✓  core
+core18                            2066   latest/stable    canonical✓  broken
+gnome-3-28-1804                   145    latest/stable    canonical✓  broken
+gnome-3-34-1804                   66     latest/stable    canonical✓  broken
+gtk-common-themes                 1515   latest/stable    canonical✓  broken
+lxd                               19188  4.0/stable/…     canonical✓  broken
+rubymine                2021.1.1  227    latest/stable    jetbrains✓  classic
+snapcraft                         6466   latest/stable/…  canonical✓  broken
+snapd                             11841  latest/stable    canonical✓  broken
+wine-platform-5-stable            16     latest/stable    mmtrt       broken
+wine-platform-runtime             216    latest/stable    mmtrt       broken
+$
+
+$ sudo snap refresh lxd
+snap "lxd" has no updates available
+$
+
+$ systemctl status snap.lxd.activate.service
+● snap.lxd.activate.service - Service for snap application lxd.activate
+     Loaded: loaded (/etc/systemd/system/snap.lxd.activate.service; enabled; vendor preset: enabled)
+     Active: inactive (dead) since Thu 2021-05-13 02:29:05 BST; 56min ago                                  # cannot start the service, with no error?!
+   Main PID: 5419 (code=exited, status=0/SUCCESS)
+$
+-----------------------------------------------------------------------------------------------------
+
+
+#######################################################
+# Download, Configure, Compile, Install GCC-11.x      #
+#######################################################
+## https://gcc.gnu.org/  ##
+## The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Ada, Go, and D, as well as libraries for these languages (libstdc++,...). GCC was originally written as    the compiler for the GNU operating system. The GNU system was developed to be 100% free software, free in the sense that it respects the user's freedom. ##
+## Distribution Branches:
+   These branches are maintained by organizations distributing GCC. No changes should be made to those branches without the explicit permission of the distributing organization. Such       branches are located in the Git repository under refs/vendors/vendor/heads/, which is not fetched by default; the heads/ is omitted from the names given below.
+ # ubuntu/gcc-4_2-branch :
+   This branch follows the gcc-4_2-branch, except for gcc/java, boehm-gc, libffi, libjava and zlib, which are backported from the trunk (and from gcc-4_3-branch, once created). The branch      is used as the base for the Debian and Ubuntu gcc-4.2 source package. ##
+
+git clone git://gcc.gnu.org/git/gcc.git
+cd gcc                                                                # gcc is the default folder created by the git clone to store the downloaded source code package.
+
+# checking and customising the source code can be done at this stage,
+git branch -a
+git tag -l
+git log origin/releases/gcc-11 ^origin/master
+git worktree add ../gcc-11 releases/gcc-11
+git fetch origin
+git ls-remote
+
+
+sudo ./configure
+make
+make install
+make install-strip
+
+--------------------------------------------------------------
+$ git branch -a
+* master
+  remotes/origin/HEAD -> origin/master
+$
+
+$ git branch -a
+* master
++ releases/gcc-11                                            # this variant is created running the worktree command above.
+  remotes/origin/HEAD -> origin/master
+$
+
+$ git worktree add ../gcc-11 releases/gcc-11
+Preparing worktree (new branch 'releases/gcc-11')
+Branch 'releases/gcc-11' set up to track remote branch 'releases/gcc-11' from 'origin'.
+Updating files: 100% (107948/107948), done.
+HEAD is now at 9625dd9e58b Update gcc ja.po.
+$
+-------------------------------------------------------------
+
+
+##############################
+# Install Rstudio CLI & GUI  #
+##############################
+#(1)# (GUI) 
+    # download the Rstudio Debian .deb package from the offical site, if you can't local ubuntu-focal package download the ubuntu-18-bionic package.  
+
+wget -O ~/rstudio-1.4.1106-amd64.deb https://download1.rstudio.org/desktop/bionic/amd64/rstudio-1.4.1106-amd64.deb
+
+sudo apt install lib32gcc-s1 lib32stdc++6 libc6-i386 libclang-10-dev libclang-common-10-dev libclang-dev libobjc-9-dev libobjc4
+
+sudo gdebi rstudio-1.4.1106-amd64.deb
+
+-------------------------------------------------------------------------------------------
+$ rstudio
+qt.qpa.xcb: could not connect to display
+qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, vnc, wayland-egl, wayland, wayland-xcomposite-egl, wayland-xcomposite-glx, xcb.
+
+Aborted
+$
+-------------------------------------------------------------------------------------------
+
+
+#(2)# (CLI)
+    # install these two pre-required packages to avoide this error when you configure RStudio
+    # configure: WARNING: neither inconsolata.sty nor zi4.sty found: PDF vignettes and package manuals will not be rendered optimally
+
+sudo apt install texlive texlive-fonts-extra                                                   # 
+
+curl -L https://cran.r-project.org/src/base/R-3/R-3.6.3.tar.gz -o R-3.6.3.tar.gz               #
+tar xfz R-3.6.3.tar.gz                                                                         #
+cd R-3.6.3                                                                                     #
+sudo ./configure                                                                               #
+sudo make                                                                                      #
+sudo make install                                                                              #
+rstudio                                                                                        #
+
+----------------------------------------------------------------------------------
+R is now configured for x86_64-pc-linux-gnu
+
+  Source directory:            .
+  Installation directory:      /usr/local
+
+  C compiler:                  gcc  -g -O2
+  Fortran fixed-form compiler: gfortran -fno-optimize-sibling-calls -g -O2
+
+  Default C++ compiler:        g++ -std=gnu++11  -g -O2
+  C++98 compiler:              g++ -std=gnu++98  -g -O2
+  C++11 compiler:              g++ -std=gnu++11  -g -O2
+  C++14 compiler:              g++ -std=gnu++14  -g -O2
+  C++17 compiler:              g++ -std=gnu++17  -g -O2
+  Fortran free-form compiler:  gfortran -fno-optimize-sibling-calls -g -O2
+  Obj-C compiler:              gcc -g -O2 -fobjc-exceptions
+
+  Interfaces supported:        X11, tcltk
+  External libraries:          readline, curl
+  Additional capabilities:     PNG, JPEG, TIFF, NLS, cairo, ICU
+  Options enabled:             shared BLAS, R profiling
+
+  Capabilities skipped:
+  Options not enabled:         memory profiling
+
+  Recommended packages:        yes
+---------------------------------------------------------------------------------
+
+
+########################################################################################
+# install multiple versions of clang & c++ compiler and set the system default version #
+########################################################################################
+## Clang opensource software is a compiler front end for the C, C++, Objective-C and Objective-C++ programming languages, as well as the OpenMP, OpenCL, RenderScript, CUDA and HIP frameworks. It uses the LLVM compiler infrastructure as its back end and has been part of the LLVM release cycle since LLVM 2.6.
+It is designed to act as a drop-in replacement for the GNU Compiler Collection (GCC), supporting most of its compilation flags and unofficial language extensions. Its contributors include Apple, Microsoft, Google, ARM, Sony, Intel and AMD. ## 
+## for Ubuntu 20.04 focal, the system default clang version is 9.x. ##  
+## The Clang Compiler is an open-source compiler for the C family of programming languages. Builds on the LLVM optimizer and code generator, allowing it to provide high-quality optimization    and code generation support for many targets. ##
+## "/usr/bin/c++" is a symbol link to "/etc/alternatives/c++" which is also a symbol link to "/usr/bin/g++" so on Ubuntu c++ is g++ and g++ is g++ explicitly. ##
+## Set Clang-11 as the default C++ compiler using c++ so that build processes can still use g++ explicitly if they want to.
+
+sudo apt install clang                                                 # install the default clang, C++, G++, GCC all (version 9.3.x) ubuntu-20.04-focal distro.
+sudo apt install clang-11                                              # 
+sudo apt build-dep clang-11                                            #
+sudo aptitude install clang-11                                         # use "aptitude" command to automatically identify and resolve any dependency issues.
+sudo apt install g++-10                                                #
+sudo apt install gcc-10                                                #
+alias clang=clang-11                                                   # add this alias to the "~/.bash_aliases" file.
+alias g++=g++-10                                                       #
+alias gcc=gcc-10                                                       #
+clang -v                                                               #
+c++ -v                                                                 #
+g++ -v                                                                 #
+gcc -v                                                                 #
+
+sudo apt install lld libboost-thread-dev                                                   # Install clang/lld 10 and boost 1.71.
+
+sudo update-alternatives --config ld                                                # list the packages and the version of ld used by that package and which one is the system default.
+sudo update-alternatives --config c++                                               #
+sudo update-alternatives --config g++                                               #
+sudo update-alternatives --config gcc                                               # 
+sudo update-alternatives --config clang                                             #
+sudo update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.lld-10" 30       # set the system default version of ld and the providing package replacing "ld-2.23" with "ld.lld-10".
+sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-11 60          # set clang-g++-11 as the default system c++ compiler without interfering with the g++ compiler.
+
+
+-----------------------------------------------------------------------------------------------------(the rollback steps for clang-11 just incase)
+sudo update-alternatives --remove-all clang
+sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++ 100
+sudo update-alternatives --install /usr/bin/clang-11 clang-11 /usr/bin/clang 100
+sudo update-alternatives --install /usr/bin/clang-format-11 clang-format-11 /usr/bin/clang-format 100
+-----------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------# 
+$ sudo update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.lld-10" 30
+update-alternatives: using /usr/bin/ld.lld-10 to provide /usr/bin/ld (ld) in auto mode
+$
+
+$ sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-11 60
+update-alternatives: using /usr/bin/clang++-11 to provide /usr/bin/c++ (c++) in auto mode
+$
+
+$ sudo update-alternatives --config c++
+There are 2 choices for the alternative c++ (providing /usr/bin/c++).
+
+  Selection    Path                 Priority   Status
+------------------------------------------------------------
+* 0            /usr/bin/clang++-11   60        auto mode
+  1            /usr/bin/clang++      10        manual mode
+  2            /usr/bin/clang++-11   60        manual mode
+
+Press <enter> to keep the current choice[*], or type selection number:
+$
+
+$ clang -v
+Ubuntu clang version 11.0.0-2~ubuntu20.04.1
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/9
+Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/9
+Selected GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/9
+Candidate multilib: .;@m64
+Candidate multilib: 32;@m32
+Candidate multilib: x32;@mx32
+Selected multilib: .;@m64
+$
+
+$ c++ -v
+Ubuntu clang version 11.0.0-2~ubuntu20.04.1
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/10
+Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/9
+Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/10
+Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/9
+Selected GCC installation: /usr/bin/../lib/gcc/x86_64-linux-gnu/10
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
+$
+
+$ g++ -v
+Using built-in specs.
+COLLECT_GCC=g++
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none:hsa
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-linux-gnu
+Thread model: posix
+gcc version 9.3.0 (Ubuntu 9.3.0-17ubuntu1~20.04)
+$
+
+$ gcc -v
+Using built-in specs.
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none:hsa
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.3.0-17ubuntu1~20.04' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-HskZEa/gcc-9-9.3.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Thread model: posix
+gcc version 9.3.0 (Ubuntu 9.3.0-17ubuntu1~20.04)
+$
+-------------------------------------------------------------------------------------------#
+
+
+# (if required) add the below LLVM repository sources for Clang to the "/etc/apt/sources.list" and download the sources PGP authentication keys:
+
+sudo wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add - 
+
+------------------------------------------------------------------
+# i386 not available
+deb http://apt.llvm.org/focal/ llvm-toolchain-focal main
+deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal main
+# 11
+deb http://apt.llvm.org/focal/ llvm-toolchain-focal-11 main
+deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-11 main
+# 12
+deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main
+deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main
+------------------------------------------------------------------
+
+
+###################################################
+# Install ffmpeg audio & video management utility #
+###################################################
+sudo apt install ffmpeg                                                     # this will install the FFMPEG Audio & Video codec managaement package which includes the following three                                                                                       libraries: (libavcodec, libavformat, libavutil).
+mkdir -pv ~/ffmpeg_source ~/bin                                             # prepare a dedicated directory for storing the source code and the compiled binary files.
+cd ~/ffmpeg_source
+wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
+tar -xvf ffmpeg-snapshot.tar.bz2
+cd ffmpeg
+
+# run the path script and enter the below values, finally you will get and error the install the library in the next step:
+
+PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
+-----------------------------------------------------------------------------------------------# set these values in sequence.
+--prefix="$HOME/ffmpeg_build" \
+--pkg-config-flags="--static" \
+--extra-cflags="-I$HOME/ffmpeg_build/include" \
+--extra-ldflags="-L$HOME/ffmpeg_build/lib" \
+--extra-libs="-lpthread -lm" \
+--bindir="$HOME/bin" \
+--enable-gpl \
+--enable-gnutls \
+--enable-libaom \
+--enable-libass \
+--enable-libfdk-aac \
+--enable-libfreetype \
+--enable-libmp3lame \
+--enable-libopus \
+--enable-libvorbis \
+--enable-libvpx \
+--enable-libx264 \
+--enable-libx265 \
+--enable-nonfree
+
+ERROR: gnutls not found using pkg-config
+
+If you think configure made a mistake, make sure you are using the latest
+version from Git.  If the latest version fails, report the problem to the
+ffmpeg-user@ffmpeg.org mailing list or IRC #ffmpeg on irc.freenode.net.
+Include the log file "ffbuild/config.log" produced by configure as this will help
+solve the problem.
+$
+----------------------------------------------------------------------------------------------#
+
+sudo apt install -y libunistring-dev          # install this library and rerun the PATH script again.
+
+PATH="$HOME/bin:$PATH" make -j4               # make sure to add $HOME/ffmpeg/build/lib to PATH in the ~/.bash_profile file.
+
+sudo make install
+
+hash -r
+reboot
+source ~/.profile
+ffmpeg -version
+ffmpeg -encoders
+ffmpeg -decoders
+ffmpeg -hide_banner -i <input> <output>
+
+--enable-avresample \                        # ??????
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$ ffmpeg
+ffmpeg version 4.2.4-1ubuntu0.1 Copyright (c) 2000-2020 the FFmpeg developers
+  built with gcc 9 (Ubuntu 9.3.0-10ubuntu2)
+  configuration: --prefix=/usr --extra-version=1ubuntu0.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-avresample --disable-filter=resample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librsvg --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-nvenc --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 31.100 / 56. 31.100
+  libavcodec     58. 54.100 / 58. 54.100
+  libavformat    58. 29.100 / 58. 29.100
+  libavdevice    58.  8.100 / 58.  8.100
+  libavfilter     7. 57.100 /  7. 57.100
+  libavresample   4.  0.  0 /  4.  0.  0
+  libswscale      5.  5.100 /  5.  5.100
+  libswresample   3.  5.100 /  3.  5.100
+  libpostproc    55.  5.100 / 55.  5.100
+Hyper fast Audio and Video encoder
+usage: ffmpeg [options] [[infile options] -i infile]... {[outfile options] outfile}...
+
+Use -h to get full help or, even better, run 'man ffmpeg'
+$
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+##################################################
+# download, compile and install Darling package  #
+##################################################
+
+git clone --recursive https://github.com/darlinghq/darling.git
+cd darling
+mkdir build && cd build
+cmake ..                                                                    # if the cmake command failed, remove the Cmake cash by runnung "rm CMakeCache.txt".
+
+----------------------------------------------------------------------------# (run there syslinks)
+sudo ln -s /usr/include/x86_64-linux-gnu/jconfig.h /usr/include/jconfig.h
+sudo ln -s /usr/include/x86_64-linux-gnu/tiffio.h /usr/include/tiffio.h
+sudo ln -s /usr/include/x86_64-linux-gnu/tiff.h /usr/include/tiff.h
+sudo ln -s /usr/include/x86_64-linux-gnu/tiffconf.h /usr/include/tiffconf.h
+sudo ln -s /usr/include/x86_64-linux-gnu/tiffvers.h /usr/include/tiffvers.h
+sudo ln -s /usr/include/x86_64-linux-gnu/tiffio.hxx /usr/include/tiffio.hxx
+----------------------------------------------------------------------------#
+make
+sudo make install
+
+
+sudo apt install linux-headers-5.4.0-72-generic                             # Kernel update dependency, "/lib/modules/modules.order" file is generated by the "depmod".
+sudo apt upgrade linux-image-generic                                        # Kernel upgrade.
+
+sudo apt install --reinstall bcmwl-kernel-source                            # /etc/apt/apt.conf.d/sources.list
+sudo update-initramfs                                                       #
+
+sudo snap install canonical-livepatch                                       # auto livepatch update without reboot. (free for upto 3 machines).
+sudo canonical-livepatch enable your-key                                    # your ubuntu account key.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+$
+depmod: WARNING: could not open modules.order at /var/tmp/mkinitramfs_a6MGrG/lib/modules/5.4.72-microsoft-standard-WSL2: No such file or directory
+
+/etc/kernel/postinst.d/initramfs-tools:
+update-initramfs: Generating /boot/initrd.img-5.4.0-72-generic
+W: Couldn't identify type of root file system for fsck hook
+W: mkconf: MD subsystem is not loaded, thus I cannot scan for arrays.
+W: mdadm: failed to auto-generate temporary mdadm.conf file.
+$
+--------------------------------------------------------------------------------------------------------------------
+$
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ libc6-dev : Breaks: libc6-dev:i386 (!= 2.31-0ubuntu9.3) but 2.31-0ubuntu9.2 is to be installed
+ libc6-dev:i386 : Depends: libc6:i386 (= 2.31-0ubuntu9.2) but it is not going to be installed
+                  Depends: libc-dev-bin:i386 (= 2.31-0ubuntu9.2)
+                  Depends: linux-libc-dev:i386 but it is not going to be installed
+                  Depends: libcrypt-dev:i386 but it is not going to be installed
+                  Breaks: libc6-dev (!= 2.31-0ubuntu9.2) but 2.31-0ubuntu9.3 is to be installed
+ libfreetype6-dev:i386 : Depends: libfreetype-dev:i386 (= 2.10.1-2ubuntu0.1) but it is not going to be installed
+ libtiff5-dev : Depends: libtiff-dev (>= 4.0.10-1) but it is not going to be installed
+E: Error, pkgProblemResolver::Resolve generated breaks, this may be caused by held packages.
+$
+---------------------------------------------------------------------------------------------------------------------
+$
+CMake Error at cmake/FindFFmpeg.cmake:86 (message):
+  Could not find libavcodec or libavformat or libavutil
+$
+---------------------------------------------------------------------------------------------------------------------
+
+
+# to Enable KernelCare Service and get the (30-day trial) key at (https://cloudlinux.com/kernelcare-free-trial5).
+
+su root
+wget -qq -O - https://repo.cloudlinux.com/kernelcare/kernelcare_install.sh | bash
+sudo /usr/bin/kcarectl --register KEY
+
+
+## Linux Kernel Utilities: is a program that makes the process of updating Linux kernel easy in Ubuntu-like systems. It is a set of BASH shell       scripts used to compile and/or update latest Linux kernels for Debian and derivatives. It consists of three utilities, one for manually           compiling and installing Kernel from source from (http://www.kernel.org) website, another for downloading and installing pre-compiled Kernels     from from (https://kernel.ubuntu.com) website. and third script is for removing the old kernels. For more details, please have a look at the      following link. (https://ostechnix.com/linux-kernel-utilities-scripts-compile-update-latest-linux-kernel-debian-derivatives/).
+   Pros: Simple. Automated.
+   Cons: Internet necessary. Reboot necessary.
+
+## KernelCare service:
+   is the newest of all the live patching solutions. It is the product of CloudLinux. KernelCare runs on Ubuntu and other flavors of Linux. It       checks for patch releases every 4 hours and will install them without confirmation. Patches can be rolled back if there are problems.
+   Cost: Fees, per server: 4 USD per month, 45 USD per year.
+
+   Compared to Ubuntu Livepatch, kernelCare seems very cheap and affordable. Good thing is monthly subscriptions are also available. Another         notable feature is it supports other Linux distributions, such as Red Hat, CentOS, Debian, Oracle Linux, Amazon Linux and virtualization          platforms like OpenVZ, Proxmox etc.
+
+   You can read all the features and benefits of KernelCare and check all available plan details at (https://www.kernelcare.com/product/)
+
+   Pros: Simple. Fully automated. Wide OS coverage. Patch rollback. No reboot necessary. Free license for non-profit organizations. Low cost.
+   Cons: Not free (except for 30 day trial).
+
+## Canonical Livepatch Service:
+   applies Kernel updates, patches and security hotfixes automatically without rebooting the Ubuntu systems. It reduces the Ubuntu systems           downtime and keep them secure. Canonical Livepatch Service can be set up either during or after installation. If you are using desktop Ubuntu,   the Software Updater will automatically check for kernel patches and notify you. In a console-based system, it is up to you to run apt-get        update regularly. It will install kernel security patches only when you run the command "apt-get upgrade", hence is semi-automatic.
+
+   Livepatch is free for three systems. If you have more than three, you need to upgrade to enterprise support solution named Ubuntu Advantage       suite. This suite includes Kernel Livepatching and other services such as,
+    Extended Security Maintenance - critical security updates after Ubuntu end-of-life.
+    Landscape - the systems management tool for using Ubuntu at scale.
+    Knowledge Base - A private collection of articles and tutorials written by Ubuntu experts.
+    Phone and web-based support.
+
+   Cost: Get a key at (https://auth.livepatch.canonical.com/).
+   Ubuntu Advantage includes three paid plans namely, Essential, Standard and Advanced. The basic plan (Essential plan) starts from 225 USD per      year for one physical node and 75 USD per year for one VPS. It seems there is no monthly subscription for Ubuntu servers and desktops. You can   view detailed information on all plans here.
+
+   Pros: Simple. Semi-automatic. No reboot necessary. Free for 3 systems.
+   Cons: Expensive for 4 or more hosts. No patch rollback. ##
+
+   
+---------------------------------------------------------------
+$ sudo apt upgrade linux-image-generic 
+/etc/kernel/postinst.d/initramfs-tools:
+update-initramfs is disabled since running on read-only media
+$ 
+---------------------------------------------------------------
+
+---------------------------------------------------------------
+$ sudo update-initramfs
+update-initramfs is disabled since running on read-only media
+$ 
+---------------------------------------------------------------
+
+------------------------------------------------------------------
+$ sudo apt install linux-headers-5.4.0-72-generic 
+wl.ko:
+Running module version sanity check.
+ - Original module
+   - No original module exists within this kernel
+ - Installation
+   - Installing to /lib/modules/5.4.0-72-generic/updates/dkms/
+   
+nvidia.ko:
+Running module version sanity check.
+ - Original module
+   - No original module exists within this kernel
+ - Installation
+   - Installing to /lib/modules/5.4.0-72-generic/updates/dkms/
+
+nvidia-modeset.ko:
+Running module version sanity check.
+ - Original module
+   - No original module exists within this kernel
+ - Installation
+   - Installing to /lib/modules/5.4.0-72-generic/updates/dkms/
+
+nvidia-drm.ko:
+Running module version sanity check.
+ - Original module
+   - No original module exists within this kernel
+ - Installation
+   - Installing to /lib/modules/5.4.0-72-generic/updates/dkms/
+
+nvidia-uvm.ko:
+Running module version sanity check.
+ - Original module
+   - No original module exists within this kernel
+ - Installation
+   - Installing to /lib/modules/5.4.0-72-generic/updates/dkms/
+$ 
+------------------------------------------------------------------
+
+
+##############################
+# Other Tools & dependencies #
+##############################
+sudo add-apt-repository ppa:webupd8team/y-ppa-manager                       # (Dont Add) Y-PPA-Manager is a GUI utility to manage PPA sources on the system.
+sudo apt install y-ppa-manager                                              #
+
+sudo apt install libgl1-mesa-dri                                            # Steam online gaming platform dependency.
+sudo apt build-dep libgl1-mesa-dri                                          # 
+ 
+
+sudo apt install aptitude                                                   # 
+sudo aptitude install <package>=<the-required-library&version>              # to update or downgrade from the default version for your distro.
+sudo apt clean                                                              #
+sudo apt autoclean                                                          # 
+sudo apt install bikeshed                                                   #
+
+## Random useful tools that do not yet have a permanent home Bikeshed is a collection of random but useful tools and utilities that either don't     quite fit anywhere else, or have not yet been accepted by a more appropriate project. Think of this package as an "orphanage", where tools        live until they are adopted by loving, accepting parents. (http://launchpad.net/bikeshed/). ##
+
+
+####################################################
+# How to install Ubuntu on an encrypted filesystem #
+####################################################
+sudo cryptsetup luksFormat /dev/sdb2                            # @@ WARRNING @@ this is a risky command. Disk encryption L1.
+sudo cryptsetup luksOpen /dev/sdb2 cryptcherries                # @@ WARRNING @@ this is a risky command. Disk encryption L2.
+sudo dd if=/dev/zero of=/dev/mapper/cryptcherries bs=16M        # @@ WARRNING @@ this is a risky command. disk formatting.
+sudo pvcreate /dev/mapper/cryptcherries
+sudo vgcreate vgcherries /dev/mapper/cryptcherries
+sudo lvcreate -n lvcherriesroot -L 7.5g vgcherries
+sudo lvcreate -n lvcherriesswap -L 1g vgcherries
+sudo mkfs.ext4 /dev/mapper/vgcherries-lvcherriesroot
+sudo mkswap /dev/mapper/vgcherries-lvcherriesswap
+sudo blkid /dev/sdb2
+sudo mount /dev/mapper/vgcherries-lvcherriesroot /mnt
+sudo mount /dev/sdb2 /mnt/boot
+sudo mount --bind /dev /mnt/dev
+sudo chroot /mnt
+
+## Create a file named /etc/crypttab in the chrooted environment to contain this line, replacing the UUID value with the UUID of the LUKS            partition, and vgcherries with the name of the volume group:
+------------------------------------------------------------------------------------------
+# <target name> <source device> <key file> <options>
+cryptcherries UUID=8b80b3a7-6a33-4db3-87ce-7f126545c74af none luks,retry=1,lvm=vgcherries
+------------------------------------------------------------------------------------------
+   Above is an example UUID. ##
+
+update-initramfs -k all -c
+
+# Reboot and boot into the encrypted Ubuntu. You should be prompted for a password.
+# Check that you're using the encrypted partition for / by running mount:
+
+mount
+swapon -s
+
+----------------------------------------------------------------------------
+$ mount
+/dev/mapper/vgcherries-lvcherriesroot on / type ext4 (rw,errors=remount-ro)
+/dev/sdb2 on /boot type ext3 (rw)
+----------------------------------------------------------------------------
+$ swapon -s
+Filename                              Type      Size   Used Priority
+/dev/mapper/vgcherries-lvcherriesswap partition 630780 0    -1
+----------------------------------------------------------------------------
+
+# Check that you can boot into recovery mode, you don't want to find out later during an emergency that recovery mode doesn't work.
+# Install any updates, which are likely to rebuild the ramdisk and update the grub configuration. Reboot & test both normal mode & recovery mode.
+
+
+----------------
+Example Outputs:
+-------------------------------------------------------------------------
+root@bananagap:/home/ubuntu# sudo update-initramfs
+update-initramfs is disabled since running on read-only media
+root@bananagap:/home/ubuntu# 
+-------------------------------------------------------------------------
+$ sudo apt install --reinstall bcmwl-kernel-source
+
+modprobe: ERROR: could not insert 'wl': Operation not permitted
+update-initramfs is disabled since running on read-only media
+$ 
+-------------------------------------------------------------------------
+$ rfkill
+ID TYPE      DEVICE      SOFT      HARD
+ 7 bluetooth hci0   unblocked unblocked
+$ 
+----------------------------------------------------------------------------------------------------
+$ sudo lshw -C network
+  *-network UNCLAIMED       
+       description: Network controller
+       product: BCM43142 802.11b/g/n
+       vendor: Broadcom Inc. and subsidiaries
+       physical id: 0
+       bus info: pci@0000:08:00.0
+       version: 01
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi pciexpress cap_list
+       configuration: latency=0
+       resources: memory:b5500000-b5507fff
+  *-network
+       description: Ethernet interface
+       product: RTL810xE PCI Express Fast Ethernet controller
+       vendor: Realtek Semiconductor Co., Ltd.
+       physical id: 0
+       bus info: pci@0000:09:00.0
+       logical name: eno1
+       version: 08
+       serial: 8c:dc:d4:70:e8:6c
+       size: 100Mbit/s
+       capacity: 100Mbit/s
+       width: 64 bits
+       clock: 33MHz
+       capabilities: pm msi pciexpress msix vpd bus_master cap_list ethernet physical tp mii 10bt 10bt-fd 100bt 100bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=r8169 driverversion=5.8.0-43-generic duplex=full firmware=rtl8106e-2_0.0.1 04/23/13 ip=192.168.1.190 latency=0 link=yes multicast=yes port=MII speed=100Mbit/s
+       resources: irq:19 ioport:4000(size=256) memory:b5404000-b5404fff memory:b5400000-b5403fff
+  *-network DISABLED
+       description: Ethernet interface
+       physical id: 3
+       logical name: mpqemubr0-dummy
+       serial: 52:54:00:54:ec:f1
+       capabilities: ethernet physical
+       configuration: broadcast=yes driver=dummy driverversion=5.8.0-43-generic
+$ 
+----------------------------------------------------------------------------------------------------
+$ lsusb
+Bus 001 Device 004: ID 0a5c:216c Broadcom Corp. BCM43142A0 Bluetooth Device
+Bus 001 Device 003: ID 04f2:b40e Chicony Electronics Co., Ltd HP Truevision HD camera
+Bus 001 Device 016: ID 1ea7:0064 SHARKOON Technologies GmbH 
+Bus 001 Device 002: ID 8087:8000 Intel Corp. 
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 002: ID 0781:5583 SanDisk Corp. Ultra Fit
+Bus 003 Device 005: ID 0781:5583 SanDisk Corp. Ultra Fit
+Bus 003 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+$ 
+----------------------------------------------------------------------------------------------------
+$ iwconfig
+lo        no wireless extensions.
+
+eno1      no wireless extensions.
+
+mpqemubr0-dummy  no wireless extensions.
+
+mpqemubr0  no wireless extensions.
+
+lxcbr0    no wireless extensions.
+$
+---------------------------------------------------------------------------------------------------------------
+$ lspci -knn | grep Net -A3; rfkill list
+08:00.0 Network controller [0280]: Broadcom Inc. and subsidiaries BCM43142 802.11b/g/n [14e4:4365] (rev 01)
+	DeviceName: Broadcom BCM43142 802.11bgn 1x1 WiFi Adapter + BT 4.0 combo adapter
+	Subsystem: Hewlett-Packard Company BCM43142 802.11b/g/n [103c:2230]
+	Kernel modules: wl
+7: hci0: Bluetooth
+	Soft blocked: yes
+	Hard blocked: no
+$ 
+---------------------------------------------------------------------------------------------------------------
+$ lspci -knn
+
+08:00.0 Network controller [0280]: Broadcom Inc. and subsidiaries BCM43142 802.11b/g/n [14e4:4365] (rev 01)
+	DeviceName: Broadcom BCM43142 802.11bgn 1x1 WiFi Adapter + BT 4.0 combo adapter
+	Subsystem: Hewlett-Packard Company BCM43142 802.11b/g/n [103c:2230]
+	Kernel modules: wl
+$
+---------------------------------------------------------------------------------------------------------------------
+$ lspci 
+00:00.0 Host bridge: Intel Corporation Haswell-ULT DRAM Controller (rev 0b)
+00:02.0 VGA compatible controller: Intel Corporation Haswell-ULT Integrated Graphics Controller (rev 0b)
+00:03.0 Audio device: Intel Corporation Haswell-ULT HD Audio Controller (rev 0b)
+00:14.0 USB controller: Intel Corporation 8 Series USB xHCI HC (rev 04)
+00:16.0 Communication controller: Intel Corporation 8 Series HECI #0 (rev 04)
+00:1b.0 Audio device: Intel Corporation 8 Series HD Audio Controller (rev 04)
+00:1c.0 PCI bridge: Intel Corporation 8 Series PCI Express Root Port 1 (rev e4)
+00:1c.1 PCI bridge: Intel Corporation 8 Series PCI Express Root Port 2 (rev e4)
+00:1c.2 PCI bridge: Intel Corporation 8 Series PCI Express Root Port 3 (rev e4)
+00:1c.3 PCI bridge: Intel Corporation 8 Series PCI Express Root Port 4 (rev e4)
+00:1c.4 PCI bridge: Intel Corporation 8 Series PCI Express Root Port 5 (rev e4)
+00:1d.0 USB controller: Intel Corporation 8 Series USB EHCI #1 (rev 04)
+00:1f.0 ISA bridge: Intel Corporation 8 Series LPC Controller (rev 04)
+00:1f.2 SATA controller: Intel Corporation 8 Series SATA Controller 1 [AHCI mode] (rev 04)
+00:1f.3 SMBus: Intel Corporation 8 Series SMBus Controller (rev 04)
+02:00.0 Unassigned class [ff00]: Realtek Semiconductor Co., Ltd. RTS5227 PCI Express Card Reader (rev 01)
+
+08:00.0 Network controller: Broadcom Inc. and subsidiaries BCM43142 802.11b/g/n (rev 01)
+
+09:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL810xE PCI Express Fast Ethernet controller (rev 08)
+0a:00.0 3D controller: NVIDIA Corporation GM108M [GeForce 840M] (rev a2)
+$ 
+----------------------------------------------------------------------------------------------------------------------
+
+
+#######################################################################################################
+# Ubuntu Multipass VM Management tool for Ubuntu on Windows/MAC hosts with Hyper-V/Oracle-VM-VMBox    #
+#######################################################################################################
+## Multipass is a tool to launch and manage VMs on Windows, Mac and Linux that simulates a cloud environment with support for cloud-init. Get Ubuntu on-demand with    clean integration to your IDE and version control on your native platform. ##
+## Multipass is the recommended method to create Ubuntu VMs on Ubuntu. It’s designed for developers who want a fresh Ubuntu environment with a single command and works    on Linux, Windows and macOS. ##
+## Don’t forget to logout (or Ctrl-D). ##
+
+https://ubuntu.com/appliance/vm
+https://www.virtualbox.org/
+
+
+sudo snap install multipass                         # Multipass on Linux its available as a snap.
+sudo snap install multipass --beta --classic        # 
+
+multipass find                                      # list the available Linux images/VM's.
+
+multipass launch --name foo                         # Launch an instance (by default you get the current Ubuntu LTS).
+
+multipass list                                      # list the the available instances.
+multipass info <instanceName>                       # details of the VM instance you just launched.
+
+multipass exec <instanceName> -- lsb_release -a     # Run commands inside an instance from outside.
+multipass exec foo -- lsb_release -a                # by default the current Ubuntu LTS. 
+
+multipass stop <instanceName>                       # Stop an instance to save resources.
+multipass start <instanceName>                      #
+multipass shell <instanceName>                      # Connect to a running instance.
+
+multipass delete <instanceName>                     # Delete the instance.
+multipass purge  <instanceName>                     # to completely get rid of it.
+
+multipass launch -n bar --cloud-init cloud-config.yaml    # Pass a cloud-init metadata file to an instance on launch.
+
+-----------------------------------------------------------------------------------------------------
+$ multipass find
+Image                       Aliases           Version          Description
+snapcraft:core18                              20201111         Snapcraft builder for Core 18
+snapcraft:core20                              20201111         Snapcraft builder for Core 20
+snapcraft:core                                20210429         Snapcraft builder for Core 16
+core                        core16            20200818         Ubuntu Core 16
+core18                                        20200812         Ubuntu Core 18
+18.04                       bionic            20210415         Ubuntu 18.04 LTS
+20.04                       focal,lts         20210415         Ubuntu 20.04 LTS
+20.10                       groovy            20210415.1       Ubuntu 20.10
+21.04                       hirsute           20210422         Ubuntu 21.04
+appliance:adguard-home                        20200812         Ubuntu AdGuard Home Appliance
+appliance:mosquitto                           20200812         Ubuntu Mosquitto Appliance
+appliance:nextcloud                           20200812         Ubuntu Nextcloud Appliance
+appliance:openhab                             20200812         Ubuntu openHAB Home Appliance
+appliance:plexmediaserver                     20200812         Ubuntu Plex Media Server Appliance
+$
+-----------------------------------------------------------------------------------------------------
+
+
+Integrate into the rest of your virtualization:
+-----------------------------------------------
+## You might have other virtualization already based on libvirt either through using the similar older uvtool already or through the common virt-manager. ##
+## You might for example want those guests to be on the same bridge to communicate to each other or you need access to the graphical output for some reason. ##
+
+## Manage virtual machines with virt-manager;
+   The virt-manager application is a desktop user interface for managing virtual machines through libvirt. It primarily targets KVM VMs, but also manages Xen and LXC    (linux containers). It presents a summary view of running domains, their live performance & resource utilization statistics. Wizards enable the creation of new       domains, and configuration & adjustment of a domain’s resource allocation & virtual hardware. An embedded VNC and SPICE client viewer presents a full graphical    console to the guest domain. 
+
+https://virt-manager.org/
+
+sudo multipass set local.driver=libvirt             # 
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#############################################################################################################
+# WSL2 Kernel "5.4.72-microsoft-standard-WSL2" upgrade (from linux-msft-5.4.72 to linux-msft-wsl-5.10.43.3) #
+#############################################################################################################
+
+## What’s new in Build 20150: Three new Windows Subsystem for Linux (WSL) features: GPU compute, WSL install, and WSL update. ##
+## https://www.catalog.update.microsoft.com/Search.aspx?q=wsl
+   Download and install the latest WSL2 Kernel ##
+
+
+
+$ du -hs /path/to/directory
+
+$ uname -a
+$ uname -r
+
+$ sudo apt upgrade
+Setting up zfsutils-linux (0.8.3-1ubuntu12.10)
+modprobe: FATAL: Module zfs not found in directory /lib/modules/5.4.72-microsoft-standard-WSL2
+zfs-import-scan.service is a disabled or a static unit, not starting it.
+zfs-import-scan.service is a disabled or a static unit, not starting it.
+Setting up zfs-initramfs (0.8.3-1ubuntu12.10) 
+Setting up zfs-zed (0.8.3-1ubuntu12.10)
+$
+
+$ sudo depmod
+depmod: ERROR: could not open directory /lib/modules/5.4.72-microsoft-standard-WSL2: No such file or directory
+depmod: FATAL: could not search modules: No such file or directory
+$
+
+$ sudo apt search linux-headers-`uname -r`
+Sorting... Done
+Full Text Search... Done
+$
+
+$ sudo make -C /home/twrcha/WSL2-Linux-Kernel M=$(pwd) modules
+make: *** /home/twrcha/WSL2-Linux-Kernel: No such file or directory.  Stop.
+$
+
+$ sudo insmod lkm_example.ko
+insmod: ERROR: could not load module lkm_example.ko: No such file or directory
+$
+
+$ sudo apt install --reinstall linux-image-`uname -r\`
+>
+$
+
+## At that time I was trying to compile the drivers builtin into the kernel and not as a module. For some reason that didn't work so I decided to compile them as modules separately and    installing them later.
+   The main problema I wasn't finding any package when doing apt-get was because I wasn't using a kernel version that had the linux image ready for installation. Basically I needed to    install compile and install it myself.
+   One other thing that made everything start working was when I started compiling the linux headers, without doing that I'd probably still be trying to get my board to work. ##
+
+$ apt-cache search linux-image
+linux-modules-nvidia-390-5.4.0-1009-gcp - Linux kernel nvidia modules for version 5.4.0-1009
+linux-modules-nvidia-390-5.4.0-1009-oracle - Linux kernel nvidia modules for version 5.4.0-1009
+linux-modules-nvidia-390-5.4.0-26-generic - Linux kernel nvidia modules for version 5.4.0-26
+linux-modules-nvidia-390-5.4.0-26-lowlatency - Linux kernel nvidia modules for version 5.4.0-26
+linux-modules-nvidia-440-5.4.0-1009-gcp - Linux kernel nvidia modules for version 5.4.0-1009
+linux-modules-nvidia-440-5.4.0-1009-oracle - Linux kernel nvidia modules for version 5.4.0-1009
+linux-modules-nvidia-440-5.4.0-26-generic - Linux kernel nvidia modules for version 5.4.0-26
+linux-modules-nvidia-440-5.4.0-26-lowlatency - Linux kernel nvidia modules for version 5.4.0-26
+linux-modules-nvidia-440-5.6.0-1007-oem - Linux kernel nvidia modules for version 5.6.0-1007
+alsa-base - ALSA driver configuration files
+linux-image-5.4.0-1009-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1009-gcp - Signed kernel image GCP
+linux-image-5.4.0-1009-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1009-oracle - Signed kernel image oracle
+linux-image-5.4.0-1010-azure - Signed kernel image azure
+linux-image-5.4.0-26-generic - Signed kernel image generic
+linux-image-5.4.0-26-lowlatency - Signed kernel image lowlatency
+linux-image-5.6.0-1007-oem - Signed kernel image oem
+linux-image-aws - Linux kernel image for Amazon Web Services (AWS) systems.
+linux-image-azure - Linux kernel image for Azure systems.
+linux-image-extra-virtual - Extra drivers for Virtual Linux kernel image
+linux-image-extra-virtual-hwe-18.04 - Extra drivers for virtual Linux kernel image (dummy transitional package)
+linux-image-extra-virtual-hwe-18.04-edge - Extra drivers for virtual Linux kernel image (dummy transitional package)
+linux-image-extra-virtual-hwe-20.04 - Extra drivers for Virtual Linux kernel image
+linux-image-gcp - Google Cloud Platform (GCP) Linux kernel image
+linux-image-generic - Generic Linux kernel image
+linux-image-generic-hwe-18.04 - Generic Linux kernel image (dummy transitional package)
+linux-image-generic-hwe-18.04-edge - Generic Linux kernel image (dummy transitional package)
+linux-image-generic-hwe-20.04 - Generic Linux kernel image
+linux-image-gke - Google Container Engine (GKE) Linux kernel image
+linux-image-kvm - Linux kernel image for virtual systems.
+linux-image-lowlatency - lowlatency Linux kernel image
+linux-image-lowlatency-hwe-18.04 - Lowlatency Linux kernel image (dummy transitional package)
+linux-image-lowlatency-hwe-18.04-edge - Lowlatency Linux kernel image (dummy transitional package)
+linux-image-lowlatency-hwe-20.04 - lowlatency Linux kernel image
+linux-image-oem - Depends on the generic kernel image (dummy transitional package)
+linux-image-oem-osp1 - Depends on the generic kernel image (dummy transitional package)
+linux-image-oracle - Linux kernel image for Oracle systems.
+linux-image-unsigned-5.4.0-1009-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1009-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1010-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-26-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-26-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1007-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-virtual - Virtual Linux kernel image
+linux-image-virtual-hwe-18.04 - Virtual Linux kernel image (dummy transitional package)
+linux-image-virtual-hwe-18.04-edge - Virtual Linux kernel image (dummy transitional package)
+linux-image-virtual-hwe-20.04 - Virtual Linux kernel image
+linux-virtual - Minimal Generic Linux kernel and headers
+linux-virtual-hwe-20.04 - Minimal Generic Linux kernel and headers
+linux-image-5.10.0-1011-oem - Signed kernel image oem
+linux-image-5.10.0-1013-oem - Signed kernel image oem
+linux-image-5.10.0-1014-oem - Signed kernel image oem
+linux-image-5.10.0-1016-oem - Signed kernel image oem
+linux-image-5.10.0-1017-oem - Signed kernel image oem
+linux-image-5.10.0-1019-oem - Signed kernel image oem
+linux-image-5.10.0-1021-oem - Signed kernel image oem
+linux-image-5.10.0-1022-oem - Signed kernel image oem
+linux-image-5.10.0-1023-oem - Signed kernel image oem
+linux-image-5.10.0-1025-oem - Signed kernel image oem
+linux-image-5.10.0-1026-oem - Signed kernel image oem
+linux-image-5.10.0-1029-oem - Signed kernel image oem
+linux-image-5.10.0-1032-oem - Signed kernel image oem
+linux-image-5.10.0-1033-oem - Signed kernel image oem
+linux-image-5.10.0-1034-oem - Signed kernel image oem
+linux-image-5.11.0-1007-azure - Signed kernel image azure
+linux-image-5.11.0-1008-oracle - Signed kernel image oracle
+linux-image-5.11.0-1009-aws - Linux kernel image for version 5.11.0 on 64 bit x86 SMP
+linux-image-5.11.0-1009-gcp - Signed kernel image GCP
+linux-image-5.11.0-22-generic - Signed kernel image generic
+linux-image-5.11.0-22-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-1008-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1009-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1010-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1011-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1011-gcp - Signed kernel image GCP
+linux-image-5.4.0-1011-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1011-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1011-oracle - Signed kernel image oracle
+linux-image-5.4.0-1012-azure - Signed kernel image azure
+linux-image-5.4.0-1012-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1013-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1014-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1015-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1015-gcp - Signed kernel image GCP
+linux-image-5.4.0-1015-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1015-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1015-oracle - Signed kernel image oracle
+linux-image-5.4.0-1016-azure - Signed kernel image azure
+linux-image-5.4.0-1016-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1017-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1018-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1018-gcp - Signed kernel image GCP
+linux-image-5.4.0-1018-gkeop - Signed kernel image gkeop
+linux-image-5.4.0-1018-kvm - Signed kernel image kvm
+linux-image-5.4.0-1018-oracle - Signed kernel image oracle
+linux-image-5.4.0-1019-azure - Signed kernel image azure
+linux-image-5.4.0-1019-gcp - Signed kernel image GCP
+linux-image-5.4.0-1019-oracle - Signed kernel image oracle
+linux-image-5.4.0-1020-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1020-azure - Signed kernel image azure
+linux-image-5.4.0-1020-kvm - Signed kernel image kvm
+linux-image-5.4.0-1021-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1021-gcp - Signed kernel image GCP
+linux-image-5.4.0-1021-kvm - Signed kernel image kvm
+linux-image-5.4.0-1021-oracle - Signed kernel image oracle
+linux-image-5.4.0-1022-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1022-azure - Signed kernel image azure
+linux-image-5.4.0-1022-gcp - Signed kernel image GCP
+linux-image-5.4.0-1022-oracle - Signed kernel image oracle
+linux-image-5.4.0-1023-azure - Signed kernel image azure
+linux-image-5.4.0-1023-kvm - Signed kernel image kvm
+linux-image-5.4.0-1024-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1024-gcp - Signed kernel image GCP
+linux-image-5.4.0-1024-kvm - Signed kernel image kvm
+linux-image-5.4.0-1024-oracle - Signed kernel image oracle
+linux-image-5.4.0-1025-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1025-azure - Signed kernel image azure
+linux-image-5.4.0-1025-gcp - Signed kernel image GCP
+linux-image-5.4.0-1025-oracle - Signed kernel image oracle
+linux-image-5.4.0-1026-azure - Signed kernel image azure
+linux-image-5.4.0-1026-kvm - Signed kernel image kvm
+linux-image-5.4.0-1028-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1028-gcp - Signed kernel image GCP
+linux-image-5.4.0-1028-oracle - Signed kernel image oracle
+linux-image-5.4.0-1029-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1029-gcp - Signed kernel image GCP
+linux-image-5.4.0-1029-oracle - Signed kernel image oracle
+linux-image-5.4.0-1030-kvm - Signed kernel image kvm
+linux-image-5.4.0-1031-azure - Signed kernel image azure
+linux-image-5.4.0-1031-kvm - Signed kernel image kvm
+linux-image-5.4.0-1032-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1032-gcp - Signed kernel image GCP
+linux-image-5.4.0-1032-kvm - Signed kernel image kvm
+linux-image-5.4.0-1032-oracle - Signed kernel image oracle
+linux-image-5.4.0-1033-gcp - Signed kernel image GCP
+linux-image-5.4.0-1033-gke - Signed kernel image for GKE
+linux-image-5.4.0-1033-kvm - Signed kernel image kvm
+linux-image-5.4.0-1034-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1034-azure - Signed kernel image azure
+linux-image-5.4.0-1034-gcp - Signed kernel image GCP
+linux-image-5.4.0-1034-kvm - Signed kernel image kvm
+linux-image-5.4.0-1034-oracle - Signed kernel image oracle
+linux-image-5.4.0-1035-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1035-azure - Signed kernel image azure
+linux-image-5.4.0-1035-gke - Signed kernel image for GKE
+linux-image-5.4.0-1035-oracle - Signed kernel image oracle
+linux-image-5.4.0-1036-azure - Signed kernel image azure
+linux-image-5.4.0-1036-gcp - Signed kernel image GCP
+linux-image-5.4.0-1036-gke - Signed kernel image for GKE
+linux-image-5.4.0-1036-kvm - Signed kernel image kvm
+linux-image-5.4.0-1037-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1037-gcp - Signed kernel image GCP
+linux-image-5.4.0-1037-gke - Signed kernel image for GKE
+linux-image-5.4.0-1037-kvm - Signed kernel image kvm
+linux-image-5.4.0-1037-oracle - Signed kernel image oracle
+linux-image-5.4.0-1038-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1038-gcp - Signed kernel image GCP
+linux-image-5.4.0-1038-kvm - Signed kernel image kvm
+linux-image-5.4.0-1038-oracle - Signed kernel image oracle
+linux-image-5.4.0-1039-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1039-azure - Signed kernel image azure
+linux-image-5.4.0-1039-gke - Signed kernel image for GKE
+linux-image-5.4.0-1039-kvm - Signed kernel image kvm
+linux-image-5.4.0-1039-oracle - Signed kernel image oracle
+linux-image-5.4.0-1040-azure - Signed kernel image azure
+linux-image-5.4.0-1040-gcp - Signed kernel image GCP
+linux-image-5.4.0-1040-kvm - Signed kernel image kvm
+linux-image-5.4.0-1041-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1041-azure - Signed kernel image azure
+linux-image-5.4.0-1041-gcp - Signed kernel image GCP
+linux-image-5.4.0-1041-gke - Signed kernel image for GKE
+linux-image-5.4.0-1041-kvm - Signed kernel image kvm
+linux-image-5.4.0-1041-oracle - Signed kernel image oracle
+linux-image-5.4.0-1042-gcp - Signed kernel image GCP
+linux-image-5.4.0-1042-gke - Signed kernel image for GKE
+linux-image-5.4.0-1042-oracle - Signed kernel image oracle
+linux-image-5.4.0-1043-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1043-azure - Signed kernel image azure
+linux-image-5.4.0-1043-gcp - Signed kernel image GCP
+linux-image-5.4.0-1043-gke - Signed kernel image for GKE
+linux-image-5.4.0-1043-oracle - Signed kernel image oracle
+linux-image-5.4.0-1044-azure - Signed kernel image azure
+linux-image-5.4.0-1044-gcp - Signed kernel image GCP
+linux-image-5.4.0-1044-gke - Signed kernel image for GKE
+linux-image-5.4.0-1045-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1045-oracle - Signed kernel image oracle
+linux-image-5.4.0-1046-azure - Signed kernel image azure
+linux-image-5.4.0-1046-gcp - Signed kernel image GCP
+linux-image-5.4.0-1046-gke - Signed kernel image for GKE
+linux-image-5.4.0-1046-oracle - Signed kernel image oracle
+linux-image-5.4.0-1047-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1047-azure - Signed kernel image azure
+linux-image-5.4.0-1048-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1048-azure - Signed kernel image azure
+linux-image-5.4.0-1048-oracle - Signed kernel image oracle
+linux-image-5.4.0-1049-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1049-azure - Signed kernel image azure
+linux-image-5.4.0-1049-oracle - Signed kernel image oracle
+linux-image-5.4.0-1051-aws - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-5.4.0-1051-azure - Signed kernel image azure
+linux-image-5.4.0-28-generic - Signed kernel image generic
+linux-image-5.4.0-28-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-29-generic - Signed kernel image generic
+linux-image-5.4.0-29-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-31-generic - Signed kernel image generic
+linux-image-5.4.0-31-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-33-generic - Signed kernel image generic
+linux-image-5.4.0-33-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-37-generic - Signed kernel image generic
+linux-image-5.4.0-37-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-39-generic - Signed kernel image generic
+linux-image-5.4.0-39-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-40-generic - Signed kernel image generic
+linux-image-5.4.0-40-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-42-generic - Signed kernel image generic
+linux-image-5.4.0-42-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-45-generic - Signed kernel image generic
+linux-image-5.4.0-45-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-47-generic - Signed kernel image generic
+linux-image-5.4.0-47-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-48-generic - Signed kernel image generic
+linux-image-5.4.0-48-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-51-generic - Signed kernel image generic
+linux-image-5.4.0-51-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-52-generic - Signed kernel image generic
+linux-image-5.4.0-52-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-53-generic - Signed kernel image generic
+linux-image-5.4.0-53-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-54-generic - Signed kernel image generic
+linux-image-5.4.0-54-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-58-generic - Signed kernel image generic
+linux-image-5.4.0-58-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-59-generic - Signed kernel image generic
+linux-image-5.4.0-59-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-60-generic - Signed kernel image generic
+linux-image-5.4.0-60-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-62-generic - Signed kernel image generic
+linux-image-5.4.0-62-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-64-generic - Signed kernel image generic
+linux-image-5.4.0-64-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-65-generic - Signed kernel image generic
+linux-image-5.4.0-65-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-66-generic - Signed kernel image generic
+linux-image-5.4.0-66-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-67-generic - Signed kernel image generic
+linux-image-5.4.0-67-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-70-generic - Signed kernel image generic
+linux-image-5.4.0-70-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-71-generic - Signed kernel image generic
+linux-image-5.4.0-71-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-72-generic - Signed kernel image generic
+linux-image-5.4.0-72-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-73-generic - Signed kernel image generic
+linux-image-5.4.0-73-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-74-generic - Signed kernel image generic
+linux-image-5.4.0-74-lowlatency - Signed kernel image lowlatency
+linux-image-5.4.0-77-generic - Signed kernel image generic
+linux-image-5.4.0-77-lowlatency - Signed kernel image lowlatency
+linux-image-5.6.0-1008-oem - Signed kernel image oem
+linux-image-5.6.0-1010-oem - Signed kernel image oem
+linux-image-5.6.0-1011-oem - Signed kernel image oem
+linux-image-5.6.0-1013-oem - Signed kernel image oem
+linux-image-5.6.0-1017-oem - Signed kernel image oem
+linux-image-5.6.0-1018-oem - Signed kernel image oem
+linux-image-5.6.0-1020-oem - Signed kernel image oem
+linux-image-5.6.0-1021-oem - Signed kernel image oem
+linux-image-5.6.0-1023-oem - Signed kernel image oem
+linux-image-5.6.0-1026-oem - Signed kernel image oem
+linux-image-5.6.0-1027-oem - Signed kernel image oem
+linux-image-5.6.0-1028-oem - Signed kernel image oem
+linux-image-5.6.0-1031-oem - Signed kernel image oem
+linux-image-5.6.0-1032-oem - Signed kernel image oem
+linux-image-5.6.0-1033-oem - Signed kernel image oem
+linux-image-5.6.0-1034-oem - Signed kernel image oem
+linux-image-5.6.0-1035-oem - Signed kernel image oem
+linux-image-5.6.0-1036-oem - Signed kernel image oem
+linux-image-5.6.0-1039-oem - Signed kernel image oem
+linux-image-5.6.0-1042-oem - Signed kernel image oem
+linux-image-5.6.0-1047-oem - Signed kernel image oem
+linux-image-5.6.0-1048-oem - Signed kernel image oem
+linux-image-5.6.0-1050-oem - Signed kernel image oem
+linux-image-5.6.0-1052-oem - Signed kernel image oem
+linux-image-5.6.0-1053-oem - Signed kernel image oem
+linux-image-5.6.0-1054-oem - Signed kernel image oem
+linux-image-5.6.0-1055-oem - Signed kernel image oem
+linux-image-5.6.0-1056-oem - Signed kernel image oem
+linux-image-5.8.0-1031-oracle - Signed kernel image oracle
+linux-image-5.8.0-1032-gcp - Signed kernel image GCP
+linux-image-5.8.0-1033-azure - Signed kernel image azure
+linux-image-5.8.0-1033-oracle - Signed kernel image oracle
+linux-image-5.8.0-1034-oracle - Signed kernel image oracle
+linux-image-5.8.0-1035-aws - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-5.8.0-1035-gcp - Signed kernel image GCP
+linux-image-5.8.0-1036-azure - Signed kernel image azure
+linux-image-5.8.0-1038-aws - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-5.8.0-23-generic - Signed kernel image generic
+linux-image-5.8.0-23-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-25-generic - Signed kernel image generic
+linux-image-5.8.0-25-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-28-generic - Signed kernel image generic
+linux-image-5.8.0-28-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-29-generic - Signed kernel image generic
+linux-image-5.8.0-29-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-33-generic - Signed kernel image generic
+linux-image-5.8.0-33-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-34-generic - Signed kernel image generic
+linux-image-5.8.0-34-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-36-generic - Signed kernel image generic
+linux-image-5.8.0-36-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-38-generic - Signed kernel image generic
+linux-image-5.8.0-38-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-40-generic - Signed kernel image generic
+linux-image-5.8.0-40-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-41-generic - Signed kernel image generic
+linux-image-5.8.0-41-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-43-generic - Signed kernel image generic
+linux-image-5.8.0-43-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-44-generic - Signed kernel image generic
+linux-image-5.8.0-44-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-45-generic - Signed kernel image generic
+linux-image-5.8.0-45-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-48-generic - Signed kernel image generic
+linux-image-5.8.0-48-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-49-generic - Signed kernel image generic
+linux-image-5.8.0-49-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-50-generic - Signed kernel image generic
+linux-image-5.8.0-50-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-53-generic - Signed kernel image generic
+linux-image-5.8.0-53-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-55-generic - Signed kernel image generic
+linux-image-5.8.0-55-lowlatency - Signed kernel image lowlatency
+linux-image-5.8.0-59-generic - Signed kernel image generic
+linux-image-5.8.0-59-lowlatency - Signed kernel image lowlatency
+linux-image-aws-edge - Linux kernel image for Amazon Web Services (AWS) systems.
+linux-image-aws-lts-20.04 - Linux kernel image for Amazon Web Services (AWS) systems.
+linux-image-azure-edge - Linux kernel image for Azure systems.
+linux-image-azure-lts-20.04 - Linux kernel image for Azure systems.
+linux-image-extra-virtual-hwe-20.04-edge - Extra drivers for Virtual Linux kernel image
+linux-image-gcp-edge - Google Cloud Platform (GCP) Linux kernel image
+linux-image-gcp-lts-20.04 - Google Cloud Platform (GCP) Linux kernel image
+linux-image-generic-hwe-20.04-edge - Generic Linux kernel image
+linux-image-gke-5.4 - Google Container Engine (GKE) Linux kernel image
+linux-image-gkeop - GKEOP Linux kernel image
+linux-image-gkeop-5.4 - GKEOP Linux kernel image
+linux-image-lowlatency-hwe-20.04-edge - lowlatency Linux kernel image
+linux-image-oem-20.04 - OEM Linux kernel image (dummy transitional package)
+linux-image-oem-20.04-edge - OEM Linux kernel image (dummy transitional package)
+linux-image-oem-20.04b - OEM Linux kernel image
+linux-image-oracle-edge - Linux kernel image for Oracle systems.
+linux-image-oracle-lts-20.04 - Linux kernel image for Oracle systems.
+linux-image-unsigned-5.10.0-1011-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1013-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1014-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1016-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1017-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1019-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1021-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1022-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1023-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1025-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1026-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1029-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1032-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1033-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.10.0-1034-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+linux-image-unsigned-5.11.0-1007-azure - Linux kernel image for version 5.11.0 on 64 bit x86 SMP
+linux-image-unsigned-5.11.0-1008-oracle - Oracle Linux kernel image for version 5.11.0 on 64 bit x86 SMP
+linux-image-unsigned-5.11.0-1009-gcp - Linux kernel image for version 5.11.0 on 64 bit x86 SMP
+linux-image-unsigned-5.11.0-22-generic - Linux kernel image for version 5.11.0 on 64 bit x86 SMP
+linux-image-unsigned-5.11.0-22-lowlatency - Linux kernel image for version 5.11.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1008-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1009-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1010-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1011-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1011-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1011-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1012-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1012-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1013-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1014-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1015-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1015-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1015-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1016-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1016-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1018-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1018-gkeop - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1018-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1018-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1019-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1019-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1019-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1020-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1020-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1021-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1021-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1021-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1022-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1022-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1022-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1023-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1023-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1024-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1024-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1024-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1025-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1025-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1025-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1026-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1026-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1028-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1028-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1029-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1029-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1030-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1031-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1031-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1032-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1032-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1032-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1033-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1033-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1033-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1034-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1034-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1034-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1034-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1035-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1035-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1035-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1036-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1036-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1036-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1036-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1037-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1037-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1037-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1037-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1038-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1038-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1038-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1039-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1039-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1039-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1039-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1040-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1040-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1040-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1041-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1041-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1041-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1041-kvm - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1041-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1042-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1042-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1042-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1043-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1043-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1043-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1043-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1044-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1044-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1044-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1045-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1046-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1046-gcp - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1046-gke - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1046-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1047-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1048-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1048-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1049-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1049-oracle - Oracle Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-1051-azure - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-28-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-28-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-29-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-29-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-31-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-31-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-33-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-33-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-37-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-37-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-39-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-39-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-40-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-40-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-42-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-42-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-45-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-45-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-47-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-47-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-48-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-48-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-51-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-51-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-52-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-52-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-53-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-53-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-54-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-54-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-58-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-58-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-59-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-59-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-60-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-60-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-62-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-62-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-64-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-64-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-65-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-65-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-66-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-66-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-67-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-67-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-70-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-70-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-71-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-71-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-72-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-72-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-73-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-73-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-74-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-74-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-77-generic - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.4.0-77-lowlatency - Linux kernel image for version 5.4.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1008-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1010-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1011-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1013-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1017-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1018-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1020-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1021-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1023-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1026-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1027-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1028-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1031-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1032-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1033-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1034-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1035-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1036-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1039-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1042-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1047-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1048-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1050-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1052-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1053-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1054-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1055-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.6.0-1056-oem - Linux kernel image for version 5.6.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-1031-oracle - Oracle Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-1032-gcp - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-1033-azure - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-1033-oracle - Oracle Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-1034-oracle - Oracle Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-1035-gcp - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-1036-azure - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-23-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-23-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-25-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-25-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-28-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-28-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-29-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-29-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-33-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-33-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-34-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-34-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-36-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-36-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-38-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-38-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-40-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-40-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-41-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-41-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-43-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-43-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-44-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-44-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-45-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-45-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-48-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-48-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-49-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-49-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-50-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-50-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-53-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-53-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-55-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-55-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-59-generic - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-unsigned-5.8.0-59-lowlatency - Linux kernel image for version 5.8.0 on 64 bit x86 SMP
+linux-image-virtual-hwe-20.04-edge - Virtual Linux kernel image
+linux-virtual-hwe-20.04-edge - Minimal Generic Linux kernel and headers
+linux-modules-nvidia-390-5.4.0-28-generic - Linux kernel nvidia modules for version 5.4.0-28
+linux-modules-nvidia-390-5.4.0-28-lowlatency - Linux kernel nvidia modules for version 5.4.0-28
+linux-modules-nvidia-440-5.4.0-28-generic - Linux kernel nvidia modules for version 5.4.0-28
+linux-modules-nvidia-440-5.4.0-28-lowlatency - Linux kernel nvidia modules for version 5.4.0-28
+linux-modules-nvidia-440-5.6.0-1008-oem - Linux kernel nvidia modules for version 5.6.0-1008
+linux-modules-nvidia-440-5.6.0-1010-oem - Linux kernel nvidia modules for version 5.6.0-1010
+linux-modules-nvidia-440-5.6.0-1011-oem - Linux kernel nvidia modules for version 5.6.0-1011
+linux-modules-nvidia-440-5.6.0-1013-oem - Linux kernel nvidia modules for version 5.6.0-1013
+linux-modules-nvidia-440-5.6.0-1017-oem - Linux kernel nvidia modules for version 5.6.0-1017
+linux-modules-nvidia-440-5.6.0-1018-oem - Linux kernel nvidia modules for version 5.6.0-1018
+linux-modules-nvidia-440-5.6.0-1020-oem - Linux kernel nvidia modules for version 5.6.0-1020
+linux-modules-nvidia-440-5.6.0-1021-oem - Linux kernel nvidia modules for version 5.6.0-1021
+linux-modules-nvidia-440-5.6.0-1023-oem - Linux kernel nvidia modules for version 5.6.0-1023
+linux-modules-nvidia-440-5.6.0-1026-oem - Linux kernel nvidia modules for version 5.6.0-1026
+linux-modules-nvidia-440-5.6.0-1027-oem - Linux kernel nvidia modules for version 5.6.0-1027
+linux-modules-nvidia-450-5.6.0-1028-oem - Linux kernel nvidia modules for version 5.6.0-1028
+linux-modules-nvidia-450-5.6.0-1031-oem - Linux kernel nvidia modules for version 5.6.0-1031
+linux-modules-nvidia-450-5.6.0-1032-oem - Linux kernel nvidia modules for version 5.6.0-1032
+linux-modules-nvidia-450-5.6.0-1033-oem - Linux kernel nvidia modules for version 5.6.0-1033
+linux-modules-nvidia-450-5.6.0-1034-oem - Linux kernel nvidia modules for version 5.6.0-1034
+linux-modules-nvidia-450-5.6.0-1035-oem - Linux kernel nvidia modules for version 5.6.0-1035
+linux-modules-nvidia-450-5.6.0-1036-oem - Linux kernel nvidia modules for version 5.6.0-1036
+linux-modules-nvidia-450-5.6.0-1039-oem - Linux kernel nvidia modules for version 5.6.0-1039
+linux-modules-nvidia-450-5.6.0-1042-oem - Linux kernel nvidia modules for version 5.6.0-1042
+linux-modules-nvidia-450-5.6.0-1047-oem - Linux kernel nvidia modules for version 5.6.0-1047
+linux-modules-nvidia-455-5.6.0-1034-oem - Linux kernel nvidia modules for version 5.6.0-1034
+linux-modules-nvidia-455-5.6.0-1035-oem - Linux kernel nvidia modules for version 5.6.0-1035
+linux-modules-nvidia-455-5.6.0-1036-oem - Linux kernel nvidia modules for version 5.6.0-1036
+linux-modules-nvidia-455-5.6.0-1039-oem - Linux kernel nvidia modules for version 5.6.0-1039
+linux-modules-nvidia-460-5.6.0-1042-oem - Linux kernel nvidia modules for version 5.6.0-1042
+linux-modules-nvidia-460-5.6.0-1047-oem - Linux kernel nvidia modules for version 5.6.0-1047
+linux-image-5.10.0-1008-oem - Signed kernel image oem
+linux-image-unsigned-5.10.0-1008-oem - Linux kernel image for version 5.10.0 on 64 bit x86 SMP
+$
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                                                                              End of the Document
+
+
+                  
+
