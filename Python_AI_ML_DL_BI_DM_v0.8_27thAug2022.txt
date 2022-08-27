@@ -1,0 +1,415 @@
+------------------------------
+Author  : Twrcha AD
+Contacts: twrcha@outlook.com 
+version : 0.8
+created : 2nd July 2022
+updated : 27th Aug 2022
+disply  : 1920 x 1080
+------------------------------
+@@@ DISCLAIMER: this file is a collection of best practises and know-how gathered from various sources, tested and verified by this document author within the subject linux environment for      the best of the author's knowldage during the document dated period. meanwhile there are few un-verified commands/procedures which are highlighted/marked by the auther, however     discrepancy still may occurs, due to the fact of no 100% matched environments. @@@ 
+
+
+
+################################################################
+# (AI, ML, DL, BI & DM) development environment preparation    #
+################################################################
+## the main component of kubernetes is an api server and etcd data store.
+## and other important components like kube-scheduler, kube-controller-manager and cloud-controller-manager
+## the success of Kubernetes comes from its flexibility. The ability to extend the Kubernetes API with custom resource definitions (CRDs or CRDS).
+## the api has a few built-in objects that it understands. like (pods, namespaces, ConfigMaps, services and nodes). 
+## do not use 'sudo' with (pip, conda, brew, npm, nvm, rvm, ssh) or any other enviroment specific command.
+## 'httpd' or 'apache-httpd' packages are alternative for (php, composer & apache2) in some other distros/repositories.
+## install all the dependances for the installed packages using 'apt-get build-dep'.
+## supported os's [Windows/Linux/MacOS]
+## https://www.microsoft.com/en-us/software-download/windows11/
+## https://docs.microsoft.com/en-us/windows/arm/overview/
+## https://uupdump.net/
+## pwsh run command: sfc /scannow
+## pwsh run command: Dism /Online /Cleanup-Image /ScanHealth
+## http://rufus.ie/
+## https://www.ventoy.net/
+## https://www.pendrivelinux.com/yumi-multiboot-usb-creator/#YUMI-exFAT/
+## https://www.kernel.org/
+## https://www.catalog.update.microsoft.com/Search.aspx?q=wsl/
+## https://github.com/coreybutler/nvm-windows/releases/
+## https://stackoverflow.com/questions/45023363/what-is-docker-io-in-relation-to-docker-ce-and-docker-ee-now-called-mirantis-k/
+## linux kernel: v5.10.x x86_64/amd64 or later, latest v5.18.8 .
+## distro: Ubuntu 22.04-lts(jammy jellyfish), RHEL9.0, Arch-v2022.07.01, Manjaro-v21.3.1, Mint-v20.3'una' or later/equivelent.
+## gui: gnome40, kde-plasma-v5.25 .
+## wsl distro image path %userprofile%\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu22.04LTS_79rhkp1fndgsc\LocalState\ext4.vhdx
+## https://www.catalog.update.microsoft.com/Home.aspx/
+## https://github.com/microsoft/WSL2-Linux-Kernel/
+## make KCONFIG_CONFIG=Microsoft/config-wsl
+## supported shell - cli:
+ # pwsh (powershell v7.2.0 or later, current: v7.2.5)
+ # bash (v5.1)
+ # zsh  (v5.8.1)
+ # fish (v3.3.1)
+ # csh  (v20110502)
+ # tcsh (v6.21.0)
+ # dash (v0.5.11)
+
+
+
+
+
+### internet root nameservers (DNS) list:
+
+ ## Google:
+  # 2001:4860:4860::8888
+  # 2001:4860:4860::8844
+
+
+ ## Cloudflare:
+  # 2606:4700:4700::1111
+  # 2606:4700:4700::1001
+
+  # If you want to use built-in malware filtering, you will need to use the following:
+  # 2606:4700:4700::1112
+  # 2606:4700:4700::1002
+
+  # If you want to use malware filtering and block adult content, you will need to use the following:
+  # 2606:4700:4700::1113
+  # 2606:4700:4700::1003
+
+
+ ## OpenDNS:
+  # 2620:0:ccc::2
+  # 2620:0:ccd::2
+
+  # If you want to use IPv6 DNS with filtering to protect your devices, you will need to use the following:
+  # 2620:119:35::35
+  # 2620:119:53::53
+
+
+ ## Quad9:
+  # Malware blocking and DNSSEC validation, typical for most users:
+  # 2620:fe::fe
+  # 2620:fe::9
+
+  # Malware blocking, DNSSEC validation and ECS enabled:
+  # 2620:fe::11
+  # 2620:fe::fe:11
+
+  # No malware blocking, no DNSSEC validation, recommended for advanced users:
+  # 2620:fe::10
+  # 2620:fe::fe:10
+
+
+
+
+
+## necessary packages to install:
+ 
+   sudo ubuntu-drivers autoinstall         
+   sudo apt install mlocate            # or 'plocate', you may think it is stuck at 60% for a long time because the filesystem indexing process runs in the background (just wait). 
+   sudo apt install tar curl git wget sudo apt dpkg gdebi dnf yum4 zypper rpm grep tree make cmake exa zip unzip nuget cargo flatpak gcc g++ clang golang erlang rustc meson bison 
+   sudo apt install build-essential llvm wine wine64-tools winetricks mono-runtime ninja-build perl php composer apache2 python3-cloudkittyclient
+   sudo apt install wireless-tools traceroute lsb lsb-base net-tools atop htop hatop nvtop sntop ctop telnet iputils-ping fping nginx ssh gnupg2 xrdp ca-certificates apt-transport-https
+   sudo apt install systemd snapd  aptitude* qt6* gtk3* alsa* pulseaudio* wayland* xorg* avahi* node-typescript nano* gedit vim* ruby ruby-build ruby-dev zfsutils-linux zsh fish
+   sudo apt install g++-aarch64-linux-gnu pkg-config sdkmanager android-sdk* google-android-ndk* google-android-sdk* google-android-platform-24* arduino* rpi-imager inxi
+   sudo apt install flex dwarves libssl-dev libelf-dev software-properties-common
+ 
+   sudo apt install mysql-server mysql-client           # for Canonical/Ubuntu based distro's (Ubuntu, Kubuntu, Xubuntu, Lubuntu, Edubuntu, Ubuntu-Studio, Ubuntu-Budgie, Ubuntu-MATE) 
+   sudo apt install mariadb-server mariadb-client       # for Debian based distro's (Kali, Arch, Manjaro, mint linux), the anti 'snap' & 'systemd' school of thinking.
+ 
+ 
+ 
+
+    
+## edit "~/.bash_profile" and add the below environment (env) settings:
+   sudo nano "~/.bash_profile" 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+source "$HOME/.bashrc"
+source "$HOME/.profile"
+source "$HOME/.rvm/scripts/rvm"        # Load RVM into a shell session *as a function*
+
+# another way of sourcing the above:
+# [[ -s "$HOME/.bashrc" ]] && source "$HOME/.bashrc"
+# [[ -s "$HOME/.profile" ]] && source "$HOME/.profile"
+# [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" 
+
+PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/lib/ruby/gems/3.1.0/bin:/home/linuxbrew/.linuxbrew/opt/openssl@3/bin:$HOME/.rvm/bin:$HOME/.local/bin:$PATH"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+export LDFLAGS="-L/home/linuxbrew/.linuxbrew/opt/openssl@3/lib"
+export CPPFLAGS="-I/home/linuxbrew/.linuxbrew/opt/openssl@3/include"
+export PKG_CONFIG_PATH="/home/linuxbrew/.linuxbrew/opt/openssl@3/lib/pkgconfig"
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+## node version manager (nvm) - [node-js & npm & yarn]
+   curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash          # then restart the shell or reloade the user environment 'source ~/.bashrc' .
+   nvm ls-remote             
+   nvm install node                                                                        # for the latest version.
+   nvm install 16.16.0                                                                     # for a specific node version.
+   nvm install --lts                                                                       # for the lts node (long time support) version.
+   nvm use 16.16.0                                                                         # select which installed node version you want to set as the system default (active). 
+   nvm install --latest-npm                                                                # for the latest/current npm version.
+   npm install --no-optional --no-shrinkwrap --no-package-lock
+   npm install yarn                     
+   npm install -g       typescript                                                         # tsc command.
+   npm install --global cdktf-cli@latest                                                   # cdk (cloud development kit) for 'Terraform'.
+   npm fund
+   npm audit
+   npm audit fix
+ 
+ 
+ 
+ 
+ 
+## ruby version manager (rvm), [ruby interpreter]
+ # if you user home brew it will conflict with ruby due to different openssl version requirment for both env. 
+ # you either install and use rvm or 'rbenv' never both.  
+ # https://rvm.io/
+ # http://www.ruby-lang.org/
+   gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB  
+   curl -sSL https://get.rvm.io | bash -s stable               # install 'rvm' only.
+   curl -sSL https://get.rvm.io | bash -s stable --rails       # this will install 'rvm' along with the current 'ruby' version and 'rails'.
+   rvm use ruby --install --default            # download, compile and install the latest/current version of ruby and use it as the default version for your env.
+   rvm install ruby                            # download, compile and install the latest/current version of ruby.
+   rvm install 3.0.4                           # install a specific version of ruby interpreter.
+   rvm alias create default 3.0.4              # set this version as the default/active version for that env.
+   rvm list                                    # list all installed versions.
+ 
+
+ # add the following line to the user profile settings '~/.bash_profile':
+   RUBY_CONFIGURE_OPTS="--without-openssl" rbenv install 3.0.4
+   rbenv install 3.0.4 
+   rbenv shell 3.0.4
+   RUBY_CONFIGURE_OPTS="--without-openssl" rbenv install 3.0.4           # for first ruby installation on the distro if the above command failed with openssl error.
+   sudo gem install openssl-3.0.0.gem
+ 
+ 
+ 
+ 
+  
+## install homebrew for linux (require ruby v2.7.6 or later)
+ # https://brew.sh/
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+ 
+ 
+ 
+ 
+## install Microsoft repository for linux, to install the ncessary packages (powershell, dotnet-sdk/runtime): 
+ 
+ # https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux?view=powershell-7.2/
+   wget -oO https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
+   sudo apt install ./packages-microsoft-prod.deb
+   sudo apt update && sudo apt upgrade
+   sudo apt install powershell                 # v7.2.x or later.
+   sudo apt install dotnet-sdk-6.0             # v6.0 replaces v5.0.
+
+
+
+
+## Install Microsoft Visual Studio Code (vscode) IDE [v1.68.x or later, current: v1.68.1]
+ 
+ # https://code.visualstudio.com/Download/
+   sudo dpkg -i       code_1.68.1-1655263094_amd64.deb
+   sudo gdebi         code_1.68.1-1655263094_amd64.deb
+   sudo apt install ./code_1.68.1-1655263094_amd64.deb
+   sudo rpm -i        code-1.68.1-1655263151.el7.x86_64.rpm
+ # ???                VSCode-darwin-universal.zip                # for MacOS.
+ # Extract the archive contents.
+ # Drag 'Visual Studio Code.app' to the Applications folder, making it available in the macOS Launchpad.
+ # Open the Command Palette (Cmd+Shift+P) and type 'shell command' to find the Shell Command.
+ # Restart the terminal for the new $PATH value to take effect. You'll be able to type 'code .' in any folder to start editing files in that folder.
+ # If you still have the old code alias under your profile environment variables settings ('.bash_profile', '.bashrc', 'zshrc', '.profile') from an early vscode version,
+ # remove it and replace it by executing the Shell Command.
+
+
+
+
+## 'genie' for wsl2 with systemd (current v2.4.x):
+
+ # ubuntu 20.04 equivalent or above. for earlier version support refer to an older version of genie. 
+ # 'systemd' has to be enabled and running as init (PSD1) before using genie.
+ # snapd installed and running. 
+ # for the latest version refer to https://github.com/arkane-systems/genie/releases/tag/v2.4/
+ # for systemd installation script refer to https://gist.github.com/djfdyuruiry/6720faa3f9fc59bfdf6284ee1f41f950/
+ # download the latest supported installation package by your WSL2 distro. for example, 'systemd-genie_2.4_amd64.deb' .
+   pip      install pycodestyle                            # v2.4.x and above.
+   pip      install pydocstyle                             # 
+   sudo apt install snapd                                  # 
+   snap list                                               # to insure snapd service is functioning properly.
+   sudo apt install ./systemd-genie_2.4_amd64.deb          # supports (x86_64 & arm) architecture and package options (.deb, .rpm, .pkg.tar.zst, tar.gz & .zip). 
+   sudo apt install systemd-genie                          # this will install the current supported version by debian community.  
+   genie -s                                                # add this line to '~/.bash_profile' to initiate genie at the session startup.
+   genie -c                                                # 
+   systmctl status time-sync.target                        # to insure genie is running properly this service should be running and accessable without using sudo. 
+
+
+
+
+## https://www.python.org/     [current: v3.10.5]
+
+   sudo apt install       python3 python-is-python3 python3.10 python3-pip python3-dev openjdk-17-jdk
+   sudo apt-get install
+   sudo aptitude install
+   sudo dnf install 
+   sudo yum install
+   sudo zypper install
+   sudo pamac install
+   sudo rpm -i
+   sudo pacman -Syu       python3 python-is-python3 python3.10 python3-pip python3-dev        # the package name may vary depending on the repository you are downloading from.
+   brew install           python@3.10 python-tk@3.10 python-yq                
+ 
+   sudo apt build-dep     python3 python-is-python3 python3.10 python3-pip python3-dev
+
+
+ # Python scripts may have one of several file extensions. Each file extension has a special meaning and purpose.
+
+   # *.py  - Regular scripts.
+   # *.py3 - (rarely used) Python3 script; Python3 scripts usually end with "*.py" not "*.py3".
+   # *.pyc - compiled script (Bytecode).
+   # *.pyo - optimized pyc bytecode file (As of Python3.5, Python will only use pyc rather than pyo and pyc).
+   # *.pyw - Python script for Windows that is executed with pythonw.exe.
+   # *.pyx - Cython src to be converted to C/C++.
+   # *.pyd - Python script made as a Windows DLL.
+   # *.pyi - MyPy stub.
+   # *.pyi - Stub file (PEP 484).
+   # *.pyz - Python script archive (PEP 441); this is a script containing compressed Python scripts (ZIP) in binary form after the standard Python script header.
+   # *.pyp - Py4D Python Plugin.
+   # *.pyt - Python declaration file.
+   # *.pywz - Python script archive for MS-Windows (PEP 441); this is a script containing compressed Python scripts (ZIP) in binary form after the standard Python script header.
+   # *.pyde - Python script used by Processing (https://processing.org/).
+   # *.py[cod] - wildcard notation in ".gitignore" that means the file may be "*.pyc", "*.pyo", or "*.pyd".
+   # *.pxd - Cython script which is equivalent to a C/C++ header.
+   # *.rpy - RPython script or a Python script containing application or framework-specific features.
+   # *.xpy - Unknown.
+   # *.ipynb - Jupyter Notebook file.
+
+
+
+
+## https://pypi.org/project/pip/
+## https://python.land/virtual-environments/virtualenv/
+   py     -m pip install --upgrade pip       # Windows only.
+   python -m pip install --upgrade pip       # you can use pip with or w/o the 'python -m'.
+             pip install --upgrade pip
+ 
+   pip install -U --user wheel numpy packaging requests opt_einsum ruamel-yaml keras_preprocessing virtualenv --no-deps    # in case of virtual environment installation.
+   pip install           wheel numpy packaging requests opt_einsum ruamel-yaml keras_preprocessing virtualenv
+   pip install cloudkitty
+
+   python3 -m venv /path/to/new/virtual/environment
+              venv /path/to/new/virtual/environment
+              venv c:\path\to\myenv                       # Windows environment.
+   source          /venvpath/bin/activate
+
+
+
+
+## https://www.anaconda.com/   [current: Anaconda3-2022.05]
+
+ # supports Python 3.9.x
+ # Anaconda3-2022.05-Linux-x86_64.sh
+ # Anaconda3-2022.05-Linux-x86_64.exe
+ # Anaconda3-2022.05-MacOSX-x86_64.pkg
+   sh ./Anaconda3-2022.05-Linux-x86_64.sh
+   conda init
+   conda update --all
+   conda install pathlib
+
+
+
+
+## https://www.tensorflow.org/  [by google current: v2.9.1]
+
+ # TensorFlow2 packages require a pip version >19.0 (or >20.3 for macOS) to install (.whl) wheel packages.
+   pip install tensorflow
+
+
+
+
+## https://developer.nvidia.com/cuda-downloads/  [CUDA Toolkit 11.7]
+
+ # Windows & Linux only, Apple do not support Nvidia.
+   wget https://developer.download.nvidia.com/compute/cuda/11.7.0/local_installers/cuda_11.7.0_515.43.04_linux.run
+   sudo sh cuda_11.7.0_515.43.04_linux.run
+
+
+
+
+## https://pytorch.org/  [current: v1.12.0] 
+
+   pip   install torch   torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116           # using NVIDIA GPU processing power & NIVDIA CUDA toolkit.
+   pip   install torch   torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu             # using CPU processing power with no GPU. 
+   conda install pytorch torchvision torchaudio cudatoolkit=11.6 -c pytorch -c conda-forge                         # using NVIDIA GPU & CUDA processing power through Conda-forge channel.
+
+
+
+
+## https://docs.dask.org/      [current: v2022.2.1]
+ 
+   pip install "dask[complete]"          # core package and all dependancies (NumPy, Dask Array, Dask DataFrame, etc.)
+   pip install dask                      # core package only.
+
+
+
+
+## https://www.ray.io/         [current: v1.13.0] 
+
+   pip install ray
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+#############################
+# Troubleshooting commands  #
+#############################
+
+ip a
+telnet
+ping  
+fping google.com
+ifconfig
+iwconfig
+route
+traceroute
+whois google.com
+nslookup 8.8.8.8
+host 8.8.8.8
+hostname                        # check / or change the hostname.
+tcpdump --list-interfaces
+dig MX microsoft.com
+netstat -anlp
+netstat -r
+ss                              # replacment for 'netstat'.
+lsof 
+mtr google.com
+arp 
+nc                              # (net cat)
+
+
+ls
+ls -al
+lsblk
+lsusb
+lsb_release -a
+
+
+inxi -SAMD
+atop
+htop
+ctop
+hatop
+nvtop
+sntop
+
+## curl supports protocols such as DICT, MQTT, GOPHER, FILE, ftp, ftps, sftp, tftp, rtsp, scp, http(s), imap(s), ldap(s), pop3(s), rtmp(s), smb(s), smtp(s) and telnet.
+## wget command is primarily used to fetch web pages. can be used to troubleshoot network issues as well.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+													End of the Document
